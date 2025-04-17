@@ -124,6 +124,7 @@ class Home extends Controller
             $montoUniformes  = $this->model->select_payment_student_uniformes_total_dasboard();
             $this->view->montoUniformes = json_encode($montoUniformes);
 
+            
             $this->view->count_teacher       = $count_teacher;
             $this->view->count_student       = $count_student;
             $this->view->count_student_m     = $count_student_m;
