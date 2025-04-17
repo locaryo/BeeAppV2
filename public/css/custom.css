@@ -1,0 +1,49 @@
+/* Estilo para el menú desplegable */
+.navbar-nav .dropdown-toggle {
+  cursor: pointer;
+  display: flex; /* Para alinear el icono y el svg */
+  align-items: center; /* Centrar verticalmente */
+}
+
+.navbar-nav .dropdown-toggle::after {
+  display: none !important; /* Oculta la flecha por defecto */
+}
+
+.navbar-nav .dropdown-toggle svg {
+  margin-left: 10%; /* Espacio entre el texto y el SVG */
+  width: 1em; /* Ajusta el tamaño del SVG */
+  height: 1em;
+  transition: transform 0.2s ease-in-out; /* Transición suave */
+}
+
+/* Rotar la flecha cuando el menú está abierto */
+.navbar-nav .dropdown-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.navbar-nav .dropdown-menu {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.navbar-nav .dropdown-menu .nav-link {
+  padding-left: 20px;
+  color: #5e72e4;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.navbar-nav .dropdown-menu .nav-link:hover {
+  color: #344675;
+}
+
+#tabla-horario td {
+  border: 1px solid #ddd;
+  min-width: 120px;
+}
+
+#tabla-horario td[data-fusionada="1"] {
+  padding: 0;
+  border: none;
+}
