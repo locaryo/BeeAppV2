@@ -21,9 +21,8 @@ Este proyecto es un MVC personalizado que utiliza dependencias de npm y Composer
 4.  **Configurar la base de datos:**
     * Crea una base de datos MySQL.
     * Configura los parámetros de conexión en el archivo de configuración del proyecto.
-5.  **Ejecutar las migraciones (si aplica):**
     ```bash
-    [Comando para ejecutar migraciones]
+    config/config.php
     ```
 
 ## Uso
@@ -32,6 +31,7 @@ Una vez instalado, puedes acceder a BeeApp a través de tu navegador web. El sis
 
 * Gestión de estudiantes: registro, edición y consulta de información de estudiantes.
 * Gestión de profesores: registro, edición y consulta de información de profesores.
+* Gestión de representantes: registro, edición y consulta de información de representantes.
 * Gestión académica: administración de cursos, calificaciones y asistencia.
 * Generación de reportes: creación de informes académicos y administrativos.
 
@@ -40,10 +40,10 @@ Una vez instalado, puedes acceder a BeeApp a través de tu navegador web. El sis
 Si deseas contribuir a BeeApp, sigue estos pasos:
 
 1.  Haz un "fork" del repositorio.
-2.  Crea una rama con tu funcionalidad: `git checkout -b mi-funcionalidad`.
+2.  Crea una rama con tu funcionalidad: `git checkout -b change`.
 3.  Realiza los cambios y haz "commit": `git commit -m "Agrega mi funcionalidad"`.
-4.  Sube los cambios a tu repositorio: `git push origin mi-funcionalidad`.
-5.  Envía un "pull request" a la rama "main" del repositorio original.
+4.  Sube los cambios a tu repositorio: `git push origin change`.
+5.  Envía un "pull request" a la rama "change" del repositorio original.
 
 ## Licencia
 
@@ -58,6 +58,4 @@ Este proyecto utiliza estilos y elementos de la plantilla Material Dashboard 2 d
 ## Información Adicional
 
 * Estado del proyecto: En desarrollo.
-* Futuras funcionalidades: Implementación de un sistema de mensajería interna, integración con plataformas de aprendizaje en línea.
-
-Espero que este archivo `README.md` sea de utilidad para tu proyecto BeeApp.
+* Futuras funcionalidades: Implementacion de usuarios docentes, con sus respectivas funcionalidades.
