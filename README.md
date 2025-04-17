@@ -8,7 +8,7 @@ Este proyecto es un MVC personalizado que utiliza dependencias de npm y Composer
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone [https://github.com/locaryo/BeeAppV2.git](https://github.com/locaryo/BeeAppV2.git)
+    git clone [https://github.com/cran/DELTD](https://github.com/cran/DELTD)
     ```
 2.  **Instalar dependencias de Composer:**
     ```bash

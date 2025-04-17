@@ -112,6 +112,18 @@ class Home extends Controller
             $count_student_meca  = $this->model->count_student_meca();
             $count_student_elec  = $this->model->count_student_elec();
 
+            $montoMatriculaStudent  = $this->model->select_payment_student_count();
+            $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
+
+            $ingresoEgreso  = $this->model->product_billing_count();
+            $this->view->ingresoEgreso = json_encode($ingresoEgreso);
+
+            $montoPagosMatriculaDashboard  = $this->model->select_payment_student_count_total_dasboard();
+            $this->view->montoPagosMatriculaDashboard = $montoPagosMatriculaDashboard;
+
+            $montoUniformes  = $this->model->select_payment_student_uniformes_total_dasboard();
+            $this->view->montoUniformes = json_encode($montoUniformes);
+
             $this->view->count_teacher       = $count_teacher;
             $this->view->count_student       = $count_student;
             $this->view->count_student_m     = $count_student_m;
