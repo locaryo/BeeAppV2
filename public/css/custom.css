@@ -1,19 +1,25 @@
 /* Estilo para el menú desplegable */
 .navbar-nav .dropdown-toggle {
   cursor: pointer;
-  display: flex; /* Para alinear el icono y el svg */
-  align-items: center; /* Centrar verticalmente */
+  display: flex;
+  /* Para alinear el icono y el svg */
+  align-items: center;
+  /* Centrar verticalmente */
 }
 
 .navbar-nav .dropdown-toggle::after {
-  display: none !important; /* Oculta la flecha por defecto */
+  display: none !important;
+  /* Oculta la flecha por defecto */
 }
 
 .navbar-nav .dropdown-toggle svg {
-  margin-left: 10%; /* Espacio entre el texto y el SVG */
-  width: 1em; /* Ajusta el tamaño del SVG */
+  margin-left: 10%;
+  /* Espacio entre el texto y el SVG */
+  width: 1em;
+  /* Ajusta el tamaño del SVG */
   height: 1em;
-  transition: transform 0.2s ease-in-out; /* Transición suave */
+  transition: transform 0.2s ease-in-out;
+  /* Transición suave */
 }
 
 /* Rotar la flecha cuando el menú está abierto */
@@ -38,6 +44,290 @@
   color: #344675;
 }
 
+
+.bento-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.bento-grid {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(1, 1fr);
+  gap: 8px;
+  border-radius: 8px;
+}
+
+.bento-col1-row1 {
+  grid-column: span 1;
+  grid-row: span 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col1-row2 {
+  grid-column: span 1;
+  grid-row: span 2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col1-row3 {
+  grid-column: span 1;
+  grid-row: span 3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col1-row4 {
+  grid-column: span 1;
+  grid-row: span 4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col2-row1 {
+  grid-column: span 2;
+  grid-row: span 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col2-row2 {
+  grid-column: span 2;
+  grid-row: span 2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col2-row3 {
+  grid-column: span 2;
+  grid-row: span 3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col2-row4 {
+  grid-column: span 2;
+  grid-row: span 4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col3-row1 {
+  grid-column: span 3;
+  grid-row: span 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col3-row2 {
+  grid-column: span 3;
+  grid-row: span 2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col3-row3 {
+  grid-column: span 3;
+  grid-row: span 3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col3-row4 {
+  grid-column: span 3;
+  grid-row: span 4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col4-row1 {
+  grid-column: span 4;
+  grid-row: span 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col4-row2 {
+  grid-column: span 4;
+  grid-row: span 2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col4-row3 {
+  grid-column: span 4;
+  grid-row: span 3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col4-row4 {
+  grid-column: span 4;
+  grid-row: span 4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col5-row1 {
+  grid-column: span 5;
+  grid-row: span 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col5-row2 {
+  grid-column: span 5;
+  grid-row: span 2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col5-row3 {
+  grid-column: span 5;
+  grid-row: span 3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col5-row4 {
+  grid-column: span 5;
+  grid-row: span 4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col6-row1 {
+  grid-column: span 6;
+  grid-row: span 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col6-row2 {
+  grid-column: span 6;
+  grid-row: span 2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col6-row3 {
+  grid-column: span 6;
+  grid-row: span 3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.bento-col6-row4 {
+  grid-column: span 6;
+  grid-row: span 4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+/* Estilo para la tabla de horarios */
 #tabla-horario td {
   border: 1px solid #ddd;
   min-width: 120px;
@@ -46,4 +336,11 @@
 #tabla-horario td[data-fusionada="1"] {
   padding: 0;
   border: none;
+}
+
+@media screen and (max-width: 850px) {
+  .bento-grid {
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+  }
 }
