@@ -26,7 +26,7 @@
       </div>
     <?php endif ?>
 
-    
+
     <div class="container-fluid py-4">
 
       <div class="row">
@@ -104,24 +104,10 @@
               </div>
             </div>
 
-            <div class="bento-col2-row2 row m-0">
+            <div class="bento-col4-row1 row m-0">
               <div class="row">
-                <div class="card-header bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Ingresos</h6>
-
-                </div>
-                <div class="card-body p-3">
-                  <div class="chart">
-                    <canvas id="ingresos-salidas" class="chart-canvas" height="300"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bento-col2-row2 row m-0">
-              <div class="row">
-                <div class="card-header bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Ingresos</h6>
+                <div class="card-header pb-0 pt-3 bg-transparent">
+                  <h6 class="text-capitalize text-center py-2">Ingresos Relevantes</h6>
 
                 </div>
                 <div class="card-body p-3">
@@ -133,80 +119,28 @@
             </div>
 
             <div class="bento-col2-row1 row m-0">
-              <!-- count teacher -->
               <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Docentes</p>
-                    <h5 class="font-weight-bolder">
-                      <?= $this->count_teacher ?>
-                    </h5>
-                  </div>
+                <div class="card-header bg-transparent">
+                  <h6 class="text-capitalize text-center py-2">Tabla Comparativa</h6>
+
                 </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                    <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                <div class="card-body p-3">
+                  <div class="chart">
+                    <canvas id="ingresos-salidas" class="chart-canvas" height="300"></canvas>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="bento-col2-row1 row m-0">
-              <!-- count teacher -->
-              <div class="row">
-                <div class="col-8">
-                  <div class="numbers">
-                    <p class="text-sm mb-0 text-uppercase font-weight-bold">Total Docentes</p>
-                    <h5 class="font-weight-bolder">
-                      <?= $this->count_teacher ?>
-                    </h5>
-                  </div>
-                </div>
-                <div class="col-4 text-end">
-                  <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                    <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bento-col2-row1 row m-0">
+            <div class="bento-col6-row1 row m-0">
               <div class="row">
                 <div class="card-header pb-0 pt-3 bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Petroquimica</h6>
+                  <h6 class="text-capitalize text-center py-2">Menciones</h6>
 
                 </div>
                 <div class="card-body p-3">
                   <div class="chart">
                     <canvas id="chart-line-a" class="chart-canvas" height="300"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bento-col2-row1 row m-0">
-              <div class="row">
-                <div class="card-header pb-0 pt-3 bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Mecanica</h6>
-
-                </div>
-                <div class="card-body p-3">
-                  <div class="chart">
-                    <canvas id="chart-line-b" class="chart-canvas" height="300"></canvas>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="bento-col2-row1 row m-0">
-              <div class="row">
-                <div class="card-header pb-0 pt-3 bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Electricidad</h6>
-
-                </div>
-                <div class="card-body p-3">
-                  <div class="chart">
-                    <canvas id="chart-line-c" class="chart-canvas" height="300"></canvas>
                   </div>
                 </div>
               </div>
@@ -230,16 +164,10 @@
   let egresos = 0;
   let diferencia = 0;
   let montos = JSON.parse('<?= $this->ingresoEgreso ?>');
-  let montoMatricula = JSON.parse('<?= $this->montoPagosMatriculaStudent ?>');
-
-  // Comprobar si los datos se están recibiendo correctamente
-  console.log('Montos:', montos);
-  console.log('Monto Matricula:', montoMatricula);
 
   // Extraer ingresos y egresos de los índices correspondientes, validando por si hay null o undefined
-  ingresos = parseFloat(montos[0][0]?.total_monto_ingresos || 0) + parseFloat(montoMatricula[0]?.total_monto || 0); // Primer resultado, primer elemento
+  ingresos = parseFloat(montos[0][0]?.total_monto_ingresos || 0); // Primer resultado, primer elemento
   egresos = parseFloat(montos[1][0]?.total_monto_egresos || 0); // Segundo resultado, primer elemento
-
   diferencia = parseFloat(ingresos) - parseFloat(egresos);
 
   // Configurar el contexto del gráfico
@@ -298,54 +226,72 @@
 
 
 <script type="text/javascript">
-  // Obtener los montos desde PHP
-  let montoMatriculaIngreso = JSON.parse('<?= $this->montoPagosMatriculaStudent ?>');
+  // 1. Parsear los datos que envía PHP (asegúrate de usar json_encode)
+  let datos = JSON.parse('<?= $this->montoMensualidad ?>');
+  let matricula = JSON.parse('<?= $this->montoPagosMatriculaDashboard ?>');
 
-  let matriculaIngresoFecha = montoMatriculaIngreso.map(item => {
-    let fecha = new Date(item.fecha_pago);
+  // 2. Crear un array de 12 ceros (uno por cada mes)
+  let ingresosPorMes = new Array(12).fill(0);
+  let ingresosPorMatricula = new Array(12).fill(0);
 
-    // Asegurar que el desfase no afecte la fecha, añadiendo un ajuste si es necesario
-    fecha.setMinutes(fecha.getMinutes() + fecha.getTimezoneOffset());
-
-    // Formatear a DD/MM/YYYY
-    return fecha.toLocaleDateString('es-ES');
+  // 3. Rellenar el array según los datos recibidos
+  datos.forEach(item => {
+    // Obtener el mes (0 = enero, …, 11 = diciembre)
+    let mes = new Date(item.start_monthly_payment).getMonth();
+    // Convertir el monto a número y asignarlo
+    ingresosPorMes[mes] = parseFloat(item.total_monto_ingresos) || 0;
   });
 
-  let matriculaIngreso = montoMatriculaIngreso.map(item => parseFloat(item.total_monto)); // Monto correspondiente a cada fecha
+  // 3. Rellenar el array según los datos recibidos
+  matricula.forEach(item => {
+    // Obtener el mes (0 = enero, …, 11 = diciembre)
+    let mess = new Date(item.date_payment).getMonth();
+    // Convertir el monto a número y asignarlo
+    ingresosPorMatricula[mess] = parseFloat(item.total_monto_ingresos) || 0;
+  });
 
-  // Configurar el contexto del gráfico
-  var ingresosTotales = document.getElementById("ingresos-matricula").getContext("2d");
+  // 4. Configurar y dibujar el gráfico con Chart.js
+  const ctx = document
+    .getElementById("ingresos-matricula")
+    .getContext("2d");
 
-  var gradientStroke1 = ingresosTotales.createLinearGradient(0, 230, 0, 50);
-  // Crear el gráfico
-  gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-  gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-  gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-  new Chart(ingresosTotales, {
+  // degradado para el fondo
+  const gradient = ctx.createLinearGradient(0, 200, 0, 50);
+  gradient.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+  gradient.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+  gradient.addColorStop(0, 'rgba(94, 114, 228, 0)');
+
+  new Chart(ctx, {
     type: "line",
     data: {
-      labels: matriculaIngresoFecha,
+      labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
       datasets: [{
-        label: 'Monto $',
+        label: 'Mensualidades ($)',
+        data: ingresosPorMes,
         tension: 0.4,
-        borderWidth: 0,
         pointRadius: 0,
         borderColor: "#5e72e4",
-        backgroundColor: gradientStroke1,
-        borderWidth: 3,
+        backgroundColor: gradient,
+        borderWidth: 2,
         fill: true,
-        data: matriculaIngreso,
         maxBarThickness: 6
-
-      }],
+      },{
+        label: 'Matricula ($)',
+        data: ingresosPorMatricula,
+        tension: 0.4,
+        pointRadius: 0,
+        borderColor: "#fb6340",
+        backgroundColor: gradient,
+        borderWidth: 2,
+        fill: true,
+        maxBarThickness: 6
+      }]
     },
     options: {
       responsive: true,
-      maintainAspectRatio: true,
+      maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: false,
-        }
+        legend: { display: false }
       },
       interaction: {
         intersect: false,
@@ -358,43 +304,26 @@
             display: true,
             drawOnChartArea: true,
             drawTicks: false,
-            borderDash: [5, 5]
+            borderDash: [5,5]
           },
           ticks: {
-            display: true,
             padding: 10,
-            color: '#fbfbfb',
-            font: {
-              size: 11,
-              family: "Open Sans",
-              style: 'normal',
-              lineHeight: 2
-            },
+            font: { size: 11, family: "Open Sans" }
           }
         },
         x: {
           grid: {
-            drawBorder: false,
-            display: false,
-            drawOnChartArea: false,
-            drawTicks: true,
-            borderDash: [5, 5]
+            display: false
           },
           ticks: {
-            display: true,
-            color: '#ccc',
             padding: 10,
-            font: {
-              size: 11,
-              family: "Open Sans",
-              style: 'normal',
-              lineHeight: 2
-            },
+            font: { size: 11, family: "Open Sans" }
           }
-        },
-      },
-    },
+        }
+      }
+    }
   });
 </script>
+
 
 </html>

@@ -93,69 +93,30 @@ class HomeModel extends Model
         $this->db = null;
     }
 
-    // registrar pago de matricula
-    public function register_payment(
-        $id_alumno,
-        $cedula,
-        $fecha_matricula,
-        $instrumento_pago,
-        $tipo_pago,
-        $monto_total,
-        $fecha_pago,
-        $nota
-    ) {
-        $sql = $this->db->conn()->prepare("INSERT INTO ingresos_institucion (
-                id_alumno, 
-                fecha_matricula, 
-                instrumento_pago, 
-                tipo_pago, 
-                monto, 
-                fecha_pago, 
-                nota,
-                data_registered,
-                deleted
-            ) VALUES (?,?,?,?,?,?,?,CURRENT_TIMESTAMP,0)");
-        if ($sql->execute([
-            $id_alumno,
-            $fecha_matricula,
-            $instrumento_pago,
-            $tipo_pago,
-            $monto_total,
-            $fecha_pago,
-            $nota
-
-        ])) {
-            return true;
-        } else {
-            header("Location: " . __baseurl__ . "home/register_responsable_view?error");
-        }
-
-        $sql->closeCursor();
-        $sql = null;
-        $this->db = null;
-    }
-
     // registrar factura de servicio
     public function model_register_service_payment(
-        $servicio,
-        $tipo,
-        $monto,
-        $fecha,
-        $nota
+        $bills,
+        $amount,
+        $payment_method,
+        $reference,
+        $nota,
+        $date_payment
     ) {
         $sql = $this->db->conn()->prepare("INSERT INTO send_payment (
-                name, 
-                price, 
-                tipo, 
-                nota,
+                id_bills, 
+                amount, 
+                id_payment_method, 
+                reference,
+                note,
                 date_payment
-            ) VALUES (?,?,?,?,?)");
+            ) VALUES (?,?,?,?,?,?)");
         if ($sql->execute([
-            $servicio,
-            $monto,
-            $tipo,
+            $bills,
+            $amount,
+            $payment_method,
+            $reference,
             $nota,
-            $fecha
+            $date_payment
 
         ])) {
             header("Location: " . __baseurl__ . "home/view_register_service_payment");
@@ -170,26 +131,28 @@ class HomeModel extends Model
 
     // registrar pago recibido
     public function model_register_receive_payment(
-        $servicio,
-        $tipo,
-        $monto,
-        $fecha,
-        $nota
+        $revenue,
+        $amount,
+        $payment_method,
+        $reference,
+        $nota,
+        $date_payment
     ) {
         $sql = $this->db->conn()->prepare("INSERT INTO receive_payment (
-                name, 
-                price, 
-                tipo, 
-                nota,
+                id_revenue, 
+                amount, 
+                id_payment_method, 
+                reference,
+                note,
                 date_payment
-            ) VALUES (?,?,?,?,?)");
+            ) VALUES (?,?,?,?,?,?)");
         if ($sql->execute([
-            $servicio,
-            $monto,
-            $tipo,
+            $revenue,
+            $amount,
+            $payment_method,
+            $reference,
             $nota,
-            $fecha
-
+            $date_payment
         ])) {
             header("Location: " . __baseurl__ . "home/view_register_receive_payment");
         } else {
@@ -201,17 +164,18 @@ class HomeModel extends Model
         $this->db = null;
     }
 
-    // registrar pago de matricula
-    public function product_billing_count()
+    // seleccionar facturas de servicios (ingresos, gastos)
+    public function model_product_billing_count()
     {
-        $sql = $this->db->conn()->prepare("SELECT SUM(monto) AS total_monto_ingresos FROM contabilidad_ingreso WHERE tipo = 'ingreso' AND deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT SUM(amount) AS total_monto_ingresos FROM receive_payment WHERE deleted = '0'; ");
         $sql->execute();
         $result_ingresos = $sql->fetchAll(PDO::FETCH_DEFAULT);
 
-        $sql = $this->db->conn()->prepare("SELECT SUM(monto) AS total_monto_egresos FROM contabilidad_ingreso WHERE tipo = 'egreso' AND deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT SUM(amount) AS total_monto_egresos FROM send_payment WHERE deleted = '0'; ");
         $sql->execute();
         $result_egresos = $sql->fetchAll(PDO::FETCH_DEFAULT);
         $ingresosEgresos = [$result_ingresos, $result_egresos];
+
         return $ingresosEgresos;
 
         $sql->closeCursor();
@@ -219,11 +183,107 @@ class HomeModel extends Model
         $this->db = null;
     }
 
-    // seleccionar pagos de matricula estudiantes
-    public function select_payment_student(
+    public function model_select_registration_monthly_payment()
+    {
+        // Preparamos la consulta con GROUP BY
+        $sql = $this->db->conn()->prepare(
+            "SELECT 
+            start_monthly_payment,
+            end_monthly_payment,
+            SUM(amount) AS total_monto_ingresos
+         FROM receive_payment
+         WHERE id_revenue = :rev
+           AND deleted    = 0
+         GROUP BY start_monthly_payment, end_monthly_payment;"
+        );
+
+        // Vinculamos el parámetro de forma segura
+        $sql->bindValue(':rev', 2, PDO::PARAM_INT);
+        $sql->execute();
+
+        // Obtenemos los resultados
+        $result_ingresos = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result_ingresos;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    public function model_select_registration_payment()
+    {
+        // Preparamos la consulta con GROUP BY
+        $sql = $this->db->conn()->prepare(
+            "SELECT 
+            date_payment,
+            SUM(amount) AS total_monto_ingresos
+         FROM receive_payment
+         WHERE id_revenue = :rev
+           AND deleted    = 0;"
+        );
+
+        // Vinculamos el parámetro de forma segura
+        $sql->bindValue(':rev', 1, PDO::PARAM_INT);
+        $sql->execute();
+
+        // Obtenemos los resultados
+        $result_ingresos = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result_ingresos;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // seleccionar tipos de ingresos
+    public function model_select_income_source()
+    {
+        $sql = $this->db->conn()->prepare("SELECT id, income_name, description FROM income_source WHERE deleted = '0'; ");
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+
+        return $result;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // seleccionar tipos de gastos
+    public function model_select_expenses_category()
+    {
+        $sql = $this->db->conn()->prepare("SELECT id, expenses, description FROM expenses_category WHERE deleted = '0'; ");
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+
+        return $result;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // seleccionar metodos de pago
+    public function model_select_payment_method()
+    {
+        $sql = $this->db->conn()->prepare("SELECT id, payment_method FROM payment_method WHERE deleted = '0'; ");
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+
+        return $result;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // seleccionar pagos mesuales de un estudiante
+    public function model_select_monthly_payment(
         $id_alumno
     ) {
-        $sql = $this->db->conn()->prepare("SELECT fecha_matricula, instrumento_pago, tipo_pago, monto, fecha_pago, nota FROM ingresos_institucion WHERE id_alumno = ? AND deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT id, id_student, amount, id_payment_method, reference, note, date_payment, start_monthly_payment, end_monthly_payment FROM receive_payment WHERE id_alumno = ? AND id_revenue = '2' AND deleted = '0'; ");
         $sql->execute([$id_alumno]);
         $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
 
