@@ -48,16 +48,11 @@
               <div class="d-flex justify-content-center align-items-center flex-column mx-1">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Servicios</label>
+                    <label for="example-text-input" class="form-control-label">Tipo de Ingreso</label>
                     <select class="form-control" id="example-text-input" name="servicio">
-                      
-                        <option class="text-danger" value='null'>Seleccione el Servicio</option>
-                        <option value='electricidad'>Electricidad</option>
-                        <option value='agua'>Agua</option>
-                        <option value='alquiler'>Alquiler</option>
-                        <option value='docentes'>Pago a Docente</option>
-                        <option value='internet'>Internet</option>
-                      
+                      <?php foreach($this->income_source as $value): ?>
+                        <option value="<?= $value['id'] ?>" title="<?= $value['description'] ?>"><?= $value['income_name'] ?></option>
+                      <?php endforeach ?>
                     </select>
                   </div>
                 </div>
@@ -68,9 +63,28 @@
                     <input class="form-control" type="text" id="example-text-input" name="monto" required>
                   </div>
                 </div>
+
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha de Ingreso</label>
+                    <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
+                    <select class="form-control" id="example-text-input" name="metodo_pago">
+                      <?php foreach($this->payment_mehtod as $value): ?>
+                        <option value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
+                      <?php endforeach ?>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <div class="form-group mx-2">
+                    <label for="example-text-input" class="form-control-label">Referencia</label>
+                    <input class="form-control" type="text" id="example-text-input" name="referencia">
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <div class="form-group mx-2">
+                    <label for="example-text-input" class="form-control-label">Fecha</label>
                     <input class="form-control" type="date" id="example-text-input" name="fecha" required>
                   </div>
                 </div>

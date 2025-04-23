@@ -24,10 +24,12 @@ class Home extends Controller
         $this->view->count_student_meca  = [];
         $this->view->count_student_elec  = [];
         $this->view->array               = [];
+        $this->view->payment_mehtod      = [];
+        $this->view->income_source      = [];
         $this->view->montoPagosMatriculaStudent = "";
         $this->view->ingresoEgreso = 0;
         $this->view->montoPagosMatriculaDashboard = 0;
-        $this->view->montoUniformes = 0;
+        $this->view->montoMensualidad = 0;
     }
 
     // index
@@ -112,19 +114,18 @@ class Home extends Controller
             $count_student_meca  = $this->model->count_student_meca();
             $count_student_elec  = $this->model->count_student_elec();
 
-            $montoMatriculaStudent  = $this->model->select_payment_student_count();
-            $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
+            // $montoMatriculaStudent  = $this->model->select_payment_student_count();
+            // $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
 
-            $ingresoEgreso  = $this->model->product_billing_count();
+            $ingresoEgreso  = $this->model->model_product_billing_count();
             $this->view->ingresoEgreso = json_encode($ingresoEgreso);
 
-            $montoPagosMatriculaDashboard  = $this->model->select_payment_student_count_total_dasboard();
-            $this->view->montoPagosMatriculaDashboard = $montoPagosMatriculaDashboard;
+            $montoPagosMatriculaDashboard  = $this->model->model_select_registration_payment();
+            $this->view->montoPagosMatriculaDashboard = json_encode($montoPagosMatriculaDashboard);
 
-            $montoUniformes  = $this->model->select_payment_student_uniformes_total_dasboard();
-            $this->view->montoUniformes = json_encode($montoUniformes);
+            $montoMensualidad  = $this->model->model_select_registration_monthly_payment();
+            $this->view->montoMensualidad = json_encode($montoMensualidad);
 
-            
             $this->view->count_teacher       = $count_teacher;
             $this->view->count_student       = $count_student;
             $this->view->count_student_m     = $count_student_m;
@@ -141,34 +142,38 @@ class Home extends Controller
     }
 
     // dashboard
-    public function accountingDashboard()
-    {
-        if ($_SESSION['access'] === true && $_SESSION['rol'] === 1) {
+    // public function accountingDashboard()
+    // {
+    //     if ($_SESSION['access'] === true && $_SESSION['rol'] === 1) {
 
-            $montoMatriculaStudent  = $this->model->select_payment_student_count();
-            $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
+    //         $montoMatriculaStudent  = $this->model->select_payment_student_count();
+    //         $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
 
-            $ingresoEgreso  = $this->model->product_billing_count();
-            $this->view->ingresoEgreso = json_encode($ingresoEgreso);
+    //         $ingresoEgreso  = $this->model->product_billing_count();
+    //         $this->view->ingresoEgreso = json_encode($ingresoEgreso);
 
-            $montoPagosMatriculaDashboard  = $this->model->select_payment_student_count_total_dasboard();
-            $this->view->montoPagosMatriculaDashboard = $montoPagosMatriculaDashboard;
+    //         $montoPagosMatriculaDashboard  = $this->model->select_payment_student_count_total_dasboard();
+    //         $this->view->montoPagosMatriculaDashboard = $montoPagosMatriculaDashboard;
 
-            $montoUniformes  = $this->model->select_payment_student_uniformes_total_dasboard();
-            $this->view->montoUniformes = json_encode($montoUniformes);
+    //         $montoUniformes  = $this->model->select_payment_student_uniformes_total_dasboard();
+    //         $this->view->montoUniformes = json_encode($montoUniformes);
 
-            $this->view->render('admin/accounting-dashboard');
-        } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-            header("Location: " . __baseurl__);
-            exit;
-        }
-    }
+    //         $this->view->render('admin/accounting-dashboard');
+    //     } else {
+    //         $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+    //         header("Location: " . __baseurl__);
+    //         exit;
+    //     }
+    // }
 
     // vista registrar servicio
     public function view_register_service_payment()
     {
         if ($_SESSION['access'] === true && $_SESSION['rol'] === 1) {
+            $payment_method = $this->model->model_select_payment_method();
+            $expenses_category = $this->model->model_select_expenses_category();
+            $this->view->payment_mehtod = $payment_method;
+            $this->view->income_source = $expenses_category;
             $this->view->render('admin/register-service-payment');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -179,15 +184,23 @@ class Home extends Controller
 
     public function register_service_payment()
     {
-        $servicio        = $this->validarEntrada($_POST['servicio']);
-        $tipo      = $this->validarEntrada($_POST['tipo']);
-        $monto        = $this->validarEntrada($_POST['monto']);
-        $fecha      = $this->validarEntrada($_POST['fecha']);
+        $bills        = $this->validarEntrada($_POST['servicio']);
+        $amount        = $this->validarEntrada($_POST['monto']);
+        $payment_method      = $this->validarEntrada($_POST['metodo_pago']);
+        $reference      = $this->validarEntrada($_POST['referencia']);
         $nota      = $this->validarEntrada($_POST['nota']);
+        $date_payment      = $this->validarEntrada($_POST['fecha']);
 
 
-        if ($servicio != "" && $tipo != "" && $monto != "" && $fecha != "") {
-            $this->model->model_register_service_payment($servicio, $tipo, $monto, $fecha, $nota);
+        if ($bills != "" && $amount != "" && $payment_method != "" && $reference != "" && $date_payment != "") {
+            $this->model->model_register_service_payment(
+                $bills,
+                $amount,
+                $payment_method,
+                $reference,
+                $nota,
+                $date_payment
+            );
         } else {
             header("Location: " . __baseurl__ . "home/register_entry?datos");
         }
@@ -197,6 +210,10 @@ class Home extends Controller
     public function view_register_receive_payment()
     {
         if (isset($_SESSION['access'])) {
+            $payment_method = $this->model->model_select_payment_method();
+            $income_source = $this->model->model_select_income_source();
+            $this->view->payment_mehtod = $payment_method;
+            $this->view->income_source = $income_source;
             $this->view->render('admin/register-receive-payment');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -207,15 +224,23 @@ class Home extends Controller
 
     public function register_receive_payment()
     {
-        $servicio        = $this->validarEntrada($_POST['servicio']);
-        $tipo      = $this->validarEntrada($_POST['tipo']);
-        $monto        = $this->validarEntrada($_POST['monto']);
-        $fecha      = $this->validarEntrada($_POST['fecha']);
+        $revenue        = $this->validarEntrada($_POST['servicio']);
+        $amount        = $this->validarEntrada($_POST['monto']);
+        $payment_method      = $this->validarEntrada($_POST['metodo_pago']);
+        $reference      = $this->validarEntrada($_POST['referencia']);
         $nota      = $this->validarEntrada($_POST['nota']);
+        $date_payment      = $this->validarEntrada($_POST['fecha']);
 
 
-        if ($servicio != "" && $tipo != "" && $monto != "" && $fecha != "") {
-            $this->model->model_register_receive_payment($servicio, $tipo, $monto, $fecha, $nota);
+        if ($revenue != "" && $amount != "" && $payment_method != "" && $reference != "" && $date_payment != "") {
+            $this->model->model_register_receive_payment(
+                $revenue,
+                $amount,
+                $payment_method,
+                $reference,
+                $nota,
+                $date_payment
+            );
         } else {
             header("Location: " . __baseurl__ . "home/view_register_receive_payment?datos");
         }
