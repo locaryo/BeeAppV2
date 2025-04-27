@@ -33,17 +33,13 @@
         </div>
       <?php endif ?>
       <div class="row">
-        
-        <!-- fomr escritorio -->
+        <!-- form escritorio -->
         <form class="d-none d-md-flex d-lg-flex d-xl-flex" action="<?=constant('__baseurl__')?>home/register_receive_payment" method="post">
           <div class="col-12">
-
             <div class="card mb-4">
-
               <div class="card-header pb-0">
                 <h6>Nueva Factura: Pago Recibido</h6>
               </div>
-
               <!-- desktop -->
               <div class="d-flex justify-content-center align-items-center flex-column mx-1">
                 <div class="col-md-3">
@@ -56,14 +52,12 @@
                     </select>
                   </div>
                 </div>
-                
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Monto</label>
                     <input class="form-control" type="text" id="example-text-input" name="monto" required>
                   </div>
                 </div>
-
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
@@ -74,14 +68,12 @@
                     </select>
                   </div>
                 </div>
-
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Referencia</label>
                     <input class="form-control" type="text" id="example-text-input" name="referencia">
                   </div>
                 </div>
-
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Fecha</label>
@@ -100,15 +92,12 @@
               <div class="d-flex justify-content-center align-items-center">
                 <button class="btn btn-success mx-2" name="action" type="submit">Registrar</button>
               </div>
-
             </div>
-            
           </div>
-
         </form>
 
         <!-- form mobile -->
-        <form class="d-block d-sm-none" action="<?=constant('__baseurl__')?>home/register_receive_payment" method="post">
+        <form class="d-block d-md-none" action="<?=constant('__baseurl__')?>home/register_receive_payment" method="post">
           <div class="col-12">
 
             <div class="card mb-4">
@@ -167,11 +156,8 @@
           </div>
 
         </form>
-          
       </div>
-        
       <?php require constant("__layout__")."footer.php"; ?>
-
     </div>
   </main>
     

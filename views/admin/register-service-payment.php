@@ -108,7 +108,7 @@
         </form>
 
         <!-- form mobile -->
-        <form class="d-block d-sm-none" action="<?= constant('__baseurl__') ?>home/register_service_payment" method="post">
+        <form class="d-block d-md-none" action="<?= constant('__baseurl__') ?>home/register_service_payment" method="post">
           <div class="col-12">
 
             <div class="card mb-4">
