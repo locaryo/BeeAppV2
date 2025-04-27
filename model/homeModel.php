@@ -695,8 +695,7 @@ class HomeModel extends Model
             $sexto,
             $id
         ])) {
-            $result = $this->consulting_cedula($cedula, "docentes");
-            return $result;
+            return true;
         } else {
             header("Location: " . __baseurl__ . "home/register_teacher_view?error");
         }
@@ -885,7 +884,7 @@ class HomeModel extends Model
         }
     }
 
-    public function model_consulting_payments($id_alumno)
+    public function model_consulting_student_payments($id_alumno)
     {
         $sql = $this->db->conn()->prepare("SELECT r.*, a.p_nombre, a.s_nombre, a.p_apellido, a.s_apellido, i.income_name, pm.payment_method
         FROM receive_payment as r 
@@ -894,6 +893,19 @@ class HomeModel extends Model
         INNER JOIN payment_method as pm ON pm.id = r.id_payment_method 
         WHERE r.id_student = ? AND r.deleted = 0; ");
         $sql->execute([$id_alumno]);
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        return $result;
+    }
+
+    public function model_consulting_teacher_payments($id_teacher)
+    {
+        $sql = $this->db->conn()->prepare("SELECT s.*, d.p_nombre, d.s_nombre, d.p_apellido, d.s_apellido, e.expenses, pm.payment_method
+        FROM send_payment as s 
+        INNER JOIN docentes as d ON d.id = s.id_teacher 
+        INNER JOIN expenses_category as e ON e.id = s.id_bills 
+        INNER JOIN payment_method as pm ON pm.id = s.id_payment_method 
+        WHERE s.id_teacher = ? AND s.deleted = 0; ");
+        $sql->execute([$id_teacher]);
         $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
         return $result;
     }
