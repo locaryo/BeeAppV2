@@ -317,9 +317,10 @@
       <?php require constant("__layout__")."footer.php"; ?>
 
     </div>
+    <?php require constant("__layout__")."scripts.php"; ?>
   </main>
     
-  <?php require constant("__layout__")."scripts.php"; ?>
+  
     
   </body>
 </html>

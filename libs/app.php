@@ -8,7 +8,7 @@ class App{
         $url = explode('/', $url);
         
         if(empty($url[0])){
-            $archivoController = "controllers/home.php" ;
+            $archivoController = "controllers/home.php";
             require_once $archivoController;
             $controller = new Home();
             $controller->index();
@@ -34,6 +34,7 @@ class App{
         }else{
             require_once "controllers/error.php";
             $controller = new ErrorUrl();
+            $controller->error404();
         }
     }
 }
