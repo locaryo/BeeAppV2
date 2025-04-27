@@ -6,6 +6,7 @@
 class Home extends Controller
 {
     public $view;
+    private $id_student;
 
     // constructor
     public function __construct()
@@ -13,6 +14,7 @@ class Home extends Controller
         session_start();
         parent::__construct();
         $this->view->data                = "";
+        $this->view->payments                = "";
         $this->view->moneda              = "";
         $this->view->msj                 = "";
         $this->view->institution         = "";
@@ -25,11 +27,12 @@ class Home extends Controller
         $this->view->count_student_elec  = [];
         $this->view->array               = [];
         $this->view->payment_mehtod      = [];
-        $this->view->income_source      = [];
+        $this->view->income_source       = [];
         $this->view->montoPagosMatriculaStudent = "";
         $this->view->ingresoEgreso = 0;
         $this->view->montoPagosMatriculaDashboard = 0;
         $this->view->montoMensualidad = 0;
+        $this->id_student = 0;
     }
 
     // index
@@ -99,8 +102,6 @@ class Home extends Controller
             exit;
         }
     }
-
-
 
     // dashboard
     public function dashboard()
@@ -579,8 +580,11 @@ class Home extends Controller
                 $data = $this->model->consulting_cedula($cedula, $opcion);
                 unset($_SESSION['cedula']);  // Eliminamos para que se comporte como flash data
                 unset($_SESSION['opcion']);  // Eliminamos para que se comporte como flash data
+                $this->id_student = $data['0'];
+                $payment = $this->model->model_consulting_payments($this->id_student);
                 if ($data) {
                     $this->view->data = $data;
+                    $this->view->payments = $payment;
                     $this->view->render('admin/view-data-student');
                 }
             }
