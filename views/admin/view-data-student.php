@@ -1,10 +1,10 @@
-<?php require constant("__layout__")."header.php"; ?>
+<?php require constant("__layout__") . "header.php"; ?>
 
 <body class="g-sidenav-show   bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
 
-  <?php require constant("__layout__")."nav.php"; ?>
-  <?php require constant("__layout__")."aside.php"; ?>
+  <?php require constant("__layout__") . "nav.php"; ?>
+  <?php require constant("__layout__") . "aside.php"; ?>
   <main class="main-content position-relative border-radius-lg ">
 
     <div class="container-fluid pt-5">
@@ -47,7 +47,7 @@
       <?php endif ?>
       <div class="row">
         <!-- *********** DESKTOP *********** -->
-        <form class="d-none d-md-flex d-lg-flex d-xl-flex mb-8" action="<?= constant('__baseurl__') ?>home/edit_student" method="post">
+        <form class="d-none d-md-flex d-lg-flex d-xl-flex" action="<?= constant('__baseurl__') ?>home/edit_student" method="post">
           <div class="col-12">
             <div class="card mb-4">
               <div class="card-header pb-0">
@@ -231,14 +231,176 @@
           </div>
         </form>
 
+        <div class="row">
+          <div class="card">
+            <div class="d-none d-md-flex d-lg-flex d-xl-flex table-responsive p-0">
+              <table class="table align-items-center" id="results">
+                <thead>
+                  <tr>
+                    <th style="width: 150px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mes</th>
+                    <th style="width: 100px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado Mensualidad</th>
+                    <th style="width: 400px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Detalles de Pagos</th>
+                  </tr>
+                </thead>
+                <?php
+                $mesesEs = [
+                  1  => 'Enero',
+                  2  => 'Febrero',
+                  3  => 'Marzo',
+                  4  => 'Abril',
+                  5  => 'Mayo',
+                  6  => 'Junio',
+                  7  => 'Julio',
+                  8  => 'Agosto',
+                  9  => 'Septiembre',
+                  10 => 'Octubre',
+                  11 => 'Noviembre',
+                  12 => 'Diciembre'
+                ];
+                $monthlyPayments = [];
+                $prepaidMonths   = []; // aquí guardaremos los meses adelantados
+
+                if (!empty($this->payments)) {
+                  foreach ($this->payments as $payment) {
+                    // — pagos reales agrupados por fecha de pago
+                    if (
+                      !empty($payment['date_payment'])
+                      && $payment['date_payment'] !== '0000-00-00'
+                    ) {
+                      $m = date('Y-m', strtotime($payment['date_payment']));
+                      $monthlyPayments[$m][] = $payment;
+                    }
+
+                    // — si este registro cubre una mensualidad (avance),
+                    //   agregamos todos los meses que abarca en $prepaidMonths
+                    if (
+                      !empty($payment['start_monthly_payment'])
+                      && !empty($payment['end_monthly_payment'])
+                      && $payment['start_monthly_payment'] !== '0000-00-00'
+                      && $payment['end_monthly_payment']   !== '0000-00-00'
+                    ) {
+
+                      $start = new DateTime($payment['start_monthly_payment']);
+                      $end   = new DateTime($payment['end_monthly_payment']);
+                      // iteramos mes a mes, inclusivo
+                      $period = new DatePeriod(
+                        $start,
+                        new DateInterval('P1M'),
+                        $end->modify('+1 day')
+                      );
+                      foreach ($period as $dt) {
+                        $prepaidMonths[$dt->format('Y-m')] = true;
+                      }
+                    }
+                  }
+                }
+
+                // construimos el listado definitivo de meses (uniendo pagos reales + adelantados)
+                $allMonths = array_unique(
+                  array_merge(
+                    array_keys($monthlyPayments),
+                    array_keys($prepaidMonths)
+                  )
+                );
+                // los ordenas cómo prefieras; ejemplo descendente:
+                // rsort($allMonths);
+                // o ascendente:
+                sort($allMonths);
+                ?>
+
+                <tbody id="results-body-desktop">
+                  <?php if (!empty($allMonths)): ?>
+                    <?php foreach ($allMonths as $monthYear): ?>
+                      <?php
+                      list($year, $month) = explode('-', $monthYear);
+                      // nombre amigable (ej “March 2025”)
+                      $displayMonth = $mesesEs[(int)$month] . ' ' . $year;
+                      // pagos “reales” de este mes (quizá vacío si es todo adelantado)
+                      $payments = $monthlyPayments[$monthYear] ?? [];
+                      // ¿está pagada la mensualidad? true si hubo un pago real con start+end ESTE mes,
+                      // o si el mes está en prepaidMonths
+                      $monthlyPaid = isset($prepaidMonths[$monthYear]);
+                      // id seguro para bootstrap
+                      $safeId = 'm_' . str_replace('-', '_', $monthYear);
+                      ?>
+                      <tr>
+                        <td>
+                          <h6 class="mb-0 text-sm"><?= $displayMonth ?></h6>
+                        </td>
+                        <td>
+                          <?php if ($monthlyPaid): ?>
+                            <span class="badge badge-sm bg-gradient-success">Pagado</span>
+                          <?php else: ?>
+                            <span class="badge badge-sm bg-gradient-warning">Pendiente</span>
+                          <?php endif; ?>
+                        </td>
+                        <td>
+                          <div class="accordion accordion-flush" id="accordion-<?= $safeId ?>">
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="heading-<?= $safeId ?>">
+                                <button class="accordion-button collapsed"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target="#collapse-<?= $safeId ?>"
+                                  aria-expanded="false"
+                                  aria-controls="collapse-<?= $safeId ?>">
+                                  Ver detalles (<?= count($payments) ?> pagos)
+                                </button>
+                              </h2>
+                              <div id="collapse-<?= $safeId ?>"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="heading-<?= $safeId ?>"
+                                data-bs-parent="#accordion-<?= $safeId ?>">
+                                <div class="accordion-body p-3">
+                                  <?php if (count($payments)): ?>
+                                    <ul class="list-group">
+                                      <?php foreach ($payments as $p): ?>
+                                        <li style="color: black; font-size:13px;" class="list-group-item d-flex justify-content-between align-items-center">
+                                          <div>
+                                            <strong>Monto:</strong> <?= $p['amount'] ?><br>
+                                            <strong>Fecha pago:</strong> <?= $p['date_payment'] ?><br>
+                                            <strong>Tipo:</strong> <?= $p['income_name'] ?>
+                                            <?php if ($p['income_name'] === "Mensualidades"): ?>
+                                              <br><strong>Inicio:</strong> <?= $p['start_monthly_payment'] ?><br>
+                                              <strong>Fin:</strong> <?= $p['end_monthly_payment'] ?>
+                                            <?php else: ?>
+                                            <?php endif ?>
+                                          </div>
+                                        </li>
+                                      <?php endforeach; ?>
+                                    </ul>
+                                  <?php else: ?>
+                                    <!-- aquí podrías personalizar el mensaje si quieres -->
+                                    <p class="text-muted mb-0">Mensualidad adelantada, sin detalles aún.</p>
+                                  <?php endif; ?>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php else: ?>
+                    <tr>
+                      <td colspan="3">No hay pagos registrados para este alumno.</td>
+                    </tr>
+                  <?php endif; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+
         <!-- *********** MOBIL ********** -->
         <form class="d-block mb-8" action="<?= constant('__baseurl__') ?>home/edit_student" method="post">
           <div class="col-12">
             <div class="card mb-4">
               <div class="card-header pb-0 ">
                 <h6>Estudiante</h6>
-                <button class="btn btn-success mx-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Pagar Matricula</button>
-                <button id="consultarPagosMobil" class="btn btn-primary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Consultar Pagos</button>
+                <!-- <button class="btn btn-success mx-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Pagar Matricula</button>
+                <button id="consultarPagosMobil" class="btn btn-primary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Consultar Pagos</button> -->
               </div>
 
               <!-- mobile -->
@@ -416,139 +578,183 @@
           </div>
         </form>
 
-      </div>
-
-      <?php require constant("__layout__")."footer.php"; ?>
-
-    </div>
-  </main>
-
-  <?php require constant("__layout__")."scripts.php"; ?>
-
-  <!-- Modal -->
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-      <div class="modal-content">
-        <div class="modal-body p-0">
-          <div class="card card-plain">
-            <div class="card-header pb-0 text-left">
-              <h3 class="font-weight-bolder text-success text-gradient">Registrar Pago</h3>
-              <p class="mb-0">Registre el pago de la Matricula</p>
-            </div>
-            <div class="card-body">
-              <form role="form text-left" action="<?= constant('__baseurl__') ?>home/register_payment" method="post">
-
-                <label>Fecha de matricula</label>
-                <div class="input-group mb-3">
-                  <select class="form-control" name="fecha_matricula">
-                    <option value="null">Seleccionar Matricula</option>
-                    <option value="enero">Enero</option>
-                    <option value="febrero">Febrero</option>
-                    <option value="marzo">Marzo</option>
-                    <option value="abril">Abril</option>
-                    <option value="mayo">Mayo</option>
-                    <option value="junio">Junio</option>
-                    <option value="julio">Julio</option>
-                    <option value="agosto">Agosto</option>
-                    <option value="septiembre">Septiembre</option>
-                    <option value="octubre">Octubre</option>
-                    <option value="noviembre">Noviembre</option>
-                    <option value="diciembre">Diciembre</option>
-                  </select>
-                </div>
-
-                <label>Forma de Pago</label>
-                <div class="input-group mb-3">
-                  <select class="form-control" name="instrumento_pago" id="instrumento_pago">
-                    <option value="null">Seleccionar Forma de Pago</option>
-                    <option value="pago-movil">Pago Movil</option>
-                    <option value="bolivar-efectivo">Bolivar Efectivo</option>
-                    <option value="dolar-efectivo">Dolar Efectivo</option>
-                  </select>
-                </div>
-
-                <label>Tipo de Pago</label>
-                <div class="input-group mb-3">
-                  <select class="form-control" name="tipo_pago">
-                    <option value="null">Seleccionar</option>
-                    <option value="pago-completo">Pago Completo</option>
-                    <option value="abono">Abono</option>
-                  </select>
-                </div>
-
-                <div class="input-group mb-3 d-none" id="monto_bs_caja">
-                  <input class="form-control" type="number" placeholder="Ingresar Monto en Bs" id="monto_bs">
-                </div>
-                <div class="input-group mb-3 d-none" id="monto_usd_caja">
-                  <input class="form-control" type="number" placeholder="Ingresar Monto en Usd" id="monto_usd">
-                </div>
-                <label>Fecha de Pago</label>
-                <div class="input-group mb-3">
-                  <input class="form-control text-success" type="date" name="fecha_pago" required>
-                </div>
-                <label>Total</label>
-                <div class="input-group mb-3">
-                  <input class="form-control text-success" type="text" id="monto_total" name="monto_total" readonly>
-                </div>
-                <label>Dolar BCV</label>
-                <div class="input-group mb-3">
-                  <input class="form-control text-success" id="dolar_bcv" value="<?= $this->moneda['USD'] ?>" readonly>
-                </div>
-
-                <label>Nota</label>
-                <div class="input-group mb-3">
-                  <input class="form-control" type="text" placeholder="referencia, cantidad pagada, cantidad abonada" id="example-text-input" name="nota" required>
-                </div>
-
-                <div class="text-center">
-                  <input type="text" name="id_alumno" value="<?= $this->data['id'] ?>" hidden>
-                  <input type="text" name="cedula" value="<?= $this->data['cedula'] ?>" hidden>
-                  <button type="submit" class="btn btn-round bg-gradient-success btn-lg w-100 mt-4 mb-0">Registrar Pago</button>
-                  <button type="button" class="btn btn-round bg-gradient-secondary btn-lg w-100 mt-4 mb-0" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-              </form>
-            </div>
-
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModal2Label" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title font-weight-bolder text-info text-gradient" id="exampleModalLabel">Pagos Registrados</h5>
-          <button type="button" class="btn-close btn-danger bg-danger" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
+        <div class="row">
           <div class="card">
-            <div class="table-responsive">
-              <table class="table align-items-center mb-0">
+            <div class="d-block d-sm-none table-responsive p-0">
+              <table class="table align-items-center" id="results">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Fecha de Pago</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Matricula</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tipo</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Monto</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nota</th>
-                    <th></th>
+                    <th style="width: 150px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mes</th>
+                    <th style="width: 100px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estado Mensualidad</th>
+                    <th style="width: 400px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Detalles de Pagos</th>
                   </tr>
                 </thead>
-                <tbody id="results-body">
+                <?php
+                $mesesEs = [
+                  1  => 'Enero',
+                  2  => 'Febrero',
+                  3  => 'Marzo',
+                  4  => 'Abril',
+                  5  => 'Mayo',
+                  6  => 'Junio',
+                  7  => 'Julio',
+                  8  => 'Agosto',
+                  9  => 'Septiembre',
+                  10 => 'Octubre',
+                  11 => 'Noviembre',
+                  12 => 'Diciembre'
+                ];
+                $monthlyPayments = [];
+                $prepaidMonths   = []; // aquí guardaremos los meses adelantados
 
+                if (!empty($this->payments)) {
+                  foreach ($this->payments as $payment) {
+                    // — pagos reales agrupados por fecha de pago
+                    if (
+                      !empty($payment['date_payment'])
+                      && $payment['date_payment'] !== '0000-00-00'
+                    ) {
+                      $m = date('Y-m', strtotime($payment['date_payment']));
+                      $monthlyPayments[$m][] = $payment;
+                    }
+
+                    // — si este registro cubre una mensualidad (avance),
+                    //   agregamos todos los meses que abarca en $prepaidMonths
+                    if (
+                      !empty($payment['start_monthly_payment'])
+                      && !empty($payment['end_monthly_payment'])
+                      && $payment['start_monthly_payment'] !== '0000-00-00'
+                      && $payment['end_monthly_payment']   !== '0000-00-00'
+                    ) {
+
+                      $start = new DateTime($payment['start_monthly_payment']);
+                      $end   = new DateTime($payment['end_monthly_payment']);
+                      // iteramos mes a mes, inclusivo
+                      $period = new DatePeriod(
+                        $start,
+                        new DateInterval('P1M'),
+                        $end->modify('+1 day')
+                      );
+                      foreach ($period as $dt) {
+                        $prepaidMonths[$dt->format('Y-m')] = true;
+                      }
+                    }
+                  }
+                }
+
+                // construimos el listado definitivo de meses (uniendo pagos reales + adelantados)
+                $allMonths = array_unique(
+                  array_merge(
+                    array_keys($monthlyPayments),
+                    array_keys($prepaidMonths)
+                  )
+                );
+                // los ordenas cómo prefieras; ejemplo descendente:
+                // rsort($allMonths);
+                // o ascendente:
+                sort($allMonths);
+                ?>
+
+                <tbody id="results-body-desktop">
+                  <?php if (!empty($allMonths)): ?>
+                    <?php foreach ($allMonths as $monthYear): ?>
+                      <?php
+                      list($year, $month) = explode('-', $monthYear);
+                      // nombre amigable (ej “March 2025”)
+                      $displayMonth = $mesesEs[(int)$month] . ' ' . $year;
+                      // pagos “reales” de este mes (quizá vacío si es todo adelantado)
+                      $payments = $monthlyPayments[$monthYear] ?? [];
+                      // ¿está pagada la mensualidad? true si hubo un pago real con start+end ESTE mes,
+                      // o si el mes está en prepaidMonths
+                      $monthlyPaid = isset($prepaidMonths[$monthYear]);
+                      // id seguro para bootstrap
+                      $safeId = 'm_' . str_replace('-', '_', $monthYear);
+                      ?>
+                      <tr>
+                        <td>
+                          <h6 class="mb-0 text-sm"><?= $displayMonth ?></h6>
+                        </td>
+                        <td>
+                          <?php if ($monthlyPaid): ?>
+                            <span class="badge badge-sm bg-gradient-success">Pagado</span>
+                          <?php else: ?>
+                            <span class="badge badge-sm bg-gradient-warning">Pendiente</span>
+                          <?php endif; ?>
+                        </td>
+                        <td>
+                          <div class="accordion accordion-flush" id="accordion-<?= $safeId ?>">
+                            <div class="accordion-item">
+                              <h2 class="accordion-header" id="heading-<?= $safeId ?>">
+                                <button class="accordion-button collapsed"
+                                  type="button"
+                                  data-bs-toggle="collapse"
+                                  data-bs-target="#collapse-<?= $safeId ?>"
+                                  aria-expanded="false"
+                                  aria-controls="collapse-<?= $safeId ?>">
+                                  Ver detalles (<?= count($payments) ?> pagos)
+                                </button>
+                              </h2>
+                              <div id="collapse-<?= $safeId ?>"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="heading-<?= $safeId ?>"
+                                data-bs-parent="#accordion-<?= $safeId ?>">
+                                <div class="accordion-body p-3">
+                                  <?php if (count($payments)): ?>
+                                    <ul class="list-group">
+                                      <?php foreach ($payments as $p): ?>
+                                        <li style="color: black; font-size:13px;" class="list-group-item d-flex justify-content-between align-items-center">
+                                          <div>
+                                            <strong>Monto:</strong> <?= $p['amount'] ?><br>
+                                            <strong>Fecha pago:</strong> <?= $p['date_payment'] ?><br>
+                                            <strong>Tipo:</strong> <?= $p['income_name'] ?>
+                                            <?php if ($p['income_name'] === "Mensualidades"): ?>
+                                              <br><strong>Inicio:</strong> <?= $p['start_monthly_payment'] ?><br>
+                                              <strong>Fin:</strong> <?= $p['end_monthly_payment'] ?>
+                                            <?php else: ?>
+                                            <?php endif ?>
+                                          </div>
+                                        </li>
+                                      <?php endforeach; ?>
+                                    </ul>
+                                  <?php else: ?>
+                                    <!-- aquí podrías personalizar el mensaje si quieres -->
+                                    <p class="text-muted mb-0">Mensualidad adelantada, sin detalles aún.</p>
+                                  <?php endif; ?>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php else: ?>
+                    <tr>
+                      <td colspan="3">No hay pagos registrados para este alumno.</td>
+                    </tr>
+                  <?php endif; ?>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          ...
-        </div>
+
       </div>
+
+      <?php require constant("__layout__") . "footer.php"; ?>
+
     </div>
-  </div> -->
+
+  </main>
+
+  <?php require constant("__layout__") . "scripts.php"; ?>
+  <script>
+    var accordion = document.querySelectorAll('.accordion-collapse')
+    accordion.forEach(function(element) {
+      var collapse = new bootstrap.Collapse(element, {
+        toggle: false
+      })
+    });
+  </script>
 
 </body>
 

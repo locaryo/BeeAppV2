@@ -6,6 +6,8 @@
 class Home extends Controller
 {
     public $view;
+    private $id_student;
+    private $id_teacher;
 
     // constructor
     public function __construct()
@@ -13,6 +15,7 @@ class Home extends Controller
         session_start();
         parent::__construct();
         $this->view->data                = "";
+        $this->view->payments                = "";
         $this->view->moneda              = "";
         $this->view->msj                 = "";
         $this->view->institution         = "";
@@ -25,11 +28,12 @@ class Home extends Controller
         $this->view->count_student_elec  = [];
         $this->view->array               = [];
         $this->view->payment_mehtod      = [];
-        $this->view->income_source      = [];
+        $this->view->income_source       = [];
         $this->view->montoPagosMatriculaStudent = "";
         $this->view->ingresoEgreso = 0;
         $this->view->montoPagosMatriculaDashboard = 0;
         $this->view->montoMensualidad = 0;
+        $this->id_student = 0;
     }
 
     // index
@@ -99,8 +103,6 @@ class Home extends Controller
             exit;
         }
     }
-
-
 
     // dashboard
     public function dashboard()
@@ -519,8 +521,10 @@ class Home extends Controller
                 header("Location: " . __baseurl__ . "home/view_data_student");
                 exit;
             } elseif ($opcion == "docentes") {
-                $result = $this->model->consulting_cedula($cedula, $opcion);
-                $this->view_data_teacher($result);
+                $_SESSION['cedula'] = $cedula;
+                $_SESSION['opcion'] = $opcion;
+                header("Location: " . __baseurl__ . "home/view_data_teacher");
+                exit;
             } elseif ($opcion == "representante") {
                 $result = $this->model->consulting_cedula($cedula, $opcion);
                 $this->view_data_representante($result);
@@ -579,8 +583,11 @@ class Home extends Controller
                 $data = $this->model->consulting_cedula($cedula, $opcion);
                 unset($_SESSION['cedula']);  // Eliminamos para que se comporte como flash data
                 unset($_SESSION['opcion']);  // Eliminamos para que se comporte como flash data
+                $this->id_student = $data['0'];
+                $payment = $this->model->model_consulting_student_payments($this->id_student);
                 if ($data) {
                     $this->view->data = $data;
+                    $this->view->payments = $payment;
                     $this->view->render('admin/view-data-student');
                 }
             }
@@ -611,11 +618,44 @@ class Home extends Controller
 
 
     // visualizar datos de maestro
-    public function view_data_teacher($data)
+    public function view_data_teacher()
     {
         if (isset($_SESSION['access'])) {
-            $this->view->data = $data;
-            $this->view->render('admin/view-data-teacher');
+            // $this->view->data = $data;
+            // $this->view->render('admin/view-data-teacher');
+
+            // Si ya se pasó información en $data (por ejemplo, desde una consulta), se utiliza esa
+            if (isset($_SESSION['cedula']) && isset($_SESSION['opcion'])) {
+                $cedula = $_SESSION['cedula'];
+                $opcion = $_SESSION['opcion'];
+                // Se consulta la información actualizada del estudiante según su ID
+                $data = $this->model->consulting_cedula($cedula, $opcion);
+                unset($_SESSION['cedula']);  // Eliminamos para que se comporte como flash data
+                unset($_SESSION['opcion']);  // Eliminamos para que se comporte como flash data
+                $this->id_teacher = $data['0'];
+                $payment = $this->model->model_consulting_teacher_payments($this->id_teacher);
+                if ($data) {
+                    $this->view->data = $data;
+                    $this->view->payments = $payment;
+                    $this->view->render('admin/view-data-teacher');
+                }
+            }
+            // Caso contrario, se asume que se llegó desde un update y se busca el ID en la sesión
+            elseif (isset($_SESSION['updated_teacher'])) {
+                $teacherId = $_SESSION['updated_teacher'];
+                // Se consulta la información actualizada del estudiante según su ID
+                $data = $this->model->consulting_cedula($teacherId, 'docentes');
+                unset($_SESSION['updated_teacher']);  // Eliminamos para que se comporte como flash data
+                if ($data) {
+                    $data['message'] = "Los datos se han actualizado correctamente.";
+                    $this->view->data = $data;
+                    $this->view->render('admin/view-data-teacher');
+                }
+            } else {
+                // Si no se tiene información de ninguna forma, redirigimos con error
+                header("Location: " . __baseurl__ . "home/consulting_view?errorCedula");
+                exit;
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -771,7 +811,20 @@ class Home extends Controller
                     $quinto,
                     $sexto
                 );
-                $this->view_data_teacher($data);
+                if ($data === true) {
+                    // Almacenar el mensaje de éxito y el ID (o la información) del estudiante en la sesión
+
+                    $_SESSION['updated_teacher'] = $cedula;  // Asumiendo que 'a_id' es el ID del teacher actualizado
+
+                    // Redirigir a la vista sin pasar parámetros en la URL
+                    header("Location: " . __baseurl__ . "home/view_data_teacher");
+                    exit;
+                } else {
+                    $_SESSION['message'] = "Error al actualizar el registro";
+                    $_SESSION['updated_teacher'] = $cedula;  // En caso de error, se puede conservar el ID original
+                    header("Location: " . __baseurl__ . "home/view_data_teacher");
+                    exit;
+                }
             } else {
                 header("Location: " . __baseurl__ . "home/register_teacher_view?datos");
             }
