@@ -225,6 +225,7 @@
               <div class="d-flex justify-content-center align-items-center">
                 <button class="btn btn-primary mx-2" name="action" value="update" type="submit">Actualizar</button>
                 <button class="btn btn-danger mx-2" name="action" value="delete" type="submit">Eliminar</button>
+                <button class="btn btn-secondary mx-2 go-back" type="button">Regresar</button>
               </div>
             </div>
           </div>
@@ -393,7 +394,7 @@
 
 
         <!-- *********** MOBIL ********** -->
-        <form class="d-block d-sm-none mb-8" action="<?= constant('__baseurl__') ?>home/edit_student" method="post">
+        <form class="d-block mb-8" action="<?= constant('__baseurl__') ?>home/edit_student" method="post">
           <div class="col-12">
             <div class="card mb-4">
               <div class="card-header pb-0 ">
@@ -571,6 +572,7 @@
               <div class="d-flex justify-content-center align-items-center">
                 <button class="btn btn-primary mx-2" name="action" value="update" type="submit">Actualizar</button>
                 <button class="btn btn-danger mx-2" name="action" value="delete" type="submit">Eliminar</button>
+                <button class="btn btn-secondary mx-2 go-back" type="button">Regresar</button>
               </div>
             </div>
           </div>

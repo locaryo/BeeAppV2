@@ -170,7 +170,7 @@
 
         </form>
 
-        <form class="d-block d-sm-none" action="<?=constant('__baseurl__')?>home/insert_teacher" method="post">
+        <form class="d-block d-md-none" action="<?=constant('__baseurl__')?>home/insert_teacher" method="post">
           <div class="col-12">
 
             <div class="card mb-4">

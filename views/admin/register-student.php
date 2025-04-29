@@ -188,7 +188,7 @@
           </div>
         </form>
 
-        <form class="d-block d-sm-none" action="<?=constant('__baseurl__')?>home/insert_student" method="post">
+        <form class="d-block d-md-none" action="<?=constant('__baseurl__')?>home/insert_student" method="post">
           <div class="col-12">
             <div class="card mb-4">
               <div class="card-header pb-0">
@@ -197,25 +197,25 @@
 
               <!-- mobile -->
               <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-sm-3">
+                <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Primer Nombre</label>
                     <input class="form-control" type="text" id="example-text-input" name="p_nombre">
                   </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Segundo Nombre(opcional)</label>
                     <input class="form-control" type="text" id="example-text-input" name="s_nombre">
                   </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Primer Apellido</label>
                     <input class="form-control" type="text" id="example-text-input" name="p_apellido">
                   </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Segundo Apellido(opcional)</label>
                     <input class="form-control" type="text" id="example-text-input" name="s_apellido">

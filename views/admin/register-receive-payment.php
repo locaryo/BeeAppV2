@@ -38,13 +38,10 @@
         <!-- fomr escritorio -->
         <form action="<?= constant('__baseurl__') ?>home/register_receive_payment" method="post">
           <div class="col-12">
-
             <div class="card mb-4">
-
               <div class="card-header pb-0">
                 <h6>Nueva Factura: Pago Recibido</h6>
               </div>
-
               <!-- desktop -->
               <div class="d-flex justify-content-center align-items-center flex-column mx-1 desktop-to-mobile">
                 <div class="col-md-3">
@@ -67,7 +64,7 @@
                   </div>
                 </div>
                 <div class="col-md-3 rounded" id="contenedor-resultados-estudiantes">
-                  
+
                 </div>
 
                 <div class="col-md-3">
@@ -83,7 +80,6 @@
                     <input class="form-control" type="text" id="amount-usd-bcv" required>
                   </div>
                 </div>
-
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
@@ -94,14 +90,12 @@
                     </select>
                   </div>
                 </div>
-
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Referencia</label>
                     <input class="form-control" type="text" name="referencia">
                   </div>
                 </div>
-
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Fecha</label>
@@ -129,16 +123,10 @@
               <div class="d-flex justify-content-center align-items-center">
                 <button class="btn btn-success mx-2" name="action" type="submit">Registrar</button>
               </div>
-
             </div>
-
           </div>
-
         </form>
-
-        <!-- form mobile -->
-
-
+        
       </div>
 
       <?php require constant("__layout__") . "footer.php"; ?>

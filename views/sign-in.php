@@ -45,7 +45,7 @@
                     </div>
                   </form>
 
-                  <form class="d-block d-sm-none" role="form" action="<?= constant('__baseurl__') ?>home/login" method="post">
+                  <form class="d-block d-md-none" role="form" action="<?= constant('__baseurl__') ?>home/login" method="post">
                     <div class="mb-3">
                       <input type="text" class="form-control form-control-lg" name="user" placeholder="Usuario" aria-label="Usuario" required>
                     </div>
