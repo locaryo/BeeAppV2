@@ -50,6 +50,7 @@
 
       </div>
 
+      
       <div class="row pb-8">
         <div class="col-12">
           <div class="card mb-4">
@@ -58,7 +59,7 @@
             </div>
             <div class="card-body px-0 pt-0 pb-2">
 
-              <div class="d-none d-md-flex d-lg-flex d-xl-flex table-responsive p-0">
+              <div class="d-none d-md-flex d-lg-flex d-xl-flex table-responsive p-0 desktop-to-mobile">
                 <table class="table align-items-center" id="results">
                   <thead>
                     <tr>
@@ -105,47 +106,6 @@
                 </table>
               </div>
 
-              <div class="d-block table-responsive p-0">
-
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th style="width: 400px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estudiantes</th>
-                      <th style="width: 300px;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
-                      <th class="text-secondary opacity-7"></th>
-                    </tr>
-                  </thead>
-                  <tbody id="results-body-mobile">
-                    <?php foreach ($this->array as $value) { ?>
-                      <tr>
-                        <form action="<?= constant('__baseurl__') ?>home/consulting_cedula" method="post">
-                          <td>
-                            <div class="d-flex py-1">
-                              <div>
-                                <?php if ($value['sexo'] == 1) { ?>
-                                  <img src="<?= constant('__baseurl__') ?>public/img/1.png" class="avatar avatar-sm me-3">
-                                <?php } else { ?>
-                                  <img src="<?= constant('__baseurl__') ?>public/img/0.png" class="avatar avatar-sm me-3">
-                                <?php } ?>
-                              </div>
-                              <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm"><?= $value['p_nombre'] . ' ' . $value['p_apellido'] ?></h6>
-                                <p class="text-xs text-secondary mb-0"><?= $value['cedula'] ?></p>
-                              </div>
-                            </div>
-                          </td>
-
-                          <td class="align-middle text-center">
-                            <input value="<?= $value['cedula'] ?>" type="number" name="cedula" hidden>
-                            <input value="alumnos" type="text" name="opcion" hidden>
-                            <button class="btn btn-primary" type="submit">Editar</button>
-                          </td>
-                        </form>
-                      </tr>
-                    <?php } ?>
-                  </tbody>
-                </table>
-              </div>
             </div>
           </div>
         </div>

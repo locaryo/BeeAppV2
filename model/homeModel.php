@@ -128,31 +128,40 @@ class HomeModel extends Model
         $sql = null;
         $this->db = null;
     }
-
+    
     // registrar pago recibido
     public function model_register_receive_payment(
+        $id_student,
         $revenue,
         $amount,
         $payment_method,
         $reference,
         $nota,
-        $date_payment
+        $date_payment,
+        $start_monthly_payment,
+        $end_monthly_payment
     ) {
         $sql = $this->db->conn()->prepare("INSERT INTO receive_payment (
+                id_student,
                 id_revenue, 
                 amount, 
                 id_payment_method, 
                 reference,
                 note,
-                date_payment
-            ) VALUES (?,?,?,?,?,?)");
+                date_payment,
+                start_monthly_payment,
+                end_monthly_payment
+            ) VALUES (?,?,?,?,?,?,?,?,?)");
         if ($sql->execute([
+            $id_student,
             $revenue,
             $amount,
             $payment_method,
             $reference,
             $nota,
-            $date_payment
+            $date_payment,
+            $start_monthly_payment,
+            $end_monthly_payment
         ])) {
             header("Location: " . __baseurl__ . "home/view_register_receive_payment");
         } else {
@@ -831,6 +840,19 @@ class HomeModel extends Model
     {
         $sql = $this->db->conn()->prepare("SELECT id, p_nombre, s_nombre, p_apellido, s_apellido, cedula, sexo FROM alumnos where deleted = 0 ORDER BY p_nombre LIMIT 15");
         $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        return $result;
+    }
+
+    // tabla
+    public function model_filtrar_estudiantes($query)
+    {
+        $sql = $this->db->conn()->prepare("SELECT id, p_nombre, s_nombre, p_apellido, s_apellido, cedula FROM alumnos WHERE deleted = 0 AND (p_nombre LIKE ? OR p_apellido LIKE ? OR cedula LIKE ?) ORDER BY p_nombre");
+        $sql->execute([
+            '%' . $query . '%',
+            '%' . $query . '%',
+            '%' . $query . '%'
+        ]);
         $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
         return $result;
     }
