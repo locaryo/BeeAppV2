@@ -1,5 +1,51 @@
 // Inicializamos el módulo cuando el DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
+  //view-data-student go back buttons
+  const buttons = document.querySelectorAll(".go-back");
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      window.history.back();
+    });
+  });
+  // End view-data-student go back buttons
+  // Navbar breadcrumb
+  const breadcrumb = document.getElementById("current-bc");
+  const currentRoute = window.location.pathname;
+  const crumbs = [
+    "Dashboard",
+    "Registrar representante",
+    "Registrar estudiante",
+    "Registrar maestro",
+    "Consulta",
+    "Horarios",
+    "Estudiantes",
+    "Documentos",
+    "Pagos recibidos",
+    "Pagos de servicios",
+    "Institución"
+  ];
+  const routes = [
+    "/beeappV2/home/dashboard",
+    "/beeappV2/home/register_responsable_view",
+    "/beeappV2/home/register_student_view",
+    "/beeappV2/home/register_teacher_view",
+    "/beeappV2/home/consulting_view",
+    "/beeappV2/home/schedule_view",
+    "/beeappV2/home/tables",
+    "/beeappV2/home/documents",
+    "/beeappV2/home/view_register_receive_payment",
+    "/beeappV2/home/view_register_service_payment",
+    "/beeappV2/home/view_institution"
+  ];
+  function getBreadcrumb() {
+    routes.forEach((route, index) => {
+      if (route === currentRoute) {
+        breadcrumb.innerText = crumbs[index];
+      }
+    });
+  }
+  getBreadcrumb();
+  //
   setTimeout(() => {
     let alertBox = document.querySelector(".alert");
     if (alertBox) {
@@ -12,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => (alertBox.style.display = "none"), 200); // Oculta después de la animación
     }
   }, 3000); // 3 segundos antes de ocultar
- 
 });
 
 const AlumnosModule = (() => {
@@ -25,41 +70,46 @@ const AlumnosModule = (() => {
 
   // Función para realizar la consulta al backend
   const fetchData = async () => {
-      const selectedNivel = nivelSelect ? nivelSelect.value : '';
-      const selectedSeccion = seccionSelect ? seccionSelect.value : '';
-      const selectedMencion = mencionSelect ? mencionSelect.value : '';
+    const selectedNivel = nivelSelect ? nivelSelect.value : "";
+    const selectedSeccion = seccionSelect ? seccionSelect.value : "";
+    const selectedMencion = mencionSelect ? mencionSelect.value : "";
 
-      try {
-          const response = await fetch("consulting_tabla", {
-              method: "post",
-              body: JSON.stringify({
-                  nivel: selectedNivel,
-                  seccion: selectedSeccion,
-                  mencion: selectedMencion,
-              }),
-              headers: { "Content-Type": "application/json" },
-          });
-          if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-          updateResults(data);
-      } catch (error) {
-          console.error("Error fetching alumnos:", error);
-          if (resultsBodyDesktop) resultsBodyDesktop.innerHTML = '<tr><td colspan="3">Error al cargar los alumnos.</td></tr>';
-          if (resultsBodyMobile) resultsBodyMobile.innerHTML = '<tr><td colspan="3">Error al cargar los alumnos.</td></tr>';
+    try {
+      const response = await fetch("consulting_tabla", {
+        method: "post",
+        body: JSON.stringify({
+          nivel: selectedNivel,
+          seccion: selectedSeccion,
+          mencion: selectedMencion
+        }),
+        headers: { "Content-Type": "application/json" }
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
+      updateResults(data);
+    } catch (error) {
+      console.error("Error fetching alumnos:", error);
+      if (resultsBodyDesktop)
+        resultsBodyDesktop.innerHTML =
+          '<tr><td colspan="3">Error al cargar los alumnos.</td></tr>';
+      if (resultsBodyMobile)
+        resultsBodyMobile.innerHTML =
+          '<tr><td colspan="3">Error al cargar los alumnos.</td></tr>';
+    }
   };
 
   // Función para actualizar la tabla de resultados
-  const updateResults = (data) => {
-      if (resultsBodyDesktop) resultsBodyDesktop.innerHTML = "";
-      if (resultsBodyMobile) resultsBodyMobile.innerHTML = "";
+  const updateResults = data => {
+    if (resultsBodyDesktop) resultsBodyDesktop.innerHTML = "";
+    if (resultsBodyMobile) resultsBodyMobile.innerHTML = "";
 
-      if (data && data.length > 0) {
-          data.forEach((item) => {
-              const genderImg = item.sexo == 1 ? "../public/img/1.png" : "../public/img/0.png";
-              const rowDesktop = `
+    if (data && data.length > 0) {
+      data.forEach(item => {
+        const genderImg =
+          item.sexo == 1 ? "../public/img/1.png" : "../public/img/0.png";
+        const rowDesktop = `
                   <tr>
                       <td>
                           <div class="d-flex py-1">
@@ -85,7 +135,7 @@ const AlumnosModule = (() => {
                   </tr>
               `;
 
-              const rowMobile = `
+        const rowMobile = `
                   <tr>
                       <td>
                           <div class="d-flex py-1">
@@ -108,39 +158,43 @@ const AlumnosModule = (() => {
                   </tr>
               `;
 
-              if (resultsBodyDesktop) resultsBodyDesktop.innerHTML += rowDesktop;
-              if (resultsBodyMobile) resultsBodyMobile.innerHTML += rowMobile;
-          });
-      } else {
-          if (resultsBodyDesktop) resultsBodyDesktop.innerHTML = '<tr><td colspan="3">No hay datos disponibles</td></tr>';
-          if (resultsBodyMobile) resultsBodyMobile.innerHTML = '<tr><td colspan="3">No hay datos disponibles</td></tr>';
-      }
+        if (resultsBodyDesktop) resultsBodyDesktop.innerHTML += rowDesktop;
+        if (resultsBodyMobile) resultsBodyMobile.innerHTML += rowMobile;
+      });
+    } else {
+      if (resultsBodyDesktop)
+        resultsBodyDesktop.innerHTML =
+          '<tr><td colspan="3">No hay datos disponibles</td></tr>';
+      if (resultsBodyMobile)
+        resultsBodyMobile.innerHTML =
+          '<tr><td colspan="3">No hay datos disponibles</td></tr>';
+    }
   };
 
   // Función para inicializar los event listeners
   const initializeListeners = () => {
-      if (nivelSelect) {
-          nivelSelect.addEventListener("change", fetchData);
-      }
-      if (seccionSelect) {
-          seccionSelect.addEventListener("change", fetchData);
-      }
-      if (mencionSelect) {
-          mencionSelect.addEventListener("change", fetchData);
-      }
+    if (nivelSelect) {
+      nivelSelect.addEventListener("change", fetchData);
+    }
+    if (seccionSelect) {
+      seccionSelect.addEventListener("change", fetchData);
+    }
+    if (mencionSelect) {
+      mencionSelect.addEventListener("change", fetchData);
+    }
   };
 
   // Retornamos un objeto con los métodos que queremos exponer
   return {
-      init: initializeListeners
+    init: initializeListeners
   };
 })();
 
-const CalcularEdad = (() =>{
+const CalcularEdad = (() => {
   let miInput = document.getElementById("fecha");
   let edad = document.getElementById("edad");
 
-  let calcularEdad = (fechaNacimiento) => {
+  let calcularEdad = fechaNacimiento => {
     const fechaNacimientoObj = new Date(fechaNacimiento);
     const hoy = new Date();
 
@@ -164,7 +218,7 @@ const CalcularEdad = (() =>{
     edad.value = edadAproximada;
   };
 
-  miInput.addEventListener("change", (event) => {
+  miInput.addEventListener("change", event => {
     calcularEdad(event.target.value); // Muestra lo que se escribe en la consola
   });
 })();
@@ -172,5 +226,5 @@ const CalcularEdad = (() =>{
 // Inicializamos el módulo cuando el DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
   AlumnosModule.init();
-  CalcularEdad.init(); 
+  CalcularEdad.init();
 });

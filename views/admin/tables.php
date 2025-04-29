@@ -105,7 +105,7 @@
                 </table>
               </div>
 
-              <div class="d-block d-sm-none table-responsive p-0">
+              <div class="d-block table-responsive p-0">
 
                 <table class="table align-items-center mb-0">
                   <thead>

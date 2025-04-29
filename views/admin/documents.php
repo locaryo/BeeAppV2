@@ -53,7 +53,7 @@
           </div>
         </form>
 
-        <form class="d-block d-sm-none flex-column mb-8" action="<?= constant('__baseurl__') ?>home/constancy" method="post">
+        <form class="d-block d-md-none flex-column mb-8" action="<?= constant('__baseurl__') ?>home/constancy" method="post">
           <div class="col-12">
             <div class="card mb-4">
               <div class="card-header pb-0 text-center">
