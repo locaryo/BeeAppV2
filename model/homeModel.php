@@ -128,7 +128,7 @@ class HomeModel extends Model
         $sql = null;
         $this->db = null;
     }
-
+    
     // registrar pago recibido
     public function model_register_receive_payment(
         $id_student,
