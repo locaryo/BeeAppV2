@@ -3,6 +3,7 @@
 
 if (!defined('__baseurl__')) {
     define('__baseurl__', 'http://localhost/beeapp/');
+    // define('__baseurl__', 'http://192.168.0.103/beeapp/');
 }
 if (!defined('__layout__')) {
     define('__layout__', 'views/layouts/');
