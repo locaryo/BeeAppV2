@@ -35,7 +35,7 @@
       <?php endif ?>
       <div class="row">
 
-        <form class="d-none d-md-flex d-lg-flex d-xl-flex" action="<?= constant('__baseurl__') ?>home/register_service_payment" method="post">
+        <form action="<?= constant('__baseurl__') ?>home/register_service_payment" method="post">
           <div class="col-12">
 
             <div class="card mb-4">
@@ -45,7 +45,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center flex-column mx-1">
+              <div class="d-flex justify-content-center align-items-center flex-column mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Tipo de Servicio</label>
@@ -99,67 +99,6 @@
               <!-- desktop -->
               <div class="d-flex justify-content-center align-items-center">
                 <button class="btn btn-danger mx-2" name="action" type="submit">Registrar</button>
-              </div>
-
-            </div>
-
-          </div>
-
-        </form>
-
-        <!-- form mobile -->
-        <form class="d-block d-sm-none" action="<?= constant('__baseurl__') ?>home/register_service_payment" method="post">
-          <div class="col-12">
-
-            <div class="card mb-4">
-
-              <div class="card-header pb-0">
-                <h6>Nueva Factura</h6>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Producto</label>
-                    <select class="form-control" id="example-text-input" name="servicio">
-
-                      <option class="text-success" value='null'>Seleccione la Ganancia</option>
-                      <option value='uniformes'>Pago de Uniforme</option>
-                      <option class="text-danger" value='null'>Seleccione el Egresos(Servicios)</option>
-                      <option value='electricidad'>Pago de Electricidad</option>
-                      <option value='agua'>Pago de Agua</option>
-                      <option value='alquiler'>Pago de Alquiler</option>
-                      <option value='docentes'> Pago a Docente</option>
-                      <option value='internet'>Pago de Internet</option>
-
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Monto</label>
-                    <input class="form-control" type="number" id="example-text-input" name="monto" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha de Ingreso</label>
-                    <input class="form-control" type="date" id="example-text-input" name="fecha" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Nota</label>
-                    <input class="form-control" type="text" id="example-text-input" name="nota">
-                  </div>
-                </div>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-success mx-2" name="action" value="ingreso" type="submit">Ingresos</button>
-                <button class="btn btn-danger mx-2" name="action" value="egreso" type="submit">Pagos</button>
               </div>
 
             </div>

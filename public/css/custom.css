@@ -338,10 +338,39 @@
   border: none;
 }
 
-@media screen and (max-width: 850px) {
+#contenedor-resultados-estudiantes {
+  background-color: rgba(94, 114, 228, 0.2);
+  border-radius: 5px;
+  max-height: 150px;
+  overflow-y: auto;
+  cursor: pointer;
+}
+
+#contenedor-resultados-estudiantes ul{
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  padding: 5px;
+}
+
+#contenedor-resultados-estudiantes ul li{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+@media screen and (max-width: 769px) {
   .bento-grid {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
+  }
+
+  .desktop-to-mobile{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: stretch !important;
   }
 }

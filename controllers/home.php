@@ -116,9 +116,6 @@ class Home extends Controller
             $count_student_meca  = $this->model->count_student_meca();
             $count_student_elec  = $this->model->count_student_elec();
 
-            // $montoMatriculaStudent  = $this->model->select_payment_student_count();
-            // $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
-
             $ingresoEgreso  = $this->model->model_product_billing_count();
             $this->view->ingresoEgreso = json_encode($ingresoEgreso);
 
@@ -227,21 +224,26 @@ class Home extends Controller
     public function register_receive_payment()
     {
         $revenue        = $this->validarEntrada($_POST['servicio']);
+        $id_student        = $this->validarEntrada($_POST['id-estudiante']);
         $amount        = $this->validarEntrada($_POST['monto']);
         $payment_method      = $this->validarEntrada($_POST['metodo_pago']);
         $reference      = $this->validarEntrada($_POST['referencia']);
         $nota      = $this->validarEntrada($_POST['nota']);
         $date_payment      = $this->validarEntrada($_POST['fecha']);
+        $start_monthly_payment      = $this->validarEntrada($_POST['start_monthly_payment']);
+        $end_monthly_payment      = $this->validarEntrada($_POST['end_monthly_payment']);
 
-
-        if ($revenue != "" && $amount != "" && $payment_method != "" && $reference != "" && $date_payment != "") {
+        if ($revenue != "" && $amount != "" && $payment_method != "" && $reference != "" && $date_payment != "" || $revenue == 0) {
             $this->model->model_register_receive_payment(
+                $id_student,
                 $revenue,
                 $amount,
                 $payment_method,
                 $reference,
                 $nota,
-                $date_payment
+                $date_payment,
+                $start_monthly_payment,
+                $end_monthly_payment
             );
         } else {
             header("Location: " . __baseurl__ . "home/view_register_receive_payment?datos");
@@ -478,6 +480,17 @@ class Home extends Controller
         }
     }
 
+    public function filtrar_estudiantes()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->model_filtrar_estudiantes($postData['query']);
+
+        echo json_encode($result);
+    }
 
     // procesar consulta de cedula
     public function select_payment_student()
@@ -613,9 +626,6 @@ class Home extends Controller
             exit;
         }
     }
-
-
-
 
     // visualizar datos de maestro
     public function view_data_teacher()
