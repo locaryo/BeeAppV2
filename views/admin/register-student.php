@@ -40,7 +40,7 @@
       <?php endif ?>
       <div class="row">
         
-        <form class="d-none d-md-flex d-lg-flex d-xl-flex" action="<?=constant('__baseurl__')?>home/insert_student" method="post">
+        <form action="<?=constant('__baseurl__')?>home/insert_student" method="post">
           <div class="col-12">
             <div class="card mb-4">
               <div class="card-header pb-0">
@@ -48,7 +48,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1">
+              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Primer Nombre</label>
@@ -76,7 +76,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1">
+              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Cedula</label>
@@ -107,7 +107,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1">
+              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-2">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Fecha Nacimiento</label>
@@ -140,7 +140,7 @@
                 </div>
               </div>
 
-              <div class="d-flex justify-content-center align-items-center mx-1">
+              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-4">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Año</label>
@@ -181,150 +181,7 @@
                 
               </div>
 
-              <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-primary" type="send">Registrar</button>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <form class="d-block d-md-none" action="<?=constant('__baseurl__')?>home/insert_student" method="post">
-          <div class="col-12">
-            <div class="card mb-4">
-              <div class="card-header pb-0">
-                <h6>Nuevo Estudiante</h6>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Nombre</label>
-                    <input class="form-control" type="text" id="example-text-input" name="p_nombre">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Nombre(opcional)</label>
-                    <input class="form-control" type="text" id="example-text-input" name="s_nombre">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Apellido</label>
-                    <input class="form-control" type="text" id="example-text-input" name="p_apellido">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Apellido(opcional)</label>
-                    <input class="form-control" type="text" id="example-text-input" name="s_apellido">
-                  </div>
-                </div>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Cedula</label>
-                    <input class="form-control" type="number" id="example-text-input" name="cedula">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Telefono</label>
-                    <input class="form-control" type="number" placeholder="04121234567" id="example-text-input" name="telefono">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Sexo</label>
-                    <select class="form-control" id="example-text-input" name="sexo">
-                      <option>Masculino</option>
-                      <option>Femenino</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Correo</label>
-                    <input class="form-control" name="correo" type="email" id="example-text-input" placeholder="name@example.com">
-                  </div>
-                </div>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-2">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha Nacimiento</label>
-                    <input id="fecha" class="form-control" type="date" name="fecha">
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Edad</label>
-                    <input id="edad" class="form-control" type="number" name="edad" required>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Direccion</label>
-                    <input class="form-control" type="text" placeholder="comunidad, calle, casa" id="example-text-input" name="direccion">
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Documentos Entregados</label>
-                    <input class="form-control" type="text" placeholder="partida de nacimiento, etc" id="example-text-input" name="documentos" required>
-                  </div>
-                </div>
-                
-              </div>
-
-              <div class="d-flex justify-content-center align-items-center mx-1">
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Año</label>
-                    <select class="form-control" id="example-text-input" name="grado">
-                      <option>1°ero</option>
-                      <option>2°do</option>
-                      <option>3°ero</option>
-                      <option>4°to</option>
-                      <option>5°to</option>
-                      <option>6°to</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Sección</label>
-                    <select class="form-control" id="example-text-input" name="seccion">
-                      <option>A</option>
-                      <option>B</option>
-                      <option>C</option>
-                      <option>D</option>
-                      <option>E</option>
-                    </select>
-                  </div>
-                </div>
-                
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Mención</label>
-                    <select class="form-control" id="example-text-input" name="mencion">
-                      <option>Petroquimica</option>
-                      <option>Mecanica</option>
-                      <option>Electricidad</option>
-                    </select>
-                  </div>
-                </div>
-                
-              </div>
-
-              <div class="d-flex justify-content-center align-items-center">
+              <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
                 <button class="btn btn-primary" type="send">Registrar</button>
               </div>
             </div>
