@@ -1,5 +1,77 @@
 // Inicializamos el módulo cuando el DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
+    //view-data-student go back buttons
+  const buttons = document.querySelectorAll(".go-back");
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      window.history.back();
+    });
+  });
+  // End view-data-student go back buttons
+  // Navbar breadcrumb
+  const breadcrumb = document.getElementById("current-bc");
+  const currentRoute = window.location.pathname;
+  const crumbs = [
+    "Dashboard",
+    "Registrar representante",
+    "Registrar estudiante",
+    "Registrar maestro",
+    "Consulta",
+    "Horarios",
+    "Estudiantes",
+    "Documentos",
+    "Pagos recibidos",
+    "Pagos de servicios",
+    "Institución",
+    "Consulta de estudiante"
+  ];
+  const routes = [
+    "/beeappV2/home/dashboard",
+    "/beeappV2/home/register_responsable_view",
+    "/beeappV2/home/register_student_view",
+    "/beeappV2/home/register_teacher_view",
+    "/beeappV2/home/consulting_view",
+    "/beeappV2/home/schedule_view",
+    "/beeappV2/home/tables",
+    "/beeappV2/home/documents",
+    "/beeappV2/home/view_register_receive_payment",
+    "/beeappV2/home/view_register_service_payment",
+    "/beeappV2/home/view_institution",
+    "/beeappV2/home/view_data_student"
+  ];
+  function getBreadcrumb() {
+    routes.forEach((route, index) => {
+      if (route === currentRoute) {
+        breadcrumb.innerText = crumbs[index];
+      }
+    });
+  }
+  getBreadcrumb();
+  // End Navbar breadcrumb
+  // Custom form validation
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".needs-validation");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener(
+        "submit",
+        event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+  // End custom form validation
   setTimeout(() => {
     let alertBox = document.querySelector(".alert");
     if (alertBox) {
