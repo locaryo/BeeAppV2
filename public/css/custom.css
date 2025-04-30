@@ -7,6 +7,11 @@
   /* Centrar verticalmente */
 }
 
+.form-label.required::after {
+  content: " *";
+  color: red;
+}
+
 .navbar-nav .dropdown-toggle::after {
   display: none !important;
   /* Oculta la flecha por defecto */
