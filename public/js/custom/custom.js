@@ -25,7 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
     "Pagos recibidos",
     "Pagos de servicios",
     "Institución",
+    "Consulta de estudiante"
   ];
+
   const routes = [
     "/" + `${ruta}` + "/home/dashboard",
     "/" + `${ruta}` + "/home/register_responsable_view",
@@ -38,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "/" + `${ruta}` + "/home/view_register_receive_payment",
     "/" + `${ruta}` + "/home/view_register_service_payment",
     "/" + `${ruta}` + "/home/view_institution",
+    "/" + `${ruta}` + "/home/view_data_student",
   ];
   function getBreadcrumb() {
     routes.forEach((route, index) => {
@@ -47,6 +50,32 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
   getBreadcrumb();
+
+  // End Navbar breadcrumb
+  // Custom form validation
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".needs-validation");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener(
+        "submit",
+        event => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+  // End custom form validation
 
   setTimeout(() => {
     let alertBox = document.querySelector(".alert");

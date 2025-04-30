@@ -12,7 +12,6 @@
   color: red;
 }
 
-
 .navbar-nav .dropdown-toggle::after {
   display: none !important;
   /* Oculta la flecha por defecto */
