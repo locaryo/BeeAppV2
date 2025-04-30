@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Pagos recibidos",
     "Pagos de servicios",
     "Institución",
-    "Consulta de estudiante"
+    "Consulta de estudiante",
   ];
   // Definimos las rutas que queremos manejar
   // Puedes agregar más rutas según sea necesario
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "/" + `${ruta}` + "/home/view_register_receive_payment",
     "/" + `${ruta}` + "/home/view_register_service_payment",
     "/" + `${ruta}` + "/home/view_institution",
-    "/" + `${ruta}` + "/home/view_data_student"
+    "/" + `${ruta}` + "/home/view_data_student",
   ];
   function getBreadcrumb() {
     routes.forEach((route, index) => {
@@ -60,10 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const forms = document.querySelectorAll(".needs-validation");
 
     // Loop over them and prevent submission
-    Array.from(forms).forEach(form => {
+    Array.from(forms).forEach((form) => {
       form.addEventListener(
         "submit",
-        event => {
+        (event) => {
           if (!form.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
@@ -92,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+// Fin de la inicialización del módulo
 const calcularDolar = (() => {
   let bcv = 0;
   let enparalelovzla = 0;
@@ -142,110 +143,6 @@ const calcularDolar = (() => {
   }
 })();
 
-const filtroStudent = (() => {
-  const inputIngresoTipo = document.getElementById("ingreso-tipo");
-  const inputFiltroContainer = document.querySelector(".d-filtro");
-  const inputFechaContainer = document.querySelector(".d-fecha");
-  const inputIdEstudiante = document.getElementById("student-id"); // Obtener el campo oculto
-  const inputEstudiante = inputFiltroContainer
-    ? inputFiltroContainer.querySelector("input")
-    : null;
-  const contenedorResultados = document.getElementById(
-    "contenedor-resultados-estudiantes"
-  );
-  let typingTimer;
-  const doneTypingInterval = 100;
-
-  if (inputIngresoTipo && inputEstudiante && contenedorResultados) {
-    inputIngresoTipo.addEventListener("change", (event) => {
-      const selectedOption = event.target.options[event.target.selectedIndex];
-      const nameValue = selectedOption.getAttribute("nameValue");
-
-      if (nameValue === "Matrícula") {
-        inputFiltroContainer.classList.remove("d-none");
-        inputFechaContainer.classList.add("d-none");
-        inputEstudiante.addEventListener("input", (event) => {
-          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
-          clearTimeout(typingTimer);
-          if (event.target.value.length > 0) {
-            typingTimer = setTimeout(() => {
-              selectStudent(event.target.value);
-            }, doneTypingInterval);
-          } else {
-            mostrarResultados([]);
-          }
-        });
-      } else if (nameValue === "Mensualidades") {
-        inputFiltroContainer.classList.remove("d-none");
-        inputFechaContainer.classList.remove("d-none");
-        inputEstudiante.addEventListener("input", (event) => {
-          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
-          clearTimeout(typingTimer);
-          if (event.target.value.length > 0) {
-            typingTimer = setTimeout(() => {
-              selectStudent(event.target.value);
-            }, doneTypingInterval);
-          } else {
-            mostrarResultados([]);
-          }
-        });
-      } else {
-        inputFiltroContainer.classList.add("d-none");
-        inputFechaContainer.classList.add("d-none");
-        mostrarResultados([]);
-      }
-    });
-  }
-
-  const selectStudent = (value) => {
-    fetch("filtrar_estudiantes", {
-      method: "POST",
-      body: JSON.stringify({
-        query: value,
-      }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        mostrarResultados(data);
-      })
-      .catch((error) => {
-        console.error("Error al filtrar estudiantes:", error);
-      });
-  };
-
-  const mostrarResultados = (estudiantes) => {
-    contenedorResultados.innerHTML = "";
-
-    if (estudiantes && estudiantes.length > 0) {
-      const lista = document.createElement("ul");
-      lista.classList.add("autocomplete-list"); // Añade una clase para estilos (opcional)
-      estudiantes.forEach((estudiante) => {
-        const item = document.createElement("li");
-        item.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
-        item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
-        item.addEventListener("click", () => {
-          inputEstudiante.value = `${estudiante.p_nombre} ${estudiante.p_apellido}`; // Inserta el nombre completo en el input
-          inputIdEstudiante.value = estudiante.id;
-          contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
-        });
-        lista.appendChild(item);
-      });
-      contenedorResultados.appendChild(lista);
-    } else if (inputEstudiante && inputEstudiante.value.length > 0) {
-      const mensaje = document.createElement("p");
-      mensaje.textContent =
-        "No se encontraron estudiantes con ese nombre o cédula.";
-      contenedorResultados.appendChild(mensaje);
-    }
-  };
-})();
-
 const filtroTeacher = (() => {
   const inputIngresoTipo = document.getElementById("gasto-tipo");
   const inputFiltroContainer = document.querySelector(".d-filtro");
@@ -290,7 +187,10 @@ const filtroTeacher = (() => {
             mostrarResultados([]);
           }
         });
-      } else if (nameValue === "Pago Personal de Apoyo(mantenimiento, limpieza, seguridad)") {
+      } else if (
+        nameValue ===
+        "Pago Personal de Apoyo(mantenimiento, limpieza, seguridad)"
+      ) {
         inputFiltroContainer.classList.remove("d-none");
         inputEstudiante.addEventListener("input", (event) => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
@@ -303,7 +203,7 @@ const filtroTeacher = (() => {
             mostrarResultados([]);
           }
         });
-      }else {
+      } else {
         inputFiltroContainer.classList.add("d-none");
         mostrarResultados([]);
       }
@@ -345,6 +245,111 @@ const filtroTeacher = (() => {
         item.addEventListener("click", () => {
           inputEstudiante.value = `${docente.p_nombre} ${docente.p_apellido}`; // Inserta el nombre completo en el input
           inputIdEstudiante.value = docente.id;
+          contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
+        });
+        lista.appendChild(item);
+      });
+      contenedorResultados.appendChild(lista);
+    } else if (inputEstudiante && inputEstudiante.value.length > 0) {
+      const mensaje = document.createElement("p");
+      mensaje.textContent =
+        "No se encontraron estudiantes con ese nombre o cédula.";
+      contenedorResultados.appendChild(mensaje);
+    }
+  };
+})();
+
+const filtroStudent = (() => {
+  const inputIngresoTipo = document.getElementById("tipo-ingreso");
+  const inputFiltroContainer = document.querySelector(".d-filtro");
+  const inputFechaContainer = document.querySelector(".d-fecha");
+  const inputIdEstudiante = document.getElementById("student-id"); // Obtener el campo oculto
+  const inputEstudiante = inputFiltroContainer
+    ? inputFiltroContainer.querySelector("input")
+    : null;
+  const contenedorResultados = document.getElementById(
+    "contenedor-resultados-filtro"
+  );
+  let typingTimer;
+  const doneTypingInterval = 100;
+
+  if (inputIngresoTipo && inputEstudiante && contenedorResultados) {
+    inputIngresoTipo.addEventListener("change", (event) => {
+      const selectedOption = event.target.options[event.target.selectedIndex];
+      const nameValue = selectedOption.getAttribute("nameValue");
+
+      if (nameValue === "Matrícula") {
+        inputFiltroContainer.classList.remove("d-none");
+        inputFechaContainer.classList.add("d-none");
+        inputEstudiante.addEventListener("input", (event) => {
+          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
+          clearTimeout(typingTimer);
+          if (event.target.value.length > 0) {
+            typingTimer = setTimeout(() => {
+              selectStudent(event.target.value);
+            }, doneTypingInterval);
+          } else {
+            mostrarResultados([]);
+          }
+        });
+      } else if (nameValue === "Mensualidades") {
+        inputFiltroContainer.classList.remove("d-none");
+        inputFechaContainer.classList.remove("d-none");
+        inputEstudiante.addEventListener("input", (event) => {
+          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
+          clearTimeout(typingTimer);
+          if (event.target.value.length > 0) {
+            typingTimer = setTimeout(() => {
+              selectStudent(event.target.value);
+            }, doneTypingInterval);
+          } else {
+            mostrarResultados([]);
+          }
+        });
+      } else {
+        console.log("No se seleccionó una opción válida"); // Agrega esta línea
+        inputFiltroContainer.classList.add("d-none");
+        inputFechaContainer.classList.add("d-none");
+        mostrarResultados([]);
+      }
+    });
+  }
+
+  const selectStudent = (value) => {
+    fetch("filtrar_estudiantes", {
+      method: "POST",
+      body: JSON.stringify({
+        query: value,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        mostrarResultados(data);
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const mostrarResultados = (estudiantes) => {
+    contenedorResultados.innerHTML = "";
+
+    if (estudiantes && estudiantes.length > 0) {
+      const lista = document.createElement("ul");
+      lista.classList.add("autocomplete-list"); // Añade una clase para estilos (opcional)
+      estudiantes.forEach((estudiante) => {
+        const item = document.createElement("li");
+        item.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
+        item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
+        item.addEventListener("click", () => {
+          inputEstudiante.value = `${estudiante.p_nombre} ${estudiante.p_apellido}`; // Inserta el nombre completo en el input
+          inputIdEstudiante.value = estudiante.id;
           contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
         });
         lista.appendChild(item);
