@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   // End view-data-student go back buttons
-  
   // Navbar breadcrumb
   const breadcrumb = document.getElementById("current-bc");
   const ruta = "beeapp";
@@ -40,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "/" + `${ruta}` + "/home/view_register_receive_payment",
     "/" + `${ruta}` + "/home/view_register_service_payment",
     "/" + `${ruta}` + "/home/view_institution",
-    "/" + `${ruta}` + "/home/view_data_student",
+    "/" + `${ruta}` + "/home/view_data_student"
   ];
   function getBreadcrumb() {
     routes.forEach((route, index) => {
