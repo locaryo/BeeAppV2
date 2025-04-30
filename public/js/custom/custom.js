@@ -221,6 +221,26 @@ const filtroStudent = (() => {
   };
 })();
 
+const mostrarReferencia = (() => {
+  const inputReferencia = document.getElementById("pago-tipo");
+  const referenciaContainer = document.querySelector(".d-reference");
+  if (!inputReferencia) return; // Si no existe el input, salimos de la función
+  if (!referenciaContainer) return; // Si no existe el contenedor, salimos de la función
+  inputReferencia.addEventListener("change", (event) => {
+    const selectedOption = event.target.options[event.target.selectedIndex];
+    const nameValue = selectedOption.getAttribute("nameValue");
+
+    if (nameValue === "Pago Movil") {
+      referenciaContainer.classList.remove("d-none");
+    } else if (nameValue === "Transferencia Bancaria") {
+      referenciaContainer.classList.remove("d-none");
+    } else {
+      const referenciaContainer = document.querySelector(".d-reference");
+      referenciaContainer.classList.add("d-none");
+    }
+  });
+})();
+
 const endDate = (() => {
   const inputFechaContainer = document.querySelector(".d-fecha");
   if (!inputFechaContainer) return; // Si no existe el contenedor, salimos de la función

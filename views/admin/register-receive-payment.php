@@ -83,14 +83,14 @@
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
-                    <select class="form-control" name="metodo_pago">
+                    <select class="form-control" id="pago-tipo" name="metodo_pago">
                       <?php foreach ($this->payment_mehtod as $value): ?>
-                        <option value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
+                        <option nameValue="<?= $value['payment_method'] ?>" value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
                       <?php endforeach ?>
                     </select>
                   </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 d-reference d-none">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Referencia</label>
                     <input class="form-control" type="text" name="referencia">
