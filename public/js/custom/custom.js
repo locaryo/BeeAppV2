@@ -26,7 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "Institución",
     "Consulta de estudiante"
   ];
-
+  // Definimos las rutas que queremos manejar
+  // Puedes agregar más rutas según sea necesario
   const routes = [
     "/" + `${ruta}` + "/home/dashboard",
     "/" + `${ruta}` + "/home/register_responsable_view",
