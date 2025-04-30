@@ -6,35 +6,17 @@
   <?php require constant("__layout__") . "nav.php"; ?>
   <?php require constant("__layout__") . "aside.php"; ?>
   <main class="main-content position-relative border-radius-lg ">
-
+    <?php if (isset($_SESSION['message'])): ?>
+      <div class="d-flex justify-content-center" style="position: absolute;z-index: 1;width: 100%;">
+        <div class="alert alert-primary text-center text-white" role="alert">
+          <strong><?php echo $_SESSION['message']; ?></strong>
+        </div>
+      </div>
+      <?php unset($_SESSION['message']); ?>
+    <?php endif ?>
     <div class="container-fluid pt-5">
-      <?php if (isset($_GET['existe'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-info text-center text-white" role="alert">
-            <strong>Este representante ya esta registrado en el sistema</strong>
-          </div>
-        </div>
-      <?php elseif (isset($_GET['registrado'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-primary text-center text-white" role="alert">
-            <strong>Respresentante registrado exitosamente</strong>
-          </div>
-        </div>
-      <?php elseif (isset($_GET['error'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-danger text-center text-white" role="alert">
-            <strong>Ocurrio un error al registrar los datos</strong>
-          </div>
-        </div>
-      <?php elseif (isset($_GET['datos'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-danger text-center text-white" role="alert">
-            <strong>Inserte los datos requeridos</strong>
-          </div>
-        </div>
-      <?php endif ?>
-      <div class="row">
 
+      <div class="row">
         <!-- fomr escritorio -->
         <form action="<?= constant('__baseurl__') ?>home/register_receive_payment" method="post">
           <div class="col-12">
@@ -63,7 +45,7 @@
                     <input type="text" class="d-none" id="student-id" name="id-estudiante">
                   </div>
                 </div>
-                <div class="col-md-3 rounded" id="contenedor-resultados-estudiantes">
+                <div class="col-md-3 rounded" id="contenedor-resultados-filtro">
 
                 </div>
 
@@ -77,20 +59,21 @@
                 <div class="col-md-3 d-amount d-none">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Monto USD-BCV</label>
-                    <input class="form-control" type="text" id="amount-usd-bcv" required>
+                    <input class="form-control" type="text" id="amount-usd-bcv">
                   </div>
                 </div>
+
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
-                    <select class="form-control" name="metodo_pago">
+                    <select class="form-control" id="pago-tipo" name="metodo_pago">
                       <?php foreach ($this->payment_mehtod as $value): ?>
-                        <option value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
+                        <option nameValue="<?= $value['payment_method'] ?>" value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
                       <?php endforeach ?>
                     </select>
                   </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 d-reference d-none">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Referencia</label>
                     <input class="form-control" type="text" name="referencia">

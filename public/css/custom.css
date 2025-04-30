@@ -343,7 +343,7 @@
   border: none;
 }
 
-#contenedor-resultados-estudiantes {
+#contenedor-resultados-filtro {
   background-color: rgba(94, 114, 229, 0.2);
   border-radius: 5px;
   max-height: 150px;
@@ -351,14 +351,14 @@
   cursor: pointer;
 }
 
-#contenedor-resultados-estudiantes ul{
+#contenedor-resultados-filtro ul {
   list-style: none;
   padding-left: 0;
   margin: 0;
   padding: 5px;
 }
 
-#contenedor-resultados-estudiantes ul li{
+#contenedor-resultados-filtro ul li {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -372,7 +372,7 @@
     flex-wrap: wrap;
   }
 
-  .desktop-to-mobile{
+  .desktop-to-mobile {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
