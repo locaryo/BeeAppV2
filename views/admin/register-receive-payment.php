@@ -29,7 +29,7 @@
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Tipo de Ingreso</label>
-                    <select class="form-control" id="ingreso-tipo" name="servicio">
+                    <select class="form-control" id="tipo-ingreso" name="servicio">
                       <option value="0">Seleccionar</option>
                       <?php foreach ($this->income_source as $value): ?>
                         <option nameValue="<?= $value['income_name'] ?>" value="<?= $value['id'] ?>" title="<?= $value['description'] ?>"><?= $value['income_name'] ?></option>
