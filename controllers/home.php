@@ -180,6 +180,7 @@ class Home extends Controller
         }
     }
 
+
     public function register_service_payment()
     {
         $bills        = $this->validarEntrada($_POST['servicio']);

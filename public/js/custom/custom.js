@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
   // End view-data-student go back buttons
+  
   // Navbar breadcrumb
   const breadcrumb = document.getElementById("current-bc");
   const ruta = "beeapp";

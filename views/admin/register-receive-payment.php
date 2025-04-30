@@ -17,7 +17,6 @@
     <div class="container-fluid pt-5">
 
       <div class="row">
-
         <!-- fomr escritorio -->
         <form action="<?= constant('__baseurl__') ?>home/register_receive_payment" method="post">
           <div class="col-12">

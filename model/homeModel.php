@@ -248,6 +248,7 @@ class HomeModel extends Model
         $sql = null;
         $this->db = null;
     }
+    
 
     // seleccionar tipos de ingresos
     public function model_select_income_source()
