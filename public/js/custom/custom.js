@@ -60,11 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 3000); // 3 segundos antes de ocultar
 
-  calcularDolar.init();
-  alumnosModule.init();
-  calcularEdad.init();
-  filtroStudent.init();
-  endDate.init();
 });
 
 const calcularDolar = (() => {
@@ -88,12 +83,12 @@ const calcularDolar = (() => {
     })
     .then((data) => {
       // Aquí puedes manipular los datos obtenidos
-      console.log("Data fetched successfully:", data);
-      console.log("Data fetched successfully:", data.monitors.bcv["price"]);
-      console.log(
-        "Data fetched successfully:",
-        data.monitors.enparalelovzla["price"]
-      );
+      // console.log("Data fetched successfully:", data);
+      // console.log("Data fetched successfully:", data.monitors.bcv["price"]);
+      // console.log(
+      //   "Data fetched successfully:",
+      //   data.monitors.enparalelovzla["price"]
+      // );
 
       bcv = data.monitors.bcv["price"];
       enparalelovzla = data.monitors.enparalelovzla["price"];
@@ -207,6 +202,119 @@ const filtroStudent = (() => {
         item.addEventListener("click", () => {
           inputEstudiante.value = `${estudiante.p_nombre} ${estudiante.p_apellido}`; // Inserta el nombre completo en el input
           inputIdEstudiante.value = estudiante.id;
+          contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
+        });
+        lista.appendChild(item);
+      });
+      contenedorResultados.appendChild(lista);
+    } else if (inputEstudiante && inputEstudiante.value.length > 0) {
+      const mensaje = document.createElement("p");
+      mensaje.textContent =
+        "No se encontraron estudiantes con ese nombre o cédula.";
+      contenedorResultados.appendChild(mensaje);
+    }
+  };
+})();
+
+const filtroTeacher = (() => {
+  const inputIngresoTipo = document.getElementById("gasto-tipo");
+  const inputFiltroContainer = document.querySelector(".d-filtro");
+  const inputIdEstudiante = document.getElementById("teacher-id"); // Obtener el campo oculto
+  const inputEstudiante = inputFiltroContainer
+    ? inputFiltroContainer.querySelector("input")
+    : null;
+  const contenedorResultados = document.getElementById(
+    "contenedor-resultados-filtro"
+  );
+  let typingTimer;
+  const doneTypingInterval = 100;
+
+  if (inputIngresoTipo && inputEstudiante && contenedorResultados) {
+    inputIngresoTipo.addEventListener("change", (event) => {
+      const selectedOption = event.target.options[event.target.selectedIndex];
+      const nameValue = selectedOption.getAttribute("nameValue");
+
+      if (nameValue === "Pago Personal Docente") {
+        inputFiltroContainer.classList.remove("d-none");
+        inputEstudiante.addEventListener("input", (event) => {
+          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
+          clearTimeout(typingTimer);
+          if (event.target.value.length > 0) {
+            typingTimer = setTimeout(() => {
+              selectTeacher(event.target.value);
+            }, doneTypingInterval);
+          } else {
+            mostrarResultados([]);
+          }
+        });
+      } else if (nameValue === "Pago Personal Administrativo") {
+        inputFiltroContainer.classList.remove("d-none");
+        inputEstudiante.addEventListener("input", (event) => {
+          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
+          clearTimeout(typingTimer);
+          if (event.target.value.length > 0) {
+            typingTimer = setTimeout(() => {
+              selectTeacher(event.target.value);
+            }, doneTypingInterval);
+          } else {
+            mostrarResultados([]);
+          }
+        });
+      } else if (nameValue === "Pago Personal de Apoyo(mantenimiento, limpieza, seguridad)") {
+        inputFiltroContainer.classList.remove("d-none");
+        inputEstudiante.addEventListener("input", (event) => {
+          console.log("Evento input disparado:", event.target.value); // Agrega esta línea
+          clearTimeout(typingTimer);
+          if (event.target.value.length > 0) {
+            typingTimer = setTimeout(() => {
+              selectTeacher(event.target.value);
+            }, doneTypingInterval);
+          } else {
+            mostrarResultados([]);
+          }
+        });
+      }else {
+        inputFiltroContainer.classList.add("d-none");
+        mostrarResultados([]);
+      }
+    });
+  }
+
+  const selectTeacher = (value) => {
+    fetch("filtrar_docente", {
+      method: "POST",
+      body: JSON.stringify({
+        query: value,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        mostrarResultados(data);
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const mostrarResultados = (docentes) => {
+    contenedorResultados.innerHTML = "";
+
+    if (docentes && docentes.length > 0) {
+      const lista = document.createElement("ul");
+      lista.classList.add("autocomplete-list"); // Añade una clase para estilos (opcional)
+      docentes.forEach((docente) => {
+        const item = document.createElement("li");
+        item.textContent = `${docente.p_nombre} ${docente.p_apellido}`;
+        item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
+        item.addEventListener("click", () => {
+          inputEstudiante.value = `${docente.p_nombre} ${docente.p_apellido}`; // Inserta el nombre completo en el input
+          inputIdEstudiante.value = docente.id;
           contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
         });
         lista.appendChild(item);
