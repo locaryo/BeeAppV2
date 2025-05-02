@@ -96,6 +96,7 @@ class HomeModel extends Model
     // registrar factura de servicio
     public function model_register_service_payment(
         $bills,
+        $id_teacher,
         $amount,
         $payment_method,
         $reference,
@@ -103,14 +104,16 @@ class HomeModel extends Model
         $date_payment
     ) {
         $sql = $this->db->conn()->prepare("INSERT INTO send_payment (
+                id_teacher,
                 id_bills, 
                 amount, 
                 id_payment_method, 
                 reference,
                 note,
                 date_payment
-            ) VALUES (?,?,?,?,?,?)");
+            ) VALUES (?,?,?,?,?,?,?)");
         if ($sql->execute([
+            $id_teacher,
             $bills,
             $amount,
             $payment_method,
@@ -119,9 +122,9 @@ class HomeModel extends Model
             $date_payment
 
         ])) {
-            header("Location: " . __baseurl__ . "home/view_register_service_payment");
+            return true;
         } else {
-            header("Location: " . __baseurl__ . "home/view_register_service_payment?error");
+            return false;
         }
 
         $sql->closeCursor();
@@ -163,9 +166,9 @@ class HomeModel extends Model
             $start_monthly_payment,
             $end_monthly_payment
         ])) {
-            header("Location: " . __baseurl__ . "home/view_register_receive_payment");
+            return true;
         } else {
-            header("Location: " . __baseurl__ . "home/view_register_receive_payment?error");
+            return false;
         }
 
         $sql->closeCursor();
@@ -245,6 +248,7 @@ class HomeModel extends Model
         $sql = null;
         $this->db = null;
     }
+    
 
     // seleccionar tipos de ingresos
     public function model_select_income_source()
@@ -856,6 +860,20 @@ class HomeModel extends Model
         $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
         return $result;
     }
+
+    // tabla
+    public function model_filtrar_docentes($query)
+    {
+        $sql = $this->db->conn()->prepare("SELECT id, p_nombre, s_nombre, p_apellido, s_apellido, cedula FROM docentes WHERE deleted = 0 AND (p_nombre LIKE ? OR p_apellido LIKE ? OR cedula LIKE ?) ORDER BY p_nombre");
+        $sql->execute([
+            '%' . $query . '%',
+            '%' . $query . '%',
+            '%' . $query . '%'
+        ]);
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        return $result;
+    }
+
 
     // consultar datos por opciones desde tabla
     public function consulting_tabla($nivel, $seccion, $mencion)

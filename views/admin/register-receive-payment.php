@@ -6,35 +6,17 @@
   <?php require constant("__layout__") . "nav.php"; ?>
   <?php require constant("__layout__") . "aside.php"; ?>
   <main class="main-content position-relative border-radius-lg ">
-
+    <?php if (isset($_SESSION['message'])): ?>
+      <div class="d-flex justify-content-center" style="position: absolute;z-index: 1;width: 100%;">
+        <div class="alert alert-primary text-center text-white" role="alert">
+          <strong><?php echo $_SESSION['message']; ?></strong>
+        </div>
+      </div>
+      <?php unset($_SESSION['message']); ?>
+    <?php endif ?>
     <div class="container-fluid pt-5">
-      <?php if (isset($_GET['existe'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-info text-center text-white" role="alert">
-            <strong>Este representante ya esta registrado en el sistema</strong>
-          </div>
-        </div>
-      <?php elseif (isset($_GET['registrado'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-primary text-center text-white" role="alert">
-            <strong>Respresentante registrado exitosamente</strong>
-          </div>
-        </div>
-      <?php elseif (isset($_GET['error'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-danger text-center text-white" role="alert">
-            <strong>Ocurrio un error al registrar los datos</strong>
-          </div>
-        </div>
-      <?php elseif (isset($_GET['datos'])): ?>
-        <div class="d-flex justify-content-center position-absolute" style="left: 0;right: 0;top: 20px;">
-          <div class="alert alert-danger text-center text-white" role="alert">
-            <strong>Inserte los datos requeridos</strong>
-          </div>
-        </div>
-      <?php endif ?>
-      <div class="row">
 
+      <div class="row">
         <!-- form escritorio -->
         <form class="needs-validation" novalidate action="<?= constant('__baseurl__') ?>home/register_receive_payment" method="post">
           <div class="card mb-4">
@@ -45,7 +27,7 @@
             <div class="row mx-1">
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label">Tipo de Ingreso</label>
-                <select class="form-control" id="ingreso-tipo" name="servicio">
+                <select class="form-control" id="tipo-ingreso" name="servicio">
                   <option value="0">Seleccionar</option>
                   <?php foreach ($this->income_source as $value): ?>
                     <option nameValue="<?= $value['income_name'] ?>" value="<?= $value['id'] ?>" title="<?= $value['description'] ?>"><?= $value['income_name'] ?></option>
@@ -66,6 +48,42 @@
                 <input class="form-control" type="text" id="amount-bs" name="monto" required>
               </div>
 
+              <div class="col-md-3">
+                <div class="form-group mx-2">
+                  <label for="example-text-input" class="form-control-label">Monto</label>
+                  <input class="form-control" type="text" id="amount-bs" name="monto" required>
+                </div>
+              </div>
+
+              <div class="col-md-3 d-amount d-none">
+                <div class="form-group mx-2">
+                  <label for="example-text-input" class="form-control-label">Monto USD-BCV</label>
+                  <input class="form-control" type="text" id="amount-usd-bcv">
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group mx-2">
+                  <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
+                  <select class="form-control" id="pago-tipo" name="metodo_pago">
+                    <?php foreach ($this->payment_mehtod as $value): ?>
+                      <option nameValue="<?= $value['payment_method'] ?>" value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
+                    <?php endforeach ?>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3 d-reference d-none">
+                <div class="form-group mx-2">
+                  <label for="example-text-input" class="form-control-label">Referencia</label>
+                  <input class="form-control" type="text" name="referencia">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group mx-2">
+                  <label for="example-text-input" class="form-control-label">Fecha</label>
+                  <input class="form-control" type="date" name="fecha" required>
+                </div>
+              </div>
               <div class="form-group col-12 col-sm-6 col-md-4 px-2 d-amount d-none">
                 <label for="example-text-input" class="form-label">Monto USD-BCV</label>
                 <input class="form-control" type="text" id="amount-usd-bcv" required>

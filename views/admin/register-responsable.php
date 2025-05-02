@@ -34,7 +34,7 @@
       <?php endif ?>
       <div class="row">
         
-        <form class="d-none d-md-flex d-lg-flex d-xl-flex" action="<?=constant('__baseurl__')?>home/insert_responsable" method="post">
+        <form action="<?=constant('__baseurl__')?>home/insert_responsable" method="post">
           <div class="col-12">
 
             <div class="card mb-4">
@@ -44,7 +44,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1">
+              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Primer Nombre</label>
@@ -72,7 +72,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-left align-items-center mx-1">
+              <div class="d-flex justify-content-left align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Cedula</label>
@@ -94,7 +94,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1">
+              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
                     <label for="example-text-input" class="form-control-label">Fecha Nacimiento</label>
@@ -111,95 +111,7 @@
               </div>
 
               <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-primary" type="send">Registrar</button>
-              </div>
-
-            </div>
-            
-          </div>
-
-        </form>
-
-        <form class="d-block d-md-none" action="<?=constant('__baseurl__')?>home/insert_responsable" method="post">
-          <div class="col-12">
-
-            <div class="card mb-4">
-
-              <div class="card-header pb-0">
-                <h6>Nuevo Representante</h6>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Nombre</label>
-                    <input class="form-control" type="text" id="example-text-input" name="p_nombre" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Nombre(opcional)</label>
-                    <input class="form-control" type="text" id="example-text-input" name="s_nombre">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Apellido</label>
-                    <input class="form-control" type="text" id="example-text-input" name="p_apellido" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Apellido(opcional)</label>
-                    <input class="form-control" type="text" id="example-text-input" name="s_apellido">
-                  </div>
-                </div>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Cedula</label>
-                    <input class="form-control" type="number" id="example-text-input" name="cedula" required>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Telefono</label>
-                    <input class="form-control" type="number" id="example-text-input" placeholder="04121234567" name="telefono" required>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Correo</label>
-                    <input class="form-control" type="email" id="example-text-input" placeholder="name@example.com" name="correo">
-                  </div>
-                </div>
-                
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center align-items-center mx-1">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha Nacimiento</label>
-                    <input class="form-control" type="date" id="example-text-input" name="fecha" required>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Direccion</label>
-                    <input class="form-control" type="text" id="example-text-input" placeholder="comunidad, calle, casa" name="direccion" required>
-                  </div>
-                </div>
-                
-              </div>
-
-              <!-- mobile -->
-              <div class="d-flex justify-content-center align-items-center">
+              <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
                 <button class="btn btn-primary" type="send">Registrar</button>
               </div>
 

@@ -180,9 +180,11 @@ class Home extends Controller
         }
     }
 
+
     public function register_service_payment()
     {
         $bills        = $this->validarEntrada($_POST['servicio']);
+        $id_teacher        = $this->validarEntrada($_POST['id-docente']);
         $amount        = $this->validarEntrada($_POST['monto']);
         $payment_method      = $this->validarEntrada($_POST['metodo_pago']);
         $reference      = $this->validarEntrada($_POST['referencia']);
@@ -190,17 +192,29 @@ class Home extends Controller
         $date_payment      = $this->validarEntrada($_POST['fecha']);
 
 
-        if ($bills != "" && $amount != "" && $payment_method != "" && $reference != "" && $date_payment != "") {
-            $this->model->model_register_service_payment(
+        if ($bills != "" && $amount != "" && $payment_method != "" && $date_payment != "" || $bills == 0) {
+            $result = $this->model->model_register_service_payment(
                 $bills,
+                $id_teacher,
                 $amount,
                 $payment_method,
                 $reference,
                 $nota,
                 $date_payment
             );
+            if ($result == true) {
+                $_SESSION['message'] = "Pago registrado exitosamente";  // Guardamos el mensaje en la sesión
+                header("Location: " . __baseurl__ . "home/view_register_service_payment");  // Redirigimos a la vista de horario sin pasar parámetros en la URL
+                exit;
+            } else {
+                $_SESSION['message'] = "Error al registrar el pago";  // Guardamos el mensaje en la sesión
+                header("Location: " . __baseurl__ . "home/view_register_service_payment");  // Redirigimos a la vista de horario con error
+                exit;
+            }
         } else {
-            header("Location: " . __baseurl__ . "home/register_entry?datos");
+            $_SESSION['message'] = "Ingrese todos los datos";
+            header("Location: " . __baseurl__ . "home/view_register_service_payment");
+            exit;
         }
     }
 
@@ -232,8 +246,8 @@ class Home extends Controller
         $start_monthly_payment      = $this->validarEntrada($_POST['start_monthly_payment']);
         $end_monthly_payment      = $this->validarEntrada($_POST['end_monthly_payment']);
 
-        if ($revenue != "" && $amount != "" && $payment_method != "" && $reference != "" && $date_payment != "" || $revenue == 0) {
-            $this->model->model_register_receive_payment(
+        if ($revenue != "" && $amount != "" && $payment_method != "" && $date_payment != "" || $revenue == 0) {
+            $result = $this->model->model_register_receive_payment(
                 $id_student,
                 $revenue,
                 $amount,
@@ -244,8 +258,19 @@ class Home extends Controller
                 $start_monthly_payment,
                 $end_monthly_payment
             );
+            if ($result == true) {
+                $_SESSION['message'] = "Pago registrado exitosamente";  // Guardamos el mensaje en la sesión
+                header("Location: " . __baseurl__ . "home/view_register_receive_payment");  // Redirigimos a la vista de horario sin pasar parámetros en la URL
+                exit;
+            } else {
+                $_SESSION['message'] = "Error al registrar el pago";  // Guardamos el mensaje en la sesión
+                header("Location: " . __baseurl__ . "home/view_register_receive_payment");  // Redirigimos a la vista de horario con error
+                exit;
+            }
         } else {
-            header("Location: " . __baseurl__ . "home/view_register_receive_payment?datos");
+            $_SESSION['message'] = "Ingrese todos los datos";
+            header("Location: " . __baseurl__ . "home/view_register_receive_payment");
+            exit;
         }
     }
 
@@ -437,48 +462,6 @@ class Home extends Controller
         }
     }
 
-    // proceso para registrar pago de matricula
-    public function register_payment()
-    {
-        $id_alumno        = $this->validarEntrada($_POST['id_alumno']);
-        $cedula           = $this->validarEntrada($_POST['cedula']);
-        $fecha_matricula  = $this->validarEntrada($_POST['fecha_matricula']);
-        $instrumento_pago = $this->validarEntrada($_POST['instrumento_pago']);
-        $tipo_pago        = $this->validarEntrada($_POST['tipo_pago']);
-        $monto_total      = $this->validarEntrada($_POST['monto_total']);
-        $fecha_pago       = $this->validarEntrada($_POST['fecha_pago']);
-        $nota             = $this->validarEntrada($_POST['nota']);
-
-        if (
-            $fecha_matricula  != "" &&
-            $instrumento_pago != "" &&
-            $tipo_pago        != "" &&
-            $monto_total      != "" &&
-            $fecha_pago       != "" &&
-            $nota             != ""
-        ) {
-            // Registrar el pago
-            $this->model->register_payment(
-                $id_alumno,
-                $cedula,
-                $fecha_matricula,
-                $instrumento_pago,
-                $tipo_pago,
-                $monto_total,
-                $fecha_pago,
-                $nota
-            );
-
-
-            // Redirigir a la vista de datos del estudiante
-            $this->consulting_cedula($cedula, 'alumnos');
-            exit(); // Asegúrate de salir para que no se ejecute más código
-        } else {
-            header("Location: " . __baseurl__ . "home/consulting_view?datos");
-            exit();
-        }
-    }
-
     public function filtrar_estudiantes()
     {
         // Get raw POST data
@@ -487,6 +470,18 @@ class Home extends Controller
         // Decode JSON data
         $postData = json_decode($rawData, true);
         $result = $this->model->model_filtrar_estudiantes($postData['query']);
+
+        echo json_encode($result);
+    }
+
+    public function filtrar_docente()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->model_filtrar_docentes($postData['query']);
 
         echo json_encode($result);
     }

@@ -26,7 +26,7 @@ include __DIR__ . '/../../config/config.php';
                     <h6 class="text-center">Asignar Horario</h6>
                 </div>
                 <!-- row1 -->
-                <div class="d-flex justify-content-evenly align-items-center">
+                <div class="d-flex justify-content-evenly align-items-center desktop-to-mobile">
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">Dia:</span>
@@ -55,7 +55,7 @@ include __DIR__ . '/../../config/config.php';
                     </div>
                 </div>
                 <!-- row2 -->
-                <div class="d-flex justify-content-evenly align-items-center">
+                <div class="d-flex justify-content-evenly align-items-center desktop-to-mobile">
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">Docente: </span>
@@ -80,7 +80,7 @@ include __DIR__ . '/../../config/config.php';
 
                 </div>
                 <!-- row3 -->
-                <div class="d-flex justify-content-center align-items-center">
+                <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
                     <button class="btn btn-primary" id="btn-asignar">Asignar</button>
                 </div>
             </div>
