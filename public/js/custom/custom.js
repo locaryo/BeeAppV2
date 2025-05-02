@@ -145,44 +145,49 @@ const calcularDolar = (() => {
 const filtroTeacher = (() => {
   const inputIngresoTipo = document.getElementById("gasto-tipo");
   const inputFiltroContainer = document.querySelector(".d-filtro");
-  const inputIdEstudiante = document.getElementById("teacher-id"); // Obtener el campo oculto
-  const inputEstudiante = inputFiltroContainer
-    ? inputFiltroContainer.querySelector("input")
-    : null;
-  const contenedorResultados = document.getElementById(
-    "contenedor-resultados-filtro"
-  );
+  const inputIdPersonal = document.getElementById("teacher-id"); // Obtener el campo oculto
+  const personalList = document.getElementById("personalList");
+  const inputDocente = document.getElementById("filtrar-docente");
+
   let typingTimer;
   const doneTypingInterval = 100;
 
-  if (inputIngresoTipo && inputEstudiante && contenedorResultados) {
+  if (inputIngresoTipo && inputDocente) {
     inputIngresoTipo.addEventListener("change", event => {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const nameValue = selectedOption.getAttribute("nameValue");
 
       if (nameValue === "Pago Personal Docente") {
         inputFiltroContainer.classList.remove("d-none");
-        inputEstudiante.addEventListener("input", event => {
+        inputDocente.addEventListener("input", event => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputDocente.classList.add("rounded-0", "rounded-top");
+            personalList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectTeacher(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputDocente.classList.remove("rounded-0", "rounded-top");
+            personalList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
       } else if (nameValue === "Pago Personal Administrativo") {
         inputFiltroContainer.classList.remove("d-none");
-        inputEstudiante.addEventListener("input", event => {
+        inputDocente.addEventListener("input", event => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputDocente.classList.add("rounded-0", "rounded-top");
+            personalList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectTeacher(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputDocente.classList.remove("rounded-0", "rounded-top");
+            personalList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
@@ -191,14 +196,18 @@ const filtroTeacher = (() => {
         "Pago Personal de Apoyo(mantenimiento, limpieza, seguridad)"
       ) {
         inputFiltroContainer.classList.remove("d-none");
-        inputEstudiante.addEventListener("input", event => {
+        inputDocente.addEventListener("input", event => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputDocente.classList.add("rounded-0", "rounded-top");
+            personalList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectTeacher(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputDocente.classList.remove("rounded-0", "rounded-top");
+            personalList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
@@ -232,47 +241,43 @@ const filtroTeacher = (() => {
   };
 
   const mostrarResultados = docentes => {
-    contenedorResultados.innerHTML = "";
+    personalList.innerHTML = "";
 
     if (docentes && docentes.length > 0) {
-      const lista = document.createElement("ul");
-      lista.classList.add("autocomplete-list"); // Añade una clase para estilos (opcional)
       docentes.forEach(docente => {
-        const item = document.createElement("li");
+        const item = document.createElement("option");
         item.textContent = `${docente.p_nombre} ${docente.p_apellido}`;
+        item.value = docente.id;
         item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
         item.addEventListener("click", () => {
-          inputEstudiante.value = `${docente.p_nombre} ${docente.p_apellido}`; // Inserta el nombre completo en el input
-          inputIdEstudiante.value = docente.id;
-          contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          inputDocente.value = `${docente.p_nombre} ${docente.p_apellido}`; // Inserta el nombre completo en el input
+          inputIdPersonal.value = docente.id;
+          personalList.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          inputDocente.classList.remove("rounded-0", "rounded-top");
+          personalList.classList.remove("d-block");
         });
-        lista.appendChild(item);
+        personalList.appendChild(item);
       });
-      contenedorResultados.appendChild(lista);
-    } else if (inputEstudiante && inputEstudiante.value.length > 0) {
-      const mensaje = document.createElement("p");
-      mensaje.textContent =
-        "No se encontraron estudiantes con ese nombre o cédula.";
-      contenedorResultados.appendChild(mensaje);
+    } else if (inputDocente && inputDocente.value.length > 0) {
+      const noResult = document.createElement("option");
+      noResult.textContent = "Sin resultados";
+      personalList.appendChild(noResult);
     }
   };
 })();
 
 const filtroStudent = (() => {
-  const inputIngresoTipo = document.getElementById("tipo-ingreso");
+  const inputIngresoTipo = document.getElementById("ingreso-tipo");
   const inputFiltroContainer = document.querySelector(".d-filtro");
   const inputFechaContainer = document.querySelector(".d-fecha");
   const inputIdEstudiante = document.getElementById("student-id"); // Obtener el campo oculto
-  const inputEstudiante = inputFiltroContainer
-    ? inputFiltroContainer.querySelector("input")
-    : null;
-  const contenedorResultados = document.getElementById(
-    "contenedor-resultados-filtro"
-  );
+  const studentsList = document.getElementById("studentsList");
+  const inputEstudiante = document.getElementById("filtrar-estudiante");
+
   let typingTimer;
   const doneTypingInterval = 100;
 
-  if (inputIngresoTipo && inputEstudiante && contenedorResultados) {
+  if (inputIngresoTipo && inputEstudiante) {
     inputIngresoTipo.addEventListener("change", event => {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const nameValue = selectedOption.getAttribute("nameValue");
@@ -284,10 +289,14 @@ const filtroStudent = (() => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputEstudiante.classList.add("rounded-0", "rounded-top");
+            studentsList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectStudent(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputEstudiante.classList.remove("rounded-0", "rounded-top");
+            studentsList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
@@ -298,15 +307,18 @@ const filtroStudent = (() => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputEstudiante.classList.add("rounded-0", "rounded-top");
+            studentsList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectStudent(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputEstudiante.classList.remove("rounded-0", "rounded-top");
+            studentsList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
       } else {
-        console.log("No se seleccionó una opción válida"); // Agrega esta línea
         inputFiltroContainer.classList.add("d-none");
         inputFechaContainer.classList.add("d-none");
         mostrarResultados([]);
@@ -337,28 +349,27 @@ const filtroStudent = (() => {
   };
 
   const mostrarResultados = estudiantes => {
-    contenedorResultados.innerHTML = "";
+    studentsList.innerHTML = "";
 
     if (estudiantes && estudiantes.length > 0) {
-      const lista = document.createElement("ul");
-      lista.classList.add("autocomplete-list"); // Añade una clase para estilos (opcional)
       estudiantes.forEach(estudiante => {
-        const item = document.createElement("li");
+        const item = document.createElement("option");
         item.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
+        item.value = estudiante.id;
         item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
         item.addEventListener("click", () => {
           inputEstudiante.value = `${estudiante.p_nombre} ${estudiante.p_apellido}`; // Inserta el nombre completo en el input
           inputIdEstudiante.value = estudiante.id;
-          contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          studentsList.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          inputEstudiante.classList.remove("rounded-0", "rounded-top");
+          studentsList.classList.remove("d-block");
         });
-        lista.appendChild(item);
+        studentsList.appendChild(item);
       });
-      contenedorResultados.appendChild(lista);
     } else if (inputEstudiante && inputEstudiante.value.length > 0) {
-      const mensaje = document.createElement("p");
-      mensaje.textContent =
-        "No se encontraron estudiantes con ese nombre o cédula.";
-      contenedorResultados.appendChild(mensaje);
+      const noResult = document.createElement("option");
+      noResult.textContent = "Sin resultados";
+      studentsList.appendChild(noResult);
     }
   };
 })();

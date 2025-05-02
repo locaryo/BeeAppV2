@@ -136,11 +136,17 @@
                 </select>
               </div>
             </div>
+
             <div class="col-auto">
               <p class="card-text px-3 mb-3"><span class="text-danger">(*)</span> Indica que el campo es obligatorio.</p>
             </div>
-            <div class="col-auto align-self-center">
-              <button class="btn btn-primary" type="send">Registrar</button>
+            <div class="row mx-1 justify-content-center mt-2">
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-primary" type="send">Registrar</button>
+              </div>
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-secondary go-back" type="button">Regresar</button>
+              </div>
             </div>
           </div>
         </form>

@@ -35,99 +35,83 @@
       <?php endif ?>
       <div class="row">
 
-        <form action="<?= constant('__baseurl__') ?>home/edit_representante" method="post">
-          <div class="col-12">
+        <form class="needs-validation" novalidate action="<?= constant('__baseurl__') ?>home/edit_representante" method="post">
 
-            <div class="card mb-4">
+          <div class="card mb-4">
 
-              <div class="card-header pb-0">
-                <h6>Representante</h6>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Nombre</label>
-                    <input value="<?= $this->data['p_nombre_r'] ?>" class="form-control" type="text" id="example-text-input" name="p_nombre" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Nombre(opcional)</label>
-                    <input value="<?= $this->data['s_nombre_r'] ?>" class="form-control" type="text" id="example-text-input" name="s_nombre">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Apellido</label>
-                    <input value="<?= $this->data['p_apellido_r'] ?>" class="form-control" type="text" id="example-text-input" name="p_apellido" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Apellido(opcional)</label>
-                    <input value="<?= $this->data['s_apellido_r'] ?>" class="form-control" type="text" id="example-text-input" name="s_apellido">
-                  </div>
-                </div>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-left align-items-center mx-1 desktop-to-mobile">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Cedula</label>
-                    <input value="<?= $this->data['cedula_r'] ?>" class="form-control" type="number" id="example-text-input" name="cedula" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Telefono</label>
-                    <input value="<?= $this->data['telefono'] ?>" class="form-control" type="number" id="example-text-input" placeholder="04121234567" name="telefono" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Correo</label>
-                    <input value="<?= $this->data['correo'] ?>" class="form-control" type="email" id="example-text-input" placeholder="name@example.com" name="correo">
-                  </div>
-                </div>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha Nacimineto</label>
-                    <input value="<?= $this->data['fecha_r'] ?>" class="form-control" type="date" id="example-text-input" name="fecha" required>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Direccion</label>
-                    <input value="<?= $this->data['direccion'] ?>" class="form-control" type="text" id="example-text-input" placeholder="comunidad, calle, casa, referencia" name="direccion" required>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- desktop -->
-              <input type="text" name="id" value="<?= $this->data['id'] ?>" hidden>
-              <input type="text" name="opcion" value="representante" hidden>
-              <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
-                <button class="btn btn-primary mx-2" name="action" value="update" type="submit">Actualizar</button>
-                <button class="btn btn-danger mx-2" name="action" value="delete" type="submit">Eliminar</button>
-              </div>
-
+            <div class="card-header pb-0">
+              <h6>Representante</h6>
             </div>
+
+            <!-- desktop -->
+            <div class="row mx-1">
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Primer Nombre</label>
+                <input value="<?= $this->data['p_nombre_r'] ?>" class="form-control" type="text" id="example-text-input" name="p_nombre" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label">Segundo Nombre</label>
+                <input value="<?= $this->data['s_nombre_r'] ?>" class="form-control" type="text" id="example-text-input" name="s_nombre">
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Primer Apellido</label>
+                <input value="<?= $this->data['p_apellido_r'] ?>" class="form-control" type="text" id="example-text-input" name="p_apellido" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label">Segundo Apellido</label>
+                <input value="<?= $this->data['s_apellido_r'] ?>" class="form-control" type="text" id="example-text-input" name="s_apellido">
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Cedula</label>
+                <input value="<?= $this->data['cedula_r'] ?>" class="form-control" type="number" id="example-text-input" name="cedula" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Telefono</label>
+                <input value="<?= $this->data['telefono'] ?>" class="form-control" type="number" id="example-text-input" placeholder="04121234567" name="telefono" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label">Correo</label>
+                <input value="<?= $this->data['correo'] ?>" class="form-control" type="email" id="example-text-input" placeholder="name@example.com" name="correo">
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Fecha Nacimineto</label>
+                <input value="<?= $this->data['fecha_r'] ?>" class="form-control" type="date" id="example-text-input" name="fecha" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Direccion</label>
+                <input value="<?= $this->data['direccion'] ?>" class="form-control" type="text" id="example-text-input" placeholder="comunidad, calle, casa, referencia" name="direccion" required>
+              </div>
+            </div>
+            <div class="col-auto">
+              <p class="card-text px-3 mb-3"><span class="text-danger">(*)</span> Indica que el campo es obligatorio.</p>
+            </div>
+            <div class="row mx-1 justify-content-center mt-2">
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-primary" name="action" value="update" type="submit">Actualizar</button>
+              </div>
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-danger" name="action" value="delete" type="submit">Eliminar</button>
+              </div>
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-secondary go-back" type="button">Regresar</button>
+              </div>
+            </div>
+          </div>
+          <!-- desktop -->
+          <input type="text" name="id" value="<?= $this->data['id'] ?>" hidden>
+          <input type="text" name="opcion" value="representante" hidden>
+          <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
+
 
           </div>
 
-        </form>
-
       </div>
 
-      <?php require constant("__layout__") . "footer.php"; ?>
+      </form>
+
+    </div>
+
+    <?php require constant("__layout__") . "footer.php"; ?>
 
     </div>
   </main>

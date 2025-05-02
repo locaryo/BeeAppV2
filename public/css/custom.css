@@ -379,7 +379,7 @@
   }
 }
 
-#studentsList {
+.filterable-list {
   width: calc(100% - 1rem);
   max-height: 10rem;
   overflow-y: auto;

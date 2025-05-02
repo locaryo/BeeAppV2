@@ -26,9 +26,9 @@
             <!-- desktop -->
             <div class="row mx-1">
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
-                <label for="example-text-input" class="form-label">Tipo de Ingreso</label>
-                <select class="form-control" id="tipo-ingreso" name="servicio">
-                  <option value="0">Seleccionar</option>
+                <label for="example-text-input" class="form-label required">Tipo de Ingreso</label>
+                <select class="form-control" id="ingreso-tipo" name="servicio">
+                  <option selected disabled value="">Seleccionar</option>
                   <?php foreach ($this->income_source as $value): ?>
                     <option nameValue="<?= $value['income_name'] ?>" value="<?= $value['id'] ?>" title="<?= $value['description'] ?>"><?= $value['income_name'] ?></option>
                   <?php endforeach ?>
@@ -36,9 +36,9 @@
               </div>
 
               <div class="form-group col-12 col-sm-6 col-md-4 px-2 d-filtro d-none position-relative">
-                <label for="example-text-input" class="form-label">Filtrar Estudiante</label>
-                <input class="form-control" id="filtrar-estudiante" name="filtro-estudiante" list="" role="listbox" autocomplete="off">
-                <datalist class="p-1 overflow-y-auto rounded-0 rounded-bottom position-absolute bg-white border-bottom border-end border-start border-primary" id="studentsList">
+                <label for="example-text-input" class="form-label required">Filtrar Estudiante</label>
+                <input class="form-control" id="filtrar-estudiante" name="filtro-estudiante" list="" role="listbox" autocomplete="off" required>
+                <datalist class="filterable-list p-1 overflow-y-auto rounded-0 rounded-bottom position-absolute bg-white border-bottom border-end border-start border-primary" id="studentsList">
                 </datalist>
                 <input type="text" class="d-none" id="student-id" name="id-estudiante">
               </div>
@@ -48,85 +48,64 @@
                 <input class="form-control" type="text" id="amount-bs" name="monto" required>
               </div>
 
-              <div class="col-md-3">
-                <div class="form-group mx-2">
-                  <label for="example-text-input" class="form-control-label">Monto</label>
-                  <input class="form-control" type="text" id="amount-bs" name="monto" required>
-                </div>
-              </div>
-
-              <div class="col-md-3 d-amount d-none">
-                <div class="form-group mx-2">
-                  <label for="example-text-input" class="form-control-label">Monto USD-BCV</label>
-                  <input class="form-control" type="text" id="amount-usd-bcv">
-                </div>
-              </div>
-
-              <div class="col-md-3">
-                <div class="form-group mx-2">
-                  <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
-                  <select class="form-control" id="pago-tipo" name="metodo_pago">
-                    <?php foreach ($this->payment_mehtod as $value): ?>
-                      <option nameValue="<?= $value['payment_method'] ?>" value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
-                    <?php endforeach ?>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-3 d-reference d-none">
-                <div class="form-group mx-2">
-                  <label for="example-text-input" class="form-control-label">Referencia</label>
-                  <input class="form-control" type="text" name="referencia">
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group mx-2">
-                  <label for="example-text-input" class="form-control-label">Fecha</label>
-                  <input class="form-control" type="date" name="fecha" required>
-                </div>
-              </div>
               <div class="form-group col-12 col-sm-6 col-md-4 px-2 d-amount d-none">
                 <label for="example-text-input" class="form-label">Monto USD-BCV</label>
-                <input class="form-control" type="text" id="amount-usd-bcv" required>
+                <input class="form-control" type="text" id="amount-usd-bcv">
               </div>
+
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label">Metodo de Pago</label>
-                <select class="form-control" name="metodo_pago">
+                <select class="form-control" id="pago-tipo" name="metodo_pago">
                   <?php foreach ($this->payment_mehtod as $value): ?>
-                    <option value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
+                    <option nameValue="<?= $value['payment_method'] ?>" value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
                   <?php endforeach ?>
                 </select>
               </div>
-              <div class="form-group col-12 col-sm-6 col-md-4 px-2">
-                <label for="example-text-input" class="form-label">Referencia</label>
-                <input class="form-control" type="text" name="referencia">
+              <div class="form-group col-12 col-sm-6 col-md-4 px-2 d-reference d-none">
+                <label for="example-text-input" class="form-label required">Referencia</label>
+                <input class="form-control" type="text" name="referencia" required>
               </div>
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
-                <label for="example-text-input" class="form-label">Fecha</label>
+                <label for="example-text-input" class="form-label required">Fecha</label>
                 <input class="form-control" type="date" name="fecha" required>
               </div>
-
               <div class="form-group col-12 col-sm-6 col-md-4 px-2 d-fecha d-none">
-                <label for="example-text-input" class="form-label">Mes a Pagar</label>
-                <input class="form-control" type="date" name="start_monthly_payment">
+                <label for="example-text-input" class="form-label required">Mes a Pagar</label>
+                <input class="form-control" type="date" name="start_monthly_payment" required>
                 <input class="form-control d-none" id="end_monthly_payment" type="date" name="end_monthly_payment">
               </div>
-
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label">Nota</label>
                 <input class="form-control" type="text" name="nota">
               </div>
             </div>
-
-            <!-- desktop -->
-            <div class="d-flex justify-content-center align-items-center">
-              <button class="btn btn-success mx-2" name="action" type="submit">Registrar</button>
+            <div class="col-auto">
+              <p class="card-text px-3 mb-3"><span class="text-danger">(*)</span> Indica que el campo es obligatorio.</p>
             </div>
+            <div class="row mx-1 justify-content-center mt-2">
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-primary" type="send">Registrar</button>
+              </div>
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-secondary go-back" type="button">Regresar</button>
+              </div>
+            </div>
+
+
+
+
           </div>
-        </form>
 
+          <!-- desktop -->
+          <div class="d-flex justify-content-center align-items-center">
+            <button class="btn btn-success mx-2" name="action" type="submit">Registrar</button>
+          </div>
       </div>
+      </form>
 
-      <?php require constant("__layout__") . "footer.php"; ?>
+    </div>
+
+    <?php require constant("__layout__") . "footer.php"; ?>
 
     </div>
   </main>

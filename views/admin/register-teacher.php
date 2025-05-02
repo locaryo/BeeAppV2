@@ -35,145 +35,124 @@
       <?php endif ?>
       <div class="row">
 
-        <form action="<?= constant('__baseurl__') ?>home/insert_teacher" method="post">
-          <div class="col-12">
+        <form class="needs-validation" novalidate action="<?= constant('__baseurl__') ?>home/insert_teacher" method="post">
 
-            <div class="card mb-4">
+          <div class="card mb-4">
 
-              <div class="card-header pb-0">
-                <h6>Nuevo Docente</h6>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Nombre</label>
-                    <input class="form-control" type="text" id="example-text-input" name="p_nombre" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Nombre(opcional)</label>
-                    <input class="form-control" type="text" id="example-text-input" name="s_nombre">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Primer Apellido</label>
-                    <input class="form-control" type="text" id="example-text-input" name="p_apellido" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Segundo Apellido(opcional)</label>
-                    <input class="form-control" type="text" id="example-text-input" name="s_apellido">
-                  </div>
-                </div>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Cedula</label>
-                    <input class="form-control" type="number" id="example-text-input" name="cedula" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Telefono</label>
-                    <input class="form-control" type="number" id="example-text-input" placeholder="04121234567" name="telefono" required>
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Correo</label>
-                    <input class="form-control" type="email" id="example-text-input" placeholder="name@example.com" name="correo">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Areas de Formación</label>
-                    <input class="form-control" type="text" id="example-text-input" placeholder="quimica,ciencias" name="areas_formacion" required>
-                  </div>
-                </div>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">
-                <div class="col-md-3">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha Nacimiento</label>
-                    <input class="form-control" type="date" id="example-text-input" name="fecha" required>
-                  </div>
-                </div>
-                <div class="col-md-9">
-                  <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Direccion</label>
-                    <input class="form-control" type="text" id="example-text-input" placeholder="comunidad, calle, casa" name="direccion" required>
-                  </div>
-                </div>
-
-              </div>
-
-              <div class="d-flex align-items-center mx-3 desktop-to-mobile">
-                <h6>Niveles que atiende !</h6>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center align-items-center mx-1 my-3 desktop-to-mobile">
-                <div class="col-md-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="primero">
-                    <label class="custom-control-label">Primer Año</label>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="segundo">
-                    <label class="custom-control-label">Segundo Año</label>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="tercero">
-                    <label class="custom-control-label">Tercer Año</label>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="cuarto">
-                    <label class="custom-control-label">Cuarto Año</label>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="quinto">
-                    <label class="custom-control-label">Quinto Año</label>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="sexto">
-                    <label class="custom-control-label">Sexto Año</label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
-                <button class="btn btn-primary" type="send">Registrar</button>
-              </div>
-
+            <div class="card-header pb-0">
+              <h6>Nuevo Docente</h6>
             </div>
 
+            <!-- desktop -->
+            <div class="row mx-1">
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Primer Nombre</label>
+                <input class="form-control" type="text" id="example-text-input" name="p_nombre" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label">Segundo Nombre</label>
+                <input class="form-control" type="text" id="example-text-input" name="s_nombre">
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Primer Apellido</label>
+                <input class="form-control" type="text" id="example-text-input" name="p_apellido" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label">Segundo Apellido</label>
+                <input class="form-control" type="text" id="example-text-input" name="s_apellido">
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Cedula</label>
+                <input class="form-control" type="number" id="example-text-input" name="cedula" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Telefono</label>
+                <input class="form-control" type="number" id="example-text-input" placeholder="04121234567" name="telefono" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label">Correo</label>
+                <input class="form-control" type="email" id="example-text-input" placeholder="name@example.com" name="correo">
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Areas de Formación</label>
+                <input class="form-control" type="text" id="example-text-input" placeholder="quimica,ciencias" name="areas_formacion" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
+                <label for="example-text-input" class="form-label required">Fecha Nacimiento</label>
+                <input class="form-control" type="date" id="example-text-input" name="fecha" required>
+              </div>
+              <div class="form-group col-12 col-sm-6 col-md-9 px-2">
+                <label for="example-text-input" class="form-label required">Direccion</label>
+                <input class="form-control" type="text" id="example-text-input" placeholder="comunidad, calle, casa" name="direccion" required>
+              </div>
+            </div>
+            <div class="col-auto">
+              <p class="card-text px-3 mb-3"><span class="text-danger">(*)</span> Indica que el campo es obligatorio.</p>
+            </div>
+            <div class="d-flex align-items-center mx-3 desktop-to-mobile">
+              <h6>Niveles que atiende !</h6>
+            </div>
+
+            <!-- desktop -->
+            <div class="row justify-content-center align-items-center mx-1">
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="primero">
+                  <label class="custom-control-label">Primer Año</label>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="segundo">
+                  <label class="custom-control-label">Segundo Año</label>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="tercero">
+                  <label class="custom-control-label">Tercer Año</label>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="cuarto">
+                  <label class="custom-control-label">Cuarto Año</label>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="quinto">
+                  <label class="custom-control-label">Quinto Año</label>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" name="sexto">
+                  <label class="custom-control-label">Sexto Año</label>
+                </div>
+              </div>
+            </div>
+            <div class="row mx-1 justify-content-center mt-2">
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-primary" type="send">Registrar</button>
+              </div>
+              <div class="col-12 col-sm-4 d-grid px-2">
+                <button class="btn btn-secondary go-back" type="button">Regresar</button>
+              </div>
+            </div>
           </div>
-
-        </form>
-
       </div>
+    </div>
 
-      <?php require constant("__layout__") . "footer.php"; ?>
+
+
+    </div>
+
+    </form>
+
+    </div>
+
+    <?php require constant("__layout__") . "footer.php"; ?>
 
     </div>
   </main>
