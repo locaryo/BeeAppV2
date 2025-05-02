@@ -48,7 +48,7 @@
               <div class="d-flex justify-content-center align-items-center flex-column mx-1 desktop-to-mobile">
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Tipo de Servicio</label>
+                    <label for="example-text-input" class="form-label">Tipo de Servicio</label>
                     <select class="form-control" id="example-text-input" name="servicio">
                       <?php foreach ($this->income_source as $value): ?>
                         <option value="<?= $value['id'] ?>" title="<?= $value['description'] ?>"><?= $value['expenses'] ?></option>
@@ -59,14 +59,14 @@
 
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Monto</label>
+                    <label for="example-text-input" class="form-label">Monto</label>
                     <input class="form-control" type="text" id="example-text-input" name="monto" required>
                   </div>
                 </div>
 
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Metodo de Pago</label>
+                    <label for="example-text-input" class="form-label">Metodo de Pago</label>
                     <select class="form-control" id="example-text-input" name="metodo_pago">
                       <?php foreach ($this->payment_mehtod as $value): ?>
                         <option value="<?= $value['id'] ?>"><?= $value['payment_method'] ?></option>
@@ -77,20 +77,20 @@
 
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Referencia</label>
+                    <label for="example-text-input" class="form-label">Referencia</label>
                     <input class="form-control" type="text" id="example-text-input" name="referencia" required>
                   </div>
                 </div>
 
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Fecha de Pago</label>
+                    <label for="example-text-input" class="form-label">Fecha de Pago</label>
                     <input class="form-control" type="date" id="example-text-input" name="fecha" required>
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group mx-2">
-                    <label for="example-text-input" class="form-control-label">Nota</label>
+                    <label for="example-text-input" class="form-label">Nota</label>
                     <input class="form-control" type="text" id="example-text-input" name="nota">
                   </div>
                 </div>
@@ -110,7 +110,7 @@
       </div>
 
 
-      
+
       <?php require constant("__layout__") . "footer.php"; ?>
 
     </div>

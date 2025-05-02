@@ -1,6 +1,6 @@
 // Inicializamos el módulo cuando el DOM esté cargado
 document.addEventListener("DOMContentLoaded", () => {
-    //view-data-student go back buttons
+  //view-data-student go back buttons
   const buttons = document.querySelectorAll(".go-back");
   buttons.forEach(button => {
     button.addEventListener("click", () => {
@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // End view-data-student go back buttons
   // Navbar breadcrumb
   const breadcrumb = document.getElementById("current-bc");
+  const ruta = "beeapp";
   const currentRoute = window.location.pathname;
   const crumbs = [
     "Dashboard",
@@ -26,18 +27,18 @@ document.addEventListener("DOMContentLoaded", () => {
     "Consulta de estudiante"
   ];
   const routes = [
-    "/beeappV2/home/dashboard",
-    "/beeappV2/home/register_responsable_view",
-    "/beeappV2/home/register_student_view",
-    "/beeappV2/home/register_teacher_view",
-    "/beeappV2/home/consulting_view",
-    "/beeappV2/home/schedule_view",
-    "/beeappV2/home/tables",
-    "/beeappV2/home/documents",
-    "/beeappV2/home/view_register_receive_payment",
-    "/beeappV2/home/view_register_service_payment",
-    "/beeappV2/home/view_institution",
-    "/beeappV2/home/view_data_student"
+    "/" + `${ruta}` + "/home/dashboard",
+    "/" + `${ruta}` + "/home/register_responsable_view",
+    "/" + `${ruta}` + "/home/register_student_view",
+    "/" + `${ruta}` + "/home/register_teacher_view",
+    "/" + `${ruta}` + "/home/consulting_view",
+    "/" + `${ruta}` + "/home/schedule_view",
+    "/" + `${ruta}` + "/home/tables",
+    "/" + `${ruta}` + "/home/documents",
+    "/" + `${ruta}` + "/home/view_register_receive_payment",
+    "/" + `${ruta}` + "/home/view_register_service_payment",
+    "/" + `${ruta}` + "/home/view_institution",
+    "/" + `${ruta}` + "/home/view_data_student"
   ];
   function getBreadcrumb() {
     routes.forEach((route, index) => {
@@ -72,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   })();
   // End custom form validation
+
   setTimeout(() => {
     let alertBox = document.querySelector(".alert");
     if (alertBox) {
@@ -98,17 +100,20 @@ const calcularDolar = (() => {
   const inputMontoBs = document.getElementById("amount-bs");
   const divUsdBs = document.querySelector(".d-amount");
 
+  if (!inputMontoBs) return; // Si no existe el input, salimos de la función
+  if (!divUsdBs) return; // Si no existe el div, salimos de la función
+
   fetch(
     "https://pydolarve.org/api/v2/dollar?page=alcambio&format_date=default&rounded_price=true"
   )
-    .then((response) => {
+    .then(response => {
       // Verificamos si la respuesta es correcta
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     })
-    .then((data) => {
+    .then(data => {
       // Aquí puedes manipular los datos obtenidos
       console.log("Data fetched successfully:", data);
       console.log("Data fetched successfully:", data.monitors.bcv["price"]);
@@ -120,12 +125,12 @@ const calcularDolar = (() => {
       bcv = data.monitors.bcv["price"];
       enparalelovzla = data.monitors.enparalelovzla["price"];
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Error fetching dollar data:", error);
     });
 
   if (inputMontoBs) {
-    inputMontoBs.addEventListener("input", (event) => {
+    inputMontoBs.addEventListener("input", event => {
       const montoBs = event.target.value;
       if (montoBs > 0) {
         divUsdBs.classList.remove("d-none");
@@ -144,51 +149,54 @@ const filtroStudent = (() => {
   const inputFiltroContainer = document.querySelector(".d-filtro");
   const inputFechaContainer = document.querySelector(".d-fecha");
   const inputIdEstudiante = document.getElementById("student-id"); // Obtener el campo oculto
-  const inputEstudiante = inputFiltroContainer
-    ? inputFiltroContainer.querySelector("input")
-    : null;
-  const contenedorResultados = document.getElementById(
-    "contenedor-resultados-estudiantes"
-  );
+  const studentsList = document.getElementById("studentsList");
+  const inputEstudiante = document.getElementById("filtrar-estudiante");
+
   let typingTimer;
   const doneTypingInterval = 100;
 
-  if (inputIngresoTipo && inputEstudiante && contenedorResultados) {
-    inputIngresoTipo.addEventListener("change", (event) => {
+  if (inputIngresoTipo && inputEstudiante) {
+    inputIngresoTipo.addEventListener("change", event => {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const nameValue = selectedOption.getAttribute("nameValue");
 
       if (nameValue === "Matrícula") {
         inputFiltroContainer.classList.remove("d-none");
         inputFechaContainer.classList.add("d-none");
-        inputEstudiante.addEventListener("input", (event) => {
+        inputEstudiante.addEventListener("input", event => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputEstudiante.classList.add("rounded-0", "rounded-top");
+            studentsList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectStudent(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputEstudiante.classList.remove("rounded-0", "rounded-top");
+            studentsList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
-      }else if (nameValue === "Mensualidades") {
+      } else if (nameValue === "Mensualidades") {
         inputFiltroContainer.classList.remove("d-none");
         inputFechaContainer.classList.remove("d-none");
-        inputEstudiante.addEventListener("input", (event) => {
+        inputEstudiante.addEventListener("input", event => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
+            inputEstudiante.classList.add("rounded-0", "rounded-top");
+            studentsList.classList.add("d-block");
             typingTimer = setTimeout(() => {
               selectStudent(event.target.value);
             }, doneTypingInterval);
           } else {
+            inputEstudiante.classList.remove("rounded-0", "rounded-top");
+            studentsList.classList.remove("d-block");
             mostrarResultados([]);
           }
         });
-      } 
-      
-      else {
+      } else {
         inputFiltroContainer.classList.add("d-none");
         inputFechaContainer.classList.add("d-none");
         mostrarResultados([]);
@@ -196,62 +204,61 @@ const filtroStudent = (() => {
     });
   }
 
-  const selectStudent = (value) => {
+  const selectStudent = value => {
     fetch("filtrar_estudiantes", {
       method: "POST",
       body: JSON.stringify({
-        query: value,
+        query: value
       }),
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" }
     })
-      .then((response) => {
+      .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then((data) => {
+      .then(data => {
         mostrarResultados(data);
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("Error al filtrar estudiantes:", error);
       });
   };
 
-  const mostrarResultados = (estudiantes) => {
-
-    contenedorResultados.innerHTML = "";
+  const mostrarResultados = estudiantes => {
+    studentsList.innerHTML = "";
 
     if (estudiantes && estudiantes.length > 0) {
-      const lista = document.createElement("ul");
-      lista.classList.add("autocomplete-list"); // Añade una clase para estilos (opcional)
-      estudiantes.forEach((estudiante) => {
-        const item = document.createElement("li");
+      estudiantes.forEach(estudiante => {
+        const item = document.createElement("option");
         item.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
+        item.value = estudiante.id;
         item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
         item.addEventListener("click", () => {
           inputEstudiante.value = `${estudiante.p_nombre} ${estudiante.p_apellido}`; // Inserta el nombre completo en el input
           inputIdEstudiante.value = estudiante.id;
-          contenedorResultados.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          studentsList.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          inputEstudiante.classList.remove("rounded-0", "rounded-top");
+          studentsList.classList.remove("d-block");
         });
-        lista.appendChild(item);
+        studentsList.appendChild(item);
       });
-      contenedorResultados.appendChild(lista);
     } else if (inputEstudiante && inputEstudiante.value.length > 0) {
-      const mensaje = document.createElement("p");
-      mensaje.textContent =
-        "No se encontraron estudiantes con ese nombre o cédula.";
-      contenedorResultados.appendChild(mensaje);
+      const noResult = document.createElement("option");
+      noResult.textContent = "Sin resultados";
+      studentsList.appendChild(noResult);
     }
   };
 })();
 
 const endDate = (() => {
   const inputFechaContainer = document.querySelector(".d-fecha");
+  if (!inputFechaContainer) return; // Si no existe el contenedor, salimos de la función
   const inputFecha = inputFechaContainer.querySelector("input");
   const inputEndFecha = document.getElementById("end_monthly_payment");
 
-  inputFecha.addEventListener("change", (event) => {
+  inputFecha.addEventListener("change", event => {
     const fechaSeleccionada = event.target.value;
 
     if (fechaSeleccionada) {
@@ -267,8 +274,13 @@ const endDate = (() => {
       ultimoDiaDelMes.setDate(ultimoDiaDelMes.getDate() - 1);
 
       const añoUltimoDia = ultimoDiaDelMes.getFullYear();
-      const mesUltimoDia = (ultimoDiaDelMes.getMonth() + 1).toString().padStart(2, '0');
-      const diaUltimoDia = ultimoDiaDelMes.getDate().toString().padStart(2, '0');
+      const mesUltimoDia = (ultimoDiaDelMes.getMonth() + 1)
+        .toString()
+        .padStart(2, "0");
+      const diaUltimoDia = ultimoDiaDelMes
+        .getDate()
+        .toString()
+        .padStart(2, "0");
       const fechaFormateada = `${añoUltimoDia}-${mesUltimoDia}-${diaUltimoDia}`;
 
       console.log("Fecha seleccionada:", fechaSeleccionada);
@@ -308,9 +320,9 @@ const alumnosModule = (() => {
         body: JSON.stringify({
           nivel: selectedNivel,
           seccion: selectedSeccion,
-          mencion: selectedMencion,
+          mencion: selectedMencion
         }),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" }
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -329,12 +341,12 @@ const alumnosModule = (() => {
   };
 
   // Función para actualizar la tabla de resultados
-  const updateResults = (data) => {
+  const updateResults = data => {
     if (resultsBodyDesktop) resultsBodyDesktop.innerHTML = "";
     if (resultsBodyMobile) resultsBodyMobile.innerHTML = "";
 
     if (data && data.length > 0) {
-      data.forEach((item) => {
+      data.forEach(item => {
         const genderImg =
           item.sexo == 1 ? "../public/img/1.png" : "../public/img/0.png";
         const rowDesktop = `
@@ -414,7 +426,7 @@ const alumnosModule = (() => {
 
   // Retornamos un objeto con los métodos que queremos exponer
   return {
-    init: initializeListeners,
+    init: initializeListeners
   };
 })();
 
@@ -422,7 +434,7 @@ const calcularEdad = (() => {
   let miInput = document.getElementById("fecha");
   let edad = document.getElementById("edad");
 
-  let calcularEdad = (fechaNacimiento) => {
+  let calcularEdad = fechaNacimiento => {
     const fechaNacimientoObj = new Date(fechaNacimiento);
     const hoy = new Date();
 
@@ -447,7 +459,7 @@ const calcularEdad = (() => {
   };
 
   if (miInput) {
-    miInput.addEventListener("change", (event) => {
+    miInput.addEventListener("change", event => {
       calcularEdad(event.target.value); // Muestra lo que se escribe en la consola
     });
   }

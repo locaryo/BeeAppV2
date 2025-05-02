@@ -1,10 +1,9 @@
-<?php require constant("__layout__")."header.php"; ?>
+<?php require constant("__layout__") . "header.php"; ?>
 
 <body class="g-sidenav-show   bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
-
-  <?php require constant("__layout__")."nav.php"; ?>
-  <?php require constant("__layout__")."aside.php"; ?>
+  <?php require constant("__layout__") . "nav.php"; ?>
+  <?php require constant("__layout__") . "aside.php"; ?>
   <main class="main-content position-relative border-radius-lg ">
     <?php if (isset($_SESSION['message'])): ?>
       <div class="d-flex justify-content-center">
@@ -14,7 +13,6 @@
       </div>
       <?php unset($_SESSION['message']); ?>
     <?php else: ?>
-
     <?php endif; ?>
     <?php if (isset($_GET['datos'])): ?>
       <div class="d-flex justify-content-center">
@@ -37,95 +35,47 @@
     <?php endif ?>
     <div class="container-fluid py-7" style="overflow-x: hidden;">
       <div class="row">
-
-        <form class="d-none d-md-flex d-lg-flex d-xl-flex mb-8" action="<?= constant('__baseurl__') ?>home/consulting_cedula" method="post">
-
-          <div class="col-12">
-            <div class="card mb-4">
-              <div class="card-header pb-0 text-center">
-                <h5>Consultar Datos</h5>
-              </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Cedula</label>
-                    <input class="form-control text-center" name="cedula" type="text" id="example-text-input">
-                  </div>
+        <form class="needs-validation" action="<?= constant('__baseurl__') ?>home/consulting_cedula" method="post" novalidate>
+          <div class="card mb-4">
+            <div class="card-header pb-0 text-center">
+              <h5>Consultar Datos</h5>
+            </div>
+            <!-- desktop -->
+            <div class="row mx-1">
+              <div class="form-group col-12 px-2">
+                <label for="example-text-input" class="form-label required">Cedula</label>
+                <input class="form-control text-center" name="cedula" type="text" id="example-text-input" required>
+                <div class="invalid-feedback">
+                  Ingrese un numero de cédula.
                 </div>
               </div>
-
-              <!-- desktop -->
-              <div class="d-flex justify-content-center">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Opción</label>
-                    <select class="form-control" id="example-text-input" name="opcion">
-                      <option>Seleccionar</option>
-                      <option>alumnos</option>
-                      <option>docentes</option>
-                      <option>representante</option>
-                    </select>
-                  </div>
+              <div class="form-group col-12 px-2">
+                <label for="example-text-input" class="form-label required">Opción</label>
+                <select class="form-control" id="example-text-input" name="opcion" required>
+                  <option value="" selected disabled>Seleccionar</option>
+                  <option value="alumnos">Alumnos</option>
+                  <option value="docentes">Docentes</option>
+                  <option value="representante">Representante</option>
+                </select>
+                <div class="invalid-feedback">
+                  Seleccione una opción.
                 </div>
               </div>
-
-              <div class="d-flex justify-content-center">
-                <button class="btn btn-primary" type="send">Consultar</button>
-              </div>
+            </div>
+            <div class="col-auto">
+              <p class="card-text px-3 mb-3"><span class="text-danger">(*)</span> Indica que el campo es obligatorio.</p>
+            </div>
+            <!-- desktop -->
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-primary" type="send">Consultar</button>
             </div>
           </div>
         </form>
-
-        <form class="d-block d-md-none flex-column mb-8" action="<?= constant('__baseurl__') ?>home/consulting_cedula" method="post">
-          <div class="col-12">
-            <div class="card mb-4">
-              <div class="card-header pb-0 text-center">
-                <h5>Consultar Datos</h5>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center mx-5">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Cedula</label>
-                    <input class="form-control text-center" name="cedula" type="text" id="example-text-input">
-                  </div>
-                </div>
-              </div>
-
-              <!-- mobile -->
-              <div class="d-block flex-column justify-content-center mx-5">
-                <div class="col-md-4">
-                  <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Opción</label>
-                    <select class="form-control" id="example-text-input" name="opcion">
-                      <option>Seleccionar</option>
-                      <option>alumnos</option>
-                      <option>docentes</option>
-                      <option>representante</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-flex justify-content-center">
-                <button class="btn btn-primary" type="send">Consultar</button>
-              </div>
-            </div>
-          </div>
-        </form>
-
       </div>
-
-      <?php require constant("__layout__")."footer.php"; ?>
-
+      <?php require constant("__layout__") . "footer.php"; ?>
     </div>
   </main>
-
-  <?php require constant("__layout__")."scripts.php"; ?>
-
+  <?php require constant("__layout__") . "scripts.php"; ?>
 </body>
 
 </html>
