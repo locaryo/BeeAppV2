@@ -56,28 +56,30 @@ include __DIR__ . '/../../config/config.php';
                 </div>
                 <!-- row2 -->
                 <div class="d-flex justify-content-evenly align-items-center desktop-to-mobile">
+                    <!-- Select de Docente -->
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">Docente: </span>
                             <select class="form-control" id="docente-asignar">
+                                <option value="0">Seleccionar</option>
                                 <?php foreach ($this->array as $docente): ?>
-                                    <option value="<?= $docente['id'] ?>"><?= $docente['p_nombre'] . " " . $docente['p_apellido']  ?></option>
+                                    <option value="<?= $docente['id'] ?>">
+                                        <?= $docente['p_nombre'] . " " . $docente['p_apellido'] ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
 
+                    <!-- Select de Materia -->
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-text" id="inputGroup-sizing-default">Materia: </span>
                             <select class="form-control" id="materia-asignar">
-                                <?php foreach ($materias as $materia): ?>
-                                    <option value="<?= $materia ?>"><?= $materia ?></option>
-                                <?php endforeach; ?>
+                                <option value="0">Seleccionar</option>
                             </select>
                         </div>
                     </div>
-
                 </div>
                 <!-- row3 -->
                 <div class="d-flex justify-content-center align-items-center desktop-to-mobile">
@@ -96,8 +98,8 @@ include __DIR__ . '/../../config/config.php';
                             <div class="input-group">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Año: </span>
                                 <select class="form-control" name="nivel">
-                                    <?php foreach ($niveles as $nivel): ?>
-                                        <option value="<?= $nivel ?>"><?= $nivel ?></option>
+                                    <?php foreach ($this->grades as $nivel): ?>
+                                        <option value="<?= $nivel['grades'] ?>"><?= $nivel['grades'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -107,8 +109,8 @@ include __DIR__ . '/../../config/config.php';
                             <div class="input-group">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Seccion: </span>
                                 <select class="form-control" name="seccion">
-                                    <?php foreach ($secciones as $seccion): ?>
-                                        <option value="<?= $seccion ?>"><?= $seccion ?></option>
+                                    <?php foreach ($this->sections as $seccion): ?>
+                                        <option value="<?= $seccion['sections'] ?>"><?= $seccion['sections'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -118,8 +120,8 @@ include __DIR__ . '/../../config/config.php';
                             <div class="input-group">
                                 <span class="input-group-text" id="inputGroup-sizing-default">Mencion: </span>
                                 <select class="form-control" name="mencion">
-                                    <?php foreach ($menciones as $mencion): ?>
-                                        <option value="<?= $mencion ?>"><?= $mencion ?></option>
+                                    <?php foreach ($this->mentions as $mencion): ?>
+                                        <option value="<?= $mencion['mentions'] ?>"><?= $mencion['mentions'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -150,5 +152,43 @@ include __DIR__ . '/../../config/config.php';
     <?php require constant("__layout__") . "scripts.php"; ?>
 
 </body>
+
+<script>
+    const docentesMaterias = <?= json_encode($this->array) ?> ? <?= json_encode($this->array) ?> : [];
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectDocente = document.getElementById("docente-asignar");
+        const selectMateria = document.getElementById("materia-asignar");
+
+        // Limpiar materias
+        function limpiarMaterias() {
+            selectMateria.innerHTML = '<option value="0">Seleccionar</option>';
+        }
+
+        // Evento al cambiar docente
+        selectDocente.addEventListener("change", function() {
+            const docenteId = this.value;
+            limpiarMaterias();
+
+            if (docenteId === "0") return;
+
+            // Filtra las materias por docente
+            const materias = docentesMaterias
+                .filter(item => item.id == docenteId)
+                .map(item => item.areas_formacion);
+
+            // Evita duplicados
+            const materiasUnicas = [...new Set(materias)];
+
+            // Agrega al select
+            materiasUnicas.forEach(materia => {
+                const option = document.createElement("option");
+                option.value = materia.toUpperCase();
+                option.textContent = materia.toUpperCase();
+                selectMateria.appendChild(option);
+            });
+        });
+    });
+</script>
+
 
 </html>

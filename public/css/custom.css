@@ -364,6 +364,16 @@
   padding: 5px;
 }
 
+.filterable-list {
+  width: calc(100% - 1rem);
+  max-height: 10rem;
+  overflow-y: auto;
+}
+
+.autocomplete-item:hover {
+  background-color: lightblue;
+}
+
 @media screen and (max-width: 769px) {
   .bento-grid {
     display: flex;
@@ -377,14 +387,4 @@
     justify-content: center !important;
     align-items: stretch !important;
   }
-}
-
-.filterable-list {
-  width: calc(100% - 1rem);
-  max-height: 10rem;
-  overflow-y: auto;
-}
-
-.autocomplete-item:hover {
-  background-color: lightblue;
 }
