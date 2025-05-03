@@ -91,14 +91,6 @@
               </div>
             </div>
 
-
-
-
-          </div>
-
-          <!-- desktop -->
-          <div class="d-flex justify-content-center align-items-center">
-            <button class="btn btn-success mx-2" name="action" type="submit">Registrar</button>
           </div>
       </div>
       </form>

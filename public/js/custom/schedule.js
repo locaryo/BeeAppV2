@@ -142,16 +142,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const coloresMaterias = {
-      "Matematicas": "bg-primary",
-      "Lengua": "bg-info",
-      "Ciencias": "bg-success",
-      "Historia": "bg-warning",
-      "Geografia": "bg-info",
-      "Educacion Fisica": "bg-secondary",
-      "Arte": "bg-light",
-      "Musica": "bg-dark",
-      "Ingles": "bg-primary",
-      "Tecnologia": "bg-success",
+      "MATEMÁTICAS": "bg-primary",
+      "SALUD": "bg-primary",
+      "LENGUA": "bg-info",
+      "CIENCIAS": "bg-success",
+      "HISTORIA": "bg-warning",
+      "GEOGRAFIA": "bg-info",
+      "EDUCACION FISICA": "bg-secondary",
+      "ARTE": "bg-light",
+      "MUSICA": "bg-dark",
+      "INGLES": "bg-primary",
+      "TECNOLOGIA": "bg-success",
     };
 
     // Asignar la materia

@@ -26,6 +26,9 @@ class Home extends Controller
         $this->view->count_student_meca  = [];
         $this->view->count_student_elec  = [];
         $this->view->array               = [];
+        $this->view->sections               = [];
+        $this->view->grades               = [];
+        $this->view->mentions               = [];
         $this->view->payment_mehtod      = [];
         $this->view->income_source       = [];
         $this->view->montoPagosMatriculaStudent = "";
@@ -50,30 +53,6 @@ class Home extends Controller
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para visualizar este contenido";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
-            exit;
-        }
-    }
-
-    // iniciar sesion
-    public function registerUser()
-    {
-        $user     = $this->validarEntrada($_POST['user']);
-        $password = $this->validarEntrada($_POST['password']);
-
-        if ($user != "" && $password != "") {
-            $datos = $this->model->login($user, $password);
-            if ($datos == true) {
-                $_SESSION['message'] = "Ingreso exitosamente al sistema";  // Guardamos el mensaje en la sesión
-                header("Location: " . __baseurl__ . "home/dashboard");  // Redirigimos al dashboard sin pasar parámetros en la URL
-                exit;
-            } else {
-                $_SESSION['message'] = "No se encontró a este usuario en el sistema";  // Guardamos el mensaje en la sesión
-                header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
-                exit;
-            }
-        } else {
-            $_SESSION['message'] = "Ingrese todos los datos";
-            header("Location: " . __baseurl__ . "home/login");  // Guardamos el mensaje en la sesión
             exit;
         }
     }
@@ -106,7 +85,7 @@ class Home extends Controller
     // dashboard
     public function dashboard()
     {
-        if ($_SESSION['access'] === true && $_SESSION['rol'] === 1) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $count_teacher       = $this->model->count_teacher();
             $count_student       = $this->model->count_student();
             $count_student_m     = $this->model->count_student_m();
@@ -132,6 +111,8 @@ class Home extends Controller
             $this->view->count_student_meca  = json_encode($count_student_meca);
             $this->view->count_student_elec  = json_encode($count_student_elec);
             $this->view->render('admin/dashboard');
+        } elseif ($_SESSION['access'] === true && $_SESSION['rol'] === 2) {
+            header("Location: " . __baseurl__ . "teacher/dashboard");  // Redirigimos al dashboard sin pasar parámetros en la URL
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
@@ -167,7 +148,7 @@ class Home extends Controller
     // vista registrar servicio
     public function view_register_service_payment()
     {
-        if ($_SESSION['access'] === true && $_SESSION['rol'] === 1) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $payment_method = $this->model->model_select_payment_method();
             $expenses_category = $this->model->model_select_expenses_category();
             $this->view->payment_mehtod = $payment_method;
@@ -179,7 +160,6 @@ class Home extends Controller
             exit;
         }
     }
-
 
     public function register_service_payment()
     {
@@ -221,7 +201,7 @@ class Home extends Controller
     // vista registrar pago recibido
     public function view_register_receive_payment()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $payment_method = $this->model->model_select_payment_method();
             $income_source = $this->model->model_select_income_source();
             $this->view->payment_mehtod = $payment_method;
@@ -277,7 +257,7 @@ class Home extends Controller
     // registrar-estudiantes
     public function register_student_view()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $this->view->render('admin/register-student');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -343,7 +323,7 @@ class Home extends Controller
     // registrar-docente
     public function register_teacher_view()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
 
             $this->view->render('admin/register-teacher');
         } else {
@@ -415,7 +395,7 @@ class Home extends Controller
     // registrar-responsable
     public function register_responsable_view()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
 
             $this->view->render('admin/register-responsable');
         } else {
@@ -505,7 +485,7 @@ class Home extends Controller
     // consultar cedulas
     public function consulting_view()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $this->view->render('admin/consulting');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -545,8 +525,15 @@ class Home extends Controller
     // schedule_view
     public function schedule_view()
     {
-        if (isset($_SESSION['access'])) {
-            $this->view->array = $this->model->select_teacher();
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $result = $this->model->model_select_teacher();
+            $sections = $this->model->model_select_sections();
+            $grades = $this->model->model_select_grades();
+            $mentions = $this->model->model_select_mentions();
+            $this->view->array = $result;
+            $this->view->sections = $sections;
+            $this->view->grades = $grades;
+            $this->view->mentions = $mentions;
             $this->view->render('admin/schedule');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -581,7 +568,7 @@ class Home extends Controller
     // visualizar datos de estudiante
     public function view_data_student()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             // Si ya se pasó información en $data (por ejemplo, desde una consulta), se utiliza esa
             if (isset($_SESSION['cedula']) && isset($_SESSION['opcion'])) {
                 $cedula = $_SESSION['cedula'];
@@ -624,7 +611,7 @@ class Home extends Controller
     // visualizar datos de maestro
     public function view_data_teacher()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             // $this->view->data = $data;
             // $this->view->render('admin/view-data-teacher');
 
@@ -670,7 +657,7 @@ class Home extends Controller
     // visualizar datos de representante
     public function view_data_representante($data)
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $this->view->data = $data;
             $this->view->render('admin/view-data-representante');
         } else {
@@ -941,7 +928,7 @@ class Home extends Controller
     // tablas
     public function tables()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $data = $this->model->read_all();
             $this->view->array = $data;
             $this->view->render('admin/tables');
@@ -973,7 +960,7 @@ class Home extends Controller
     // documentos
     public function documents()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
 
             $this->view->render('admin/documents');
         } else {
@@ -986,7 +973,7 @@ class Home extends Controller
     // institucion
     public function view_institution()
     {
-        if (isset($_SESSION['access'])) {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             if ((isset($_SESSION['updated_institution']))) {
                 $datos = $this->model->institution();
                 $_SESSION['message'] = "Los datos se han actualizado correctamente.";

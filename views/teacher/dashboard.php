@@ -1,10 +1,10 @@
-<?php require "layouts/header.php"; ?>
+<?php require constant("__layout__") . "header.php"; ?>
 
 <body class="g-sidenav-show   bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
 
-  <?php require "layouts/nav.php"; ?>
-  <?php require "layouts/aside.php"; ?>
+  <?php require constant("__layout__") . "nav.php"; ?>
+  <?php require constant("__layout__") . "aside.php"; ?>
 
   <main class="main-content position-relative border-radius-lg ">
     <?php if (isset($_SESSION['message'])): ?>
@@ -135,45 +135,13 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-lg-12 mb-lg-0 pb-3">
-          <div class="card z-index-2 h-100">
-            <div class="card-header pb-0 pt-3 bg-transparent">
-              <h6 class="text-capitalize">Mecanica</h6>
-
-            </div>
-            <div class="card-body p-3">
-              <div class="chart">
-                <canvas id="chart-line-b" class="chart-canvas" height="300"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-12 mb-lg-0">
-          <div class="card z-index-2 h-100">
-            <div class="card-header pb-0 pt-3 bg-transparent">
-              <h6 class="text-capitalize">Electricidad</h6>
-
-            </div>
-            <div class="card-body p-3">
-              <div class="chart">
-                <canvas id="chart-line-c" class="chart-canvas" height="300"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <?php require "layouts/footer.php"; ?>
+      <?php require constant("__layout__") . "footer.php"; ?>
 
     </div>
 
   </main>
 
-  <?php require "layouts/scripts.php"; ?>
+  <?php require constant("__layout__") . "scripts.php"; ?>
 </body>
 
 </html>

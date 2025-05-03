@@ -23,16 +23,16 @@
             </div>
             
             <div class="card-body">
-              <form role="form">
+              <form role="form" action="<?= constant('__baseurl__') ?>teacher/createUserTeacher" method="post">
                 <div class="mb-3">
-                  <input name="user" type="text" class="form-control" placeholder="Usuario" aria-label="Usuario">
+                  <input name="username" type="text" class="form-control" placeholder="Usuario" aria-label="Usuario">
                 </div>
                 <div class="mb-3">
                   <input name="password" type="password" class="form-control" placeholder="Contraseña" aria-label="Contraseña">
                 </div>
                 
                 <div class="text-center">
-                  <button type="button" class="btn bg-gradient-primary w-100 my-4 mb-2">Registrar</button>
+                  <button type="submit" class="btn bg-gradient-primary w-100 my-4 mb-2">Registrar</button>
                 </div>
                 <p class="text-sm mt-3 mb-0">Regresar al <a href="<?=constant('__baseurl__')?>home/dashboard" class="text-dark font-weight-bolder">Inicio</a></p>
               </form>
