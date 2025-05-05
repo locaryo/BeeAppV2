@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   //view-data-student go back buttons
   const buttons = document.querySelectorAll(".go-back");
-  buttons.forEach(button => {
+  buttons.forEach((button) => {
     button.addEventListener("click", () => {
       window.history.back();
     });
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Pagos recibidos",
     "Pagos de servicios",
     "Institución",
-    "Consulta de estudiante"
+    "Consulta de estudiante",
   ];
   // Definimos las rutas que queremos manejar
   // Puedes agregar más rutas según sea necesario
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "/" + `${ruta}` + "/home/view_register_receive_payment",
     "/" + `${ruta}` + "/home/view_register_service_payment",
     "/" + `${ruta}` + "/home/view_institution",
-    "/" + `${ruta}` + "/home/view_data_student"
+    "/" + `${ruta}` + "/home/view_data_student",
   ];
   function getBreadcrumb() {
     routes.forEach((route, index) => {
@@ -60,10 +60,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const forms = document.querySelectorAll(".needs-validation");
 
     // Loop over them and prevent submission
-    Array.from(forms).forEach(form => {
+    Array.from(forms).forEach((form) => {
       form.addEventListener(
         "submit",
-        event => {
+        (event) => {
           if (!form.checkValidity()) {
             event.preventDefault();
             event.stopPropagation();
@@ -104,14 +104,14 @@ const calcularDolar = (() => {
   fetch(
     "https://pydolarve.org/api/v2/dollar?page=alcambio&format_date=default&rounded_price=true"
   )
-    .then(response => {
+    .then((response) => {
       // Verificamos si la respuesta es correcta
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     })
-    .then(data => {
+    .then((data) => {
       // Aquí puedes manipular los datos obtenidos
       // console.log("Data fetched successfully:", data);
       // console.log("Data fetched successfully:", data.monitors.bcv["price"]);
@@ -123,12 +123,12 @@ const calcularDolar = (() => {
       bcv = data.monitors.bcv["price"];
       enparalelovzla = data.monitors.enparalelovzla["price"];
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error fetching dollar data:", error);
     });
 
   if (inputMontoBs) {
-    inputMontoBs.addEventListener("input", event => {
+    inputMontoBs.addEventListener("input", (event) => {
       const montoBs = event.target.value;
       if (montoBs > 0) {
         divUsdBs.classList.remove("d-none");
@@ -153,13 +153,13 @@ const filtroTeacher = (() => {
   const doneTypingInterval = 100;
 
   if (inputIngresoTipo && inputDocente) {
-    inputIngresoTipo.addEventListener("change", event => {
+    inputIngresoTipo.addEventListener("change", (event) => {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const nameValue = selectedOption.getAttribute("nameValue");
 
       if (nameValue === "Pago Personal Docente") {
         inputFiltroContainer.classList.remove("d-none");
-        inputDocente.addEventListener("input", event => {
+        inputDocente.addEventListener("input", (event) => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
@@ -176,7 +176,7 @@ const filtroTeacher = (() => {
         });
       } else if (nameValue === "Pago Personal Administrativo") {
         inputFiltroContainer.classList.remove("d-none");
-        inputDocente.addEventListener("input", event => {
+        inputDocente.addEventListener("input", (event) => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
@@ -196,7 +196,7 @@ const filtroTeacher = (() => {
         "Pago Personal de Apoyo(mantenimiento, limpieza, seguridad)"
       ) {
         inputFiltroContainer.classList.remove("d-none");
-        inputDocente.addEventListener("input", event => {
+        inputDocente.addEventListener("input", (event) => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
@@ -218,33 +218,33 @@ const filtroTeacher = (() => {
     });
   }
 
-  const selectTeacher = value => {
+  const selectTeacher = (value) => {
     fetch("filtrar_docente", {
       method: "POST",
       body: JSON.stringify({
-        query: value
+        query: value,
       }),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         mostrarResultados(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error al filtrar estudiantes:", error);
       });
   };
 
-  const mostrarResultados = docentes => {
+  const mostrarResultados = (docentes) => {
     personalList.innerHTML = "";
 
     if (docentes && docentes.length > 0) {
-      docentes.forEach(docente => {
+      docentes.forEach((docente) => {
         const item = document.createElement("option");
         item.textContent = `${docente.p_nombre} ${docente.p_apellido}`;
         item.value = docente.id;
@@ -278,14 +278,14 @@ const filtroStudent = (() => {
   const doneTypingInterval = 100;
 
   if (inputIngresoTipo && inputEstudiante) {
-    inputIngresoTipo.addEventListener("change", event => {
+    inputIngresoTipo.addEventListener("change", (event) => {
       const selectedOption = event.target.options[event.target.selectedIndex];
       const nameValue = selectedOption.getAttribute("nameValue");
 
       if (nameValue === "Matrícula") {
         inputFiltroContainer.classList.remove("d-none");
         inputFechaContainer.classList.add("d-none");
-        inputEstudiante.addEventListener("input", event => {
+        inputEstudiante.addEventListener("input", (event) => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
@@ -303,7 +303,7 @@ const filtroStudent = (() => {
       } else if (nameValue === "Mensualidades") {
         inputFiltroContainer.classList.remove("d-none");
         inputFechaContainer.classList.remove("d-none");
-        inputEstudiante.addEventListener("input", event => {
+        inputEstudiante.addEventListener("input", (event) => {
           console.log("Evento input disparado:", event.target.value); // Agrega esta línea
           clearTimeout(typingTimer);
           if (event.target.value.length > 0) {
@@ -326,33 +326,33 @@ const filtroStudent = (() => {
     });
   }
 
-  const selectStudent = value => {
+  const selectStudent = (value) => {
     fetch("filtrar_estudiantes", {
       method: "POST",
       body: JSON.stringify({
-        query: value
+        query: value,
       }),
-      headers: { "Content-Type": "application/json" }
+      headers: { "Content-Type": "application/json" },
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         mostrarResultados(data);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error al filtrar estudiantes:", error);
       });
   };
 
-  const mostrarResultados = estudiantes => {
+  const mostrarResultados = (estudiantes) => {
     studentsList.innerHTML = "";
 
     if (estudiantes && estudiantes.length > 0) {
-      estudiantes.forEach(estudiante => {
+      estudiantes.forEach((estudiante) => {
         const item = document.createElement("option");
         item.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
         item.value = estudiante.id;
@@ -379,7 +379,7 @@ const mostrarReferencia = (() => {
   const referenciaContainer = document.querySelector(".d-reference");
   if (!inputReferencia) return; // Si no existe el input, salimos de la función
   if (!referenciaContainer) return; // Si no existe el contenedor, salimos de la función
-  inputReferencia.addEventListener("change", event => {
+  inputReferencia.addEventListener("change", (event) => {
     const selectedOption = event.target.options[event.target.selectedIndex];
     const nameValue = selectedOption.getAttribute("nameValue");
 
@@ -400,7 +400,7 @@ const endDate = (() => {
   const inputFecha = inputFechaContainer.querySelector("input");
   const inputEndFecha = document.getElementById("end_monthly_payment");
 
-  inputFecha.addEventListener("change", event => {
+  inputFecha.addEventListener("change", (event) => {
     const fechaSeleccionada = event.target.value;
 
     if (fechaSeleccionada) {
@@ -462,9 +462,9 @@ const alumnosModule = (() => {
         body: JSON.stringify({
           nivel: selectedNivel,
           seccion: selectedSeccion,
-          mencion: selectedMencion
+          mencion: selectedMencion,
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -483,12 +483,12 @@ const alumnosModule = (() => {
   };
 
   // Función para actualizar la tabla de resultados
-  const updateResults = data => {
+  const updateResults = (data) => {
     if (resultsBodyDesktop) resultsBodyDesktop.innerHTML = "";
     if (resultsBodyMobile) resultsBodyMobile.innerHTML = "";
 
     if (data && data.length > 0) {
-      data.forEach(item => {
+      data.forEach((item) => {
         const genderImg =
           item.sexo == 1 ? "../public/img/1.png" : "../public/img/0.png";
         const rowDesktop = `
@@ -568,7 +568,7 @@ const alumnosModule = (() => {
 
   // Retornamos un objeto con los métodos que queremos exponer
   return {
-    init: initializeListeners
+    init: initializeListeners,
   };
 })();
 
@@ -576,7 +576,7 @@ const calcularEdad = (() => {
   let miInput = document.getElementById("fecha");
   let edad = document.getElementById("edad");
 
-  let calcularEdad = fechaNacimiento => {
+  let calcularEdad = (fechaNacimiento) => {
     const fechaNacimientoObj = new Date(fechaNacimiento);
     const hoy = new Date();
 
@@ -601,8 +601,459 @@ const calcularEdad = (() => {
   };
 
   if (miInput) {
-    miInput.addEventListener("change", event => {
+    miInput.addEventListener("change", (event) => {
       calcularEdad(event.target.value); // Muestra lo que se escribe en la consola
     });
   }
+})();
+
+const asignarSeccion = (() => {
+  const studentsList = document.getElementById("studentsListSection");
+  const inputEstudiante = document.getElementById("filtrar-estudiante-seccion");
+
+  let typingTimer;
+  const doneTypingInterval = 100;
+
+  if (!studentsList) return; // Si no existe el input, salimos de la función
+  if (!inputEstudiante) return; // Si no existe el div, salimos de la función
+
+  inputEstudiante.addEventListener("input", (event) => {
+    console.log("Evento input disparado:", event.target.value); // Agrega esta línea
+    clearTimeout(typingTimer);
+    if (event.target.value.length > 0) {
+      inputEstudiante.classList.add("rounded-0", "rounded-top");
+      studentsList.classList.add("d-block");
+      typingTimer = setTimeout(() => {
+        selectStudent(event.target.value);
+      }, doneTypingInterval);
+    } else {
+      inputEstudiante.classList.remove("rounded-0", "rounded-top");
+      studentsList.classList.remove("d-block");
+      mostrarResultados([]);
+    }
+  });
+
+  const selectStudent = (value) => {
+    fetch("filtrar_estudiantes", {
+      method: "POST",
+      body: JSON.stringify({
+        query: value,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        mostrarResultados(data);
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const mostrarResultados = (estudiantes) => {
+    studentsList.innerHTML = "";
+
+    if (estudiantes && estudiantes.length > 0) {
+      estudiantes.forEach((estudiante) => {
+        const item = document.createElement("option");
+        item.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
+        item.value = estudiante.id;
+        item.classList.add("autocomplete-item"); // Añade una clase para estilos (opcional)
+        item.addEventListener("click", () => {
+          inputEstudiante.value = ""; // Inserta el nombre completo en el input
+          studentsList.innerHTML = ""; // Limpia la lista de resultados después de la selección
+          inputEstudiante.classList.remove("rounded-0", "rounded-top");
+          studentsList.classList.remove("d-block");
+          agregarEstudianteATabla(estudiante);
+        });
+        studentsList.appendChild(item);
+      });
+    } else if (inputEstudiante && inputEstudiante.value.length > 0) {
+      const noResult = document.createElement("option");
+      noResult.textContent = "Sin resultados";
+      studentsList.appendChild(noResult);
+    }
+  };
+
+  function agregarEstudianteATabla(estudiante) {
+    const tableBody = document.getElementById("results-body-desktop");
+
+    // Verifica que no esté ya agregado
+    const existe = tableBody.querySelector(`[data-id="${estudiante.id}"]`);
+    if (existe) return;
+
+    const row = document.createElement("tr");
+    row.setAttribute("data-id", estudiante.id);
+
+    row.innerHTML = `
+      <td class="text-center">${estudiante.p_nombre} ${estudiante.p_apellido}</td>
+      <td class="text-center">${estudiante.cedula}</td>
+      <td class="text-center">
+        <button type="button" class="btn btn-danger btn-sm remove-student">Remover</button>
+      </td>
+      <input type="hidden" name="estudiantes[]" value="${estudiante.id}">
+    `;
+
+    tableBody.appendChild(row);
+
+    // Añadir evento para eliminar
+    row.querySelector(".remove-student").addEventListener("click", () => {
+      row.remove();
+    });
+  }
+})();
+
+const asignarNotas = (() => {
+  const selectSection = document.getElementById("seccion-asignar");
+  const selectNivel = document.getElementById("nivel-asignar");
+  const btnAsignar = document.getElementById("btn-asignar");
+  let sectionValue = "";
+  let gradeValue = "";
+
+  if (!selectSection) return; // Si no existe el input, salimos de la función
+  if (!selectNivel) return; // Si no existe el div, salimos de la función
+  if (!btnAsignar) return; // Si no existe el div, salimos de la función
+
+  selectSection.addEventListener("change", (even) => {
+    sectionValue = even.target.value;
+  });
+
+  selectNivel.addEventListener("change", (even) => {
+    gradeValue = even.target.value;
+  });
+
+  btnAsignar.addEventListener("click", (even) => {
+    even.preventDefault(); // Evitar el envío del formulario
+    if (sectionValue != "" && gradeValue != "") {
+      selectClassroom(sectionValue, gradeValue);
+    } else {
+      alert("Por favor, selecciona una sección y un nivel.");
+    }
+  });
+
+  const selectClassroom = (sectionValue, gradeValue) => {
+    fetch("filtrar_classroom", {
+      method: "POST",
+      body: JSON.stringify({
+        section: sectionValue,
+        grade: gradeValue,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        agregarEstudianteATabla(data);
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const agregarEstudianteATabla = (estudiantes) => {
+    const tableBody = document.getElementById("results-body-desktop");
+
+    if (!tableBody) return; // Si no existe el contenedor, salimos de la función
+    if (!estudiantes || estudiantes.length === 0) return; // Si no hay estudiantes, salimos de la función
+    // Limpiar tabla antes de agregar nuevos datos
+    tableBody.innerHTML = "";
+
+    estudiantes.forEach((estudiante) => {
+      // Verifica que no esté ya agregado
+      const existe = tableBody.querySelector(`[data-id="${estudiante.id}"]`);
+      if (existe) return;
+
+      const row = document.createElement("tr");
+      row.setAttribute("data-id", estudiante.id);
+
+      // Celda de nombre completo
+      const nombreTd = document.createElement("td");
+      nombreTd.classList.add("text-center");
+      nombreTd.textContent = `${estudiante.p_nombre} ${estudiante.p_apellido}`;
+
+      // Celda para inputs de nota
+      const notasTd = document.createElement("td");
+      notasTd.classList.add("text-center");
+
+      const contenedorNotas = document.createElement("div");
+      contenedorNotas.classList.add(
+        "d-flex",
+        "flex-row",
+        "justify-content-around",
+        "gap-2",
+        "desktop-to-mobile"
+      );
+
+      const inputNota = document.createElement("input");
+      inputNota.type = "number";
+      inputNota.name = `notas[${estudiante.id}][]`;
+      inputNota.classList.add("form-control", "mb-1");
+      inputNota.placeholder = "Nota";
+
+      contenedorNotas.appendChild(inputNota);
+      notasTd.appendChild(contenedorNotas);
+
+      // Botón para agregar nota
+      const btnAdd = document.createElement("button");
+      btnAdd.type = "button";
+      btnAdd.textContent = "+";
+      btnAdd.classList.add("btn", "btn-success", "btn-sm", "me-1");
+
+      btnAdd.addEventListener("click", () => {
+        const newInput = document.createElement("input");
+        newInput.type = "number";
+        newInput.name = `notas[${estudiante.id}][]`;
+        newInput.classList.add("form-control", "mb-1");
+        newInput.placeholder = "Nota";
+        contenedorNotas.appendChild(newInput);
+      });
+
+      // Botón para remover última nota
+      const btnRemove = document.createElement("button");
+      btnRemove.type = "button";
+      btnRemove.textContent = "-";
+      btnRemove.classList.add("btn", "btn-danger", "btn-sm");
+
+      btnRemove.addEventListener("click", () => {
+        const inputs = contenedorNotas.querySelectorAll("input");
+        if (inputs.length > 1) {
+          contenedorNotas.removeChild(inputs[inputs.length - 1]);
+        }
+      });
+
+      const botonesTd = document.createElement("td");
+      botonesTd.classList.add("text-center", "desktop-to-mobile");
+      botonesTd.appendChild(btnAdd);
+      botonesTd.appendChild(btnRemove);
+
+      row.appendChild(nombreTd);
+      row.appendChild(notasTd);
+      row.appendChild(botonesTd);
+
+      tableBody.appendChild(row);
+    });
+  };
+})();
+
+const listarNotas = (() => {
+  const selectSection = document.getElementById("seccion-notas");
+  const selectNivel = document.getElementById("nivel-notas");
+  const selectMateria = document.getElementById("materia-notas");
+  const btnAsignar = document.getElementById("btn-filtrar-notas");
+  let sectionValue = "";
+  let gradeValue = "";
+  let materiaValue = "";
+
+  if (!selectSection) return; // Si no existe el input, salimos de la función
+  if (!selectNivel) return; // Si no existe el div, salimos de la función
+  if (!selectMateria) return; // Si no existe el div, salimos de la función
+  if (!btnAsignar) return; // Si no existe el div, salimos de la función
+
+  selectSection.addEventListener("change", (even) => {
+    sectionValue = even.target.value;
+  });
+
+  selectNivel.addEventListener("change", (even) => {
+    gradeValue = even.target.value;
+  });
+
+  selectMateria.addEventListener("change", (even) => {
+    materiaValue = even.target.value;
+  });
+
+  btnAsignar.addEventListener("click", (even) => {
+    even.preventDefault(); // Evitar el envío del formulario
+    if (sectionValue != "" && gradeValue != "" && materiaValue != "") {
+      selectClassroom(materiaValue, sectionValue, gradeValue);
+    } else {
+      alert("Por favor, selecciona una sección, nivel y materia.");
+    }
+  });
+
+  const selectClassroom = (materiaValue, sectionValue, gradeValue) => {
+    fetch("filtrar_ratings", {
+      method: "POST",
+      body: JSON.stringify({
+        materia: materiaValue,
+        section: sectionValue,
+        grade: gradeValue,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        agregarEstudianteATabla(data);
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const agregarEstudianteATabla = (registros) => {
+    const tableBody = document.getElementById("results-body-desktop");
+    if (!tableBody) return;
+    if (!registros || registros.length === 0) return;
+
+    // Limpiar la tabla
+    tableBody.innerHTML = "";
+
+    // Agrupar por estudiante
+    const estudiantesMap = new Map();
+
+    registros.forEach((registro) => {
+      const idEstudiante = registro.student;
+      let idRegistro = registro.id;
+      if (!estudiantesMap.has(idEstudiante)) {
+        estudiantesMap.set(idEstudiante, {
+          idRegistro: idRegistro,
+          id: idEstudiante,
+          nombre: `${registro.p_nombre} ${registro.p_apellido}`,
+          notas: [],
+        });
+      }
+      estudiantesMap
+        .get(idEstudiante)
+        .notas.push({ id: registro.id, value: registro.ratings });
+    });
+
+    // Crear fila por estudiante
+    estudiantesMap.forEach((estudiante, idEstudiante) => {
+      const row = document.createElement("tr");
+      row.setAttribute("data-id", idEstudiante);
+
+      // Nombre del estudiante
+      const nombreTd = document.createElement("td");
+      nombreTd.classList.add("text-center");
+      nombreTd.textContent = estudiante.nombre;
+
+      // Celda de notas
+      const notasTd = document.createElement("td");
+      notasTd.classList.add("text-center");
+
+      const contenedorNotas = document.createElement("div");
+      contenedorNotas.classList.add(
+        "d-flex",
+        "flex-row",
+        "justify-content-around",
+        "gap-2",
+        "desktop-to-mobile"
+      );
+
+      // Agregar inputs con notas existentes
+      estudiante.notas.forEach((nota) => {
+        console.log(nota);
+        const inputNota = document.createElement("input");
+        inputNota.type = "number";
+        inputNota.name = `notas[${idEstudiante}][]`;
+        inputNota.classList.add("form-control", "mb-1");
+        inputNota.placeholder = "Nota";
+        inputNota.value = nota.value; // nota ya registrada
+
+        const inputId = document.createElement("input");
+        inputId.type = "hidden";
+        inputId.name = `notas_id[${idEstudiante}][]`;
+        inputId.value = nota.id; // id de la nota en la db
+
+        contenedorNotas.appendChild(inputNota);
+        contenedorNotas.appendChild(inputId);
+      });
+
+      notasTd.appendChild(contenedorNotas);
+
+      // Botones de agregar y quitar
+      const btnAdd = document.createElement("button");
+      btnAdd.type = "button";
+      btnAdd.textContent = "+";
+      btnAdd.classList.add("btn", "btn-success", "btn-sm", "me-1");
+
+      btnAdd.addEventListener("click", () => {
+        const newInput = document.createElement("input");
+        newInput.type = "number";
+        newInput.name = `notas[${idEstudiante}][]`;
+        newInput.classList.add("form-control", "mb-1");
+        newInput.placeholder = "Nota";
+        contenedorNotas.appendChild(newInput);
+      });
+
+      const btnRemove = document.createElement("button");
+      btnRemove.type = "button";
+      btnRemove.textContent = "-";
+      btnRemove.classList.add("btn", "btn-danger", "btn-sm");
+
+      btnRemove.addEventListener("click", () => {
+        const numberInputs = contenedorNotas.querySelectorAll(
+          "input[type='number']"
+        );
+        const hiddenInputs = contenedorNotas.querySelectorAll(
+          "input[type='hidden']"
+        );
+
+        if (numberInputs.length > 0) {
+          const lastIndex = numberInputs.length - 1;
+          const lastInput = numberInputs[lastIndex];
+
+          // Buscar si hay un input hidden asociado
+          const inputHidden = hiddenInputs[lastIndex];
+          const notaId = inputHidden?.value || null;
+
+          if (notaId) {
+            // Enviar al backend para marcar como eliminado
+            console.log("Enviando al servidor:", { id: notaId, deleted: 1 });
+
+            fetch("delete_rating", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ id: notaId, deleted: 1 }),
+            })
+              .then((response) => {
+                if (!response.ok) throw new Error("Error HTTP");
+                return response.json();
+              })
+              .then((data) => {
+                if (data.success) {
+                  contenedorNotas.removeChild(lastInput);
+                  contenedorNotas.removeChild(inputHidden);
+                } else {
+                  alert("Error al eliminar la nota");
+                }
+              })
+              .catch((error) => {
+                console.error("Error en fetch:", error);
+              });
+          } else {
+            // Si no hay ID asociado, solo eliminar el input número
+            contenedorNotas.removeChild(lastInput);
+          }
+        }
+      });
+
+      const botonesTd = document.createElement("td");
+      botonesTd.classList.add("text-center", "desktop-to-mobile");
+      botonesTd.appendChild(btnAdd);
+      botonesTd.appendChild(btnRemove);
+
+      // Agregar celdas a la fila
+      row.appendChild(nombreTd);
+      row.appendChild(notasTd);
+      row.appendChild(botonesTd);
+
+      tableBody.appendChild(row);
+    });
+  };
 })();

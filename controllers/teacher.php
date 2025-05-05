@@ -12,6 +12,9 @@ class Teacher extends Controller
         $this->view->sections            = [];
         $this->view->grades              = [];
         $this->view->mentions            = [];
+        $this->view->niveles            = [];
+        $this->view->secciones          = [];
+        $this->view->materias           = [];
     }
 
     // dashboard
@@ -116,43 +119,259 @@ class Teacher extends Controller
     }
 
     // consultar seccion que atiende el docente
-    public function sections_view()
+    public function asign_ratings_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
             $id_teacher = (string) $_SESSION['id_docente']; // Forzamos a string
             $horarios = $this->model->model_select_schedule_teacher();
             $horarios_filtrados = [];
+            $vistos = [];
 
             foreach ($horarios as $horario_data) {
-                // Decodificamos los campos
-                $docentes     = json_decode($horario_data['docente'], true);
-                $materias     = json_decode($horario_data['materia'], true);
+                $docentes = json_decode($horario_data['docente'], true);
+                $materias = json_decode($horario_data['materia'], true);
 
-                // Validamos que todos sean arrays y del mismo tamaño
                 if (
                     is_array($docentes) && is_array($materias) &&
                     count($docentes) === count($materias)
                 ) {
                     foreach (array_keys($docentes) as $indice) {
-                        // Comparamos ambos como string por seguridad
                         $docente_id = (string) trim($docentes[$indice]);
-                        if ($docente_id === (string)$id_teacher) {
-                            $horario_docente = [
-                                'seccion'    => $horario_data['seccion'],
-                                'nivel'    => $horario_data['nivel'],
-                                'materia'     => $materias[$indice] ?? null,
+                        $materia    = $materias[$indice] ?? null;
+                        $seccion    = $horario_data['seccion'];
+                        $nivel      = $horario_data['nivel'];
+
+                        $clave_unica = "$materia|$seccion|$nivel"; // Clave única para evitar duplicados
+
+                        if ($docente_id === (string)$id_teacher && !isset($vistos[$clave_unica])) {
+                            $horarios_filtrados[] = [
+                                'materia' => $materia,
+                                'seccion' => $seccion,
+                                'nivel'   => $nivel,
                             ];
-                            $horarios_filtrados[] = $horario_docente;
+                            $vistos[$clave_unica] = true;
                         }
                     }
                 }
             }
-            $this->view->horarios = $horarios_filtrados;
-            $this->view->render('teacher/sections_view');
+            $niveles = [];
+            $secciones = [];
+            $materias = [];
+
+            foreach ($horarios_filtrados as $item) {
+                $niveles[$item['nivel']] = $item['nivel'];
+                $secciones[$item['seccion']] = $item['seccion'];
+                $materias[$item['materia']] = $item['materia'];
+            }
+
+            $this->view->niveles = array_values($niveles);
+            $this->view->secciones = array_values($secciones);
+            $this->view->materias = array_values($materias);
+            $this->view->render('teacher/asign_ratings_view');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
             exit;
+        }
+    }
+
+    public function filtrar_classroom()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->model_filtrar_classroom($postData['section'], $postData['grade']);
+
+        echo json_encode($result);
+    }
+
+    public function save_ratings()
+    {
+        $teacherId = $_SESSION['id_docente'];
+        $mention = $this->validarEntrada($_POST['materia']);
+        $section = $this->validarEntrada($_POST['seccion']);
+        $grade = $this->validarEntrada($_POST['nivel']);
+
+        // Verificar si ya existen notas para esta combinación
+        $sectionId = $this->model->getSectionId($section);
+        $gradeId = $this->model->getGradeId($grade);
+
+        $exists = $this->model->ratings_exist($teacherId, $mention, $sectionId, $gradeId);
+        if ($exists) {
+            $_SESSION['message'] = "Ya existen notas registradas para esta sección, curso y grado.";
+            header("Location: " . __baseurl__ . "teacher/asign_ratings_view");
+            exit;
+        }
+
+        // Insertar las notas
+        if (isset($_POST['notas']) && is_array($_POST['notas'])) {
+            foreach ($_POST['notas'] as $estudianteId => $notas) {
+                foreach ($notas as $nota) {
+                    if (trim($nota) !== '') {
+                        $result = $this->model->model_register_rating(
+                            $estudianteId,
+                            $teacherId,
+                            $nota,
+                            $mention,
+                            $sectionId,
+                            $gradeId
+                        );
+
+                        if ($result) {
+                            $_SESSION['message'] = "Notas guardadas correctamente";
+                            header("Location: " . __baseurl__ . "teacher/asign_ratings_view");
+                            exit;
+                        } else {
+                            $_SESSION['message'] = "Error al guardar las notas";
+                            header("Location: " . __baseurl__ . "teacher/asign_ratings_view");
+                            exit;
+                        }
+                    }
+                }
+            }
+        } else {
+            $_SESSION['message'] = "No se han recibido notas";
+            header("Location: " . __baseurl__ . "teacher/asign_ratings_view");
+            exit;
+        }
+    }
+
+    // consultar seccion que atiende el docente
+    public function list_ratings_view()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+            $id_teacher = (string) $_SESSION['id_docente']; // Forzamos a string
+            $horarios = $this->model->model_select_schedule_teacher();
+            $horarios_filtrados = [];
+            $vistos = [];
+
+            foreach ($horarios as $horario_data) {
+                $docentes = json_decode($horario_data['docente'], true);
+                $materias = json_decode($horario_data['materia'], true);
+
+                if (
+                    is_array($docentes) && is_array($materias) &&
+                    count($docentes) === count($materias)
+                ) {
+                    foreach (array_keys($docentes) as $indice) {
+                        $docente_id = (string) trim($docentes[$indice]);
+                        $materia    = $materias[$indice] ?? null;
+                        $seccion    = $horario_data['seccion'];
+                        $nivel      = $horario_data['nivel'];
+
+                        $clave_unica = "$materia|$seccion|$nivel"; // Clave única para evitar duplicados
+
+                        if ($docente_id === (string)$id_teacher && !isset($vistos[$clave_unica])) {
+                            $horarios_filtrados[] = [
+                                'materia' => $materia,
+                                'seccion' => $seccion,
+                                'nivel'   => $nivel,
+                            ];
+                            $vistos[$clave_unica] = true;
+                        }
+                    }
+                }
+            }
+            $niveles = [];
+            $secciones = [];
+            $materias = [];
+
+            foreach ($horarios_filtrados as $item) {
+                $niveles[$item['nivel']] = $item['nivel'];
+                $secciones[$item['seccion']] = $item['seccion'];
+                $materias[$item['materia']] = $item['materia'];
+            }
+
+            $this->view->niveles = array_values($niveles);
+            $this->view->secciones = array_values($secciones);
+            $this->view->materias = array_values($materias);
+            $this->view->render('teacher/list_ratings_view');
+        } else {
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+            exit;
+        }
+    }
+
+    public function filtrar_ratings()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->model_filtrar_ratings($postData['materia'], $postData['section'], $postData['grade']);
+
+        echo json_encode($result);
+    }
+
+    public function edit_ratings()
+    {
+        $teacherId = $_SESSION['id_docente'];
+        $mention = $this->validarEntrada($_POST['materia']);
+        $section = $this->validarEntrada($_POST['seccion']);
+        $grade = $this->validarEntrada($_POST['nivel']);
+
+        $sectionId = $this->model->getSectionId($section);
+        $gradeId = $this->model->getGradeId($grade);
+
+        $success = true; // bandera de éxito
+
+        if (isset($_POST['notas']) && is_array($_POST['notas'])) {
+            foreach ($_POST['notas'] as $estudianteId => $notas) {
+                $notasIds = $_POST['notas_id'][$estudianteId] ?? [];
+
+                foreach ($notas as $i => $nota) {
+                    $idNota = $notasIds[$i] ?? null;
+
+                    if (trim($nota) !== '') {
+                        $result = $this->model->model_edit_rating(
+                            $idNota,
+                            $estudianteId,
+                            $teacherId,
+                            $nota,
+                            $mention,
+                            $sectionId,
+                            $gradeId
+                        );
+
+                        if (!$result) {
+                            $success = false;
+                        }
+                    }
+                }
+            }
+
+            if ($success) {
+                $_SESSION['message'] = "Notas actualizadas correctamente";
+            } else {
+                $_SESSION['message'] = "Algunas notas no se pudieron actualizar";
+            }
+
+            header("Location: " . __baseurl__ . "teacher/list_ratings_view");
+            exit;
+        } else {
+            $_SESSION['message'] = "No se han recibido notas";
+            header("Location: " . __baseurl__ . "teacher/list_ratings_view");
+            exit;
+        }
+    }
+
+    public function delete_rating()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->model_deleted_rating($postData['id'], $postData['deleted']);
+
+        if ($result) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false]);
         }
     }
 

@@ -109,31 +109,21 @@
               </div>
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label required">Año</label>
-                <select class="form-control" id="example-text-input" name="grado" required>
-                  <option <?php if ($this->data['nivel'] == "1°ero") echo "selected" ?>>1°ero</option>
-                  <option <?php if ($this->data['nivel'] == "2°do") echo "selected" ?>>2°do</option>
-                  <option <?php if ($this->data['nivel'] == "3°ero") echo "selected" ?>>3°ero</option>
-                  <option <?php if ($this->data['nivel'] == "4°to") echo "selected" ?>>4°to</option>
-                  <option <?php if ($this->data['nivel'] == "5°to") echo "selected" ?>>5°to</option>
-                  <option <?php if ($this->data['nivel'] == "6°to") echo "selected" ?>>6°to</option>
+                <select class="form-control" id="example-text-input" name="grado" required readonly>
+                  <option value="<?= $this->data['nivel'] ?>" <?php if ($this->data['nivel']) echo "selected" ?>><?= $this->data['grades'] ?></option>
+
                 </select>
               </div>
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label required">Sección</label>
-                <select class="form-control" id="example-text-input" name="seccion" required>
-                  <option <?php if ($this->data['seccion'] == "A") echo "selected"; ?>>A</option>
-                  <option <?php if ($this->data['seccion'] == "B") echo "selected"; ?>>B</option>
-                  <option <?php if ($this->data['seccion'] == "C") echo "selected"; ?>>C</option>
-                  <option <?php if ($this->data['seccion'] == "D") echo "selected"; ?>>D</option>
-                  <option <?php if ($this->data['seccion'] == "E") echo "selected"; ?>>E</option>
+                <select class="form-control" id="example-text-input" name="seccion" required readonly>
+                  <option value="<?= $this->data['seccion'] ?>" <?php if ($this->data['seccion']) echo "selected" ?>><?= $this->data['sections'] ?></option>
                 </select>
               </div>
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label required">Mención</label>
-                <select class="form-control" id="example-text-input" name="mencion">
-                  <option <?php if ($this->data['mencion'] == "Petroquimica") echo "selected"; ?>>Petroquimica</option>
-                  <option <?php if ($this->data['mencion'] == "Mecanica") echo "selected"; ?>>Mecanica</option>
-                  <option <?php if ($this->data['mencion'] == "Electricidad") echo "selected"; ?>>Electricidad</option>
+                <select class="form-control" id="example-text-input" name="mencion" required readonly>
+                  <option value="<?= $this->data['mencion'] ?>" <?php if ($this->data['mencion']) echo "selected" ?>><?= $this->data['mentions'] ?></option>
                 </select>
               </div>
             </div>

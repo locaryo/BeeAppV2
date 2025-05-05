@@ -103,38 +103,7 @@
                 <label for="example-text-input" class="form-label">Documentos Entregados</label>
                 <input class="form-control" type="text" placeholder="partida de nacimiento, etc" id="example-text-input" name="documentos" required>
               </div>
-              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
-                <label for="example-text-input" class="form-label required">Año</label>
-                <select class="form-control" id="example-text-input" name="grado" required>
-                  <option value="" selected disabled>Seleccione grado</option>
-                  <option>1°ero</option>
-                  <option>2°do</option>
-                  <option>3°ero</option>
-                  <option>4°to</option>
-                  <option>5°to</option>
-                  <option>6°to</option>
-                </select>
-              </div>
-              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
-                <label for="example-text-input" class="form-label required">Sección</label>
-                <select class="form-control" id="example-text-input" name="seccion">
-                  <option value="" disabled selected>Seleccionar sección</option>
-                  <option>A</option>
-                  <option>B</option>
-                  <option>C</option>
-                  <option>D</option>
-                  <option>E</option>
-                </select>
-              </div>
-              <div class="form-group col-12 col-sm-6 col-md-3 px-2">
-                <label for="example-text-input" class="form-label required">Mención</label>
-                <select class="form-control" id="example-text-input" name="mencion">
-                  <option value="" require selected>Seleccionar mención</option>
-                  <option>Petroquimica</option>
-                  <option>Mecanica</option>
-                  <option>Electricidad</option>
-                </select>
-              </div>
+
             </div>
 
             <div class="col-auto">

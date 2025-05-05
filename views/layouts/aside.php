@@ -84,6 +84,15 @@
             <span class="nav-link-text ms-1">Consulta Individual</span>
           </a>
         </li>
+        <!-- boton consulta individual -->
+        <li class="nav-item">
+          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_create_sections">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Asignar Secciones</span>
+          </a>
+        </li>
         <!-- boton horarios -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/schedule_view">
@@ -124,22 +133,22 @@
             <span class="nav-link-text ms-1">Consultar Horario</span>
           </a>
         </li>
-        <!-- boton consulta de secciones-->
+        <!-- boton asignar notas a secciones-->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/sections_view">
+          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/asign_ratings_view">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Consultar Secciones</span>
+            <span class="nav-link-text ms-1">Asignar Calificacion</span>
           </a>
         </li>
-        <!-- boton asignar notas -->
+        <!-- boton ver notas a secciones-->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/grades_view">
+          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/list_ratings_view">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Asignar Notas</span>
+            <span class="nav-link-text ms-1">Mostrar Calificacion</span>
           </a>
         </li>
 
