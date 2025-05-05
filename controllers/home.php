@@ -90,10 +90,8 @@ class Home extends Controller
             $count_student       = $this->model->count_student();
             $count_student_m     = $this->model->count_student_m();
             $count_student_f     = $this->model->count_student_f();
-            $count_student_petro = $this->model->count_student_petro();
-            $count_student_meca  = $this->model->count_student_meca();
-            $count_student_elec  = $this->model->count_student_elec();
-
+            $count_menciones = $this->model->count_students_by_mention();
+        
             $ingresoEgreso  = $this->model->model_product_billing_count();
             $this->view->ingresoEgreso = json_encode($ingresoEgreso);
 
@@ -102,14 +100,12 @@ class Home extends Controller
 
             $montoMensualidad  = $this->model->model_select_registration_monthly_payment();
             $this->view->montoMensualidad = json_encode($montoMensualidad);
-
+            // print_r($count_menciones);
             $this->view->count_teacher       = $count_teacher;
             $this->view->count_student       = $count_student;
             $this->view->count_student_m     = $count_student_m;
             $this->view->count_student_f     = $count_student_f;
-            $this->view->count_student_petro = json_encode($count_student_petro);
-            $this->view->count_student_meca  = json_encode($count_student_meca);
-            $this->view->count_student_elec  = json_encode($count_student_elec);
+            $this->view->count_student_petro = json_encode($count_menciones);
             $this->view->render('admin/dashboard');
         } elseif ($_SESSION['access'] === true && $_SESSION['rol'] === 2) {
             header("Location: " . __baseurl__ . "teacher/dashboard");  // Redirigimos al dashboard sin pasar parámetros en la URL
@@ -282,9 +278,7 @@ class Home extends Controller
         $ci_representante = $this->validarEntrada($_POST['ci_representante']);
         $direccion        = $this->validarEntrada($_POST['direccion']);
         $documentos       = $this->validarEntrada($_POST['documentos']);
-        $grado            = $this->validarEntrada($_POST['grado']);
-        $seccion          = $this->validarEntrada($_POST['seccion']);
-        $mencion          = $this->validarEntrada($_POST['mencion']);
+
 
         $sexo = ($sexo == "Femenino") ? 1 : 0;
 
@@ -310,10 +304,7 @@ class Home extends Controller
                 $edad,
                 $ci_representante,
                 $direccion,
-                $documentos,
-                $grado,
-                $seccion,
-                $mencion
+                $documentos
             );
         } else {
             header("Location: " . __baseurl__ . "home/register_student_view?datos");
@@ -522,6 +513,52 @@ class Home extends Controller
         }
     }
 
+    // view create sections
+    // tablas
+    public function view_create_sections()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $result = $this->model->model_select_teacher();
+            $sections = $this->model->model_select_sections();
+            $grades = $this->model->model_select_grades();
+            $mentions = $this->model->model_select_mentions();
+            $this->view->array = $result;
+            $this->view->sections = $sections;
+            $this->view->grades = $grades;
+            $this->view->mentions = $mentions;
+            $this->view->render('admin/view_create_sections');
+        } else {
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__);
+            exit;
+        }
+    }
+
+    public  function submit_sections()
+    {
+        $estudiantes = $_POST['estudiantes'];
+        $grade = $_POST['grade'];
+        $section = $_POST['section'];
+        $mention = $_POST['mention'];
+
+        if (!empty($estudiantes) && $grade != 0 && $section != 0 && $mention != 0) {
+            $result = $this->model->model_register_sections($grade, $section, $mention, $estudiantes);
+            if ($result) {
+                $_SESSION['message'] = "Aula registrada exitosamente";  // Guardamos el mensaje en la sesión
+                header("Location: " . __baseurl__ . "home/view_create_sections");  // Redirigimos a la vista de horario sin pasar parámetros en la URL
+                exit;
+            } else {
+                $_SESSION['message'] = "Error al registrar el aula";  // Guardamos el mensaje en la sesión
+                header("Location: " . __baseurl__ . "home/view_create_sections");  // Redirigimos a la vista de horario con error
+                exit;
+            }
+        } else {
+            $_SESSION['message'] = "Seleccione al menos un estudiante y complete todos los campos";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__ . "home/view_create_sections?error");  // Redirigimos a la vista de horario con error
+            exit;
+        }
+    }
+
     // schedule_view
     public function schedule_view()
     {
@@ -577,7 +614,7 @@ class Home extends Controller
                 $data = $this->model->consulting_cedula($cedula, $opcion);
                 unset($_SESSION['cedula']);  // Eliminamos para que se comporte como flash data
                 unset($_SESSION['opcion']);  // Eliminamos para que se comporte como flash data
-                $this->id_student = $data['0'];
+                $this->id_student = $data['a_id'];
                 $payment = $this->model->model_consulting_student_payments($this->id_student);
                 if ($data) {
                     $this->view->data = $data;
@@ -623,7 +660,7 @@ class Home extends Controller
                 $data = $this->model->consulting_cedula($cedula, $opcion);
                 unset($_SESSION['cedula']);  // Eliminamos para que se comporte como flash data
                 unset($_SESSION['opcion']);  // Eliminamos para que se comporte como flash data
-                $this->id_teacher = $data['0'];
+                $this->id_teacher = $data['id'];
                 $payment = $this->model->model_consulting_teacher_payments($this->id_teacher);
                 if ($data) {
                     $this->view->data = $data;

@@ -57,9 +57,15 @@ class HomeModel extends Model
     public function consulting_cedula($cedula, $opcion)
     {
         if ($opcion === "alumnos") {
-            $sql = $this->db->conn()->prepare("SELECT *, alumnos.id as a_id, alumnos.correo as a_correo, r.deleted AS eliminado FROM $opcion INNER JOIN representante r ON r.cedula_r = alumnos.ci_representante WHERE alumnos.cedula = ? AND alumnos.deleted = 0");
+            $sql = $this->db->conn()->prepare("SELECT *, alumnos.id as a_id, alumnos.correo as a_correo, r.deleted AS eliminado 
+            FROM $opcion 
+            INNER JOIN representante r ON r.cedula_r = alumnos.ci_representante 
+            LEFT JOIN grades g ON g.id = alumnos.nivel
+            LEFT JOIN sections s ON s.id = alumnos.seccion
+            LEFT JOIN mentions m ON m.id = alumnos.mencion
+            WHERE alumnos.cedula = ? AND alumnos.deleted = 0");
             $sql->execute([$cedula]);
-            $result = $sql->fetch(PDO::FETCH_DEFAULT);
+            $result = $sql->fetch(PDO::FETCH_ASSOC);
             if ($result) {
                 return $result;
             } else {
@@ -69,7 +75,7 @@ class HomeModel extends Model
         } elseif ($opcion === "representante") {
             $sql = $this->db->conn()->prepare("SELECT * FROM $opcion WHERE cedula_r = ? and deleted = 0");
             $sql->execute([$cedula]);
-            $result = $sql->fetch(PDO::FETCH_DEFAULT);
+            $result = $sql->fetch(PDO::FETCH_ASSOC);
             if ($result) {
                 return $result;
             } else {
@@ -79,7 +85,7 @@ class HomeModel extends Model
         } else {
             $sql = $this->db->conn()->prepare("SELECT * FROM $opcion WHERE cedula = ? and deleted = 0");
             $sql->execute([$cedula]);
-            $result = $sql->fetch(PDO::FETCH_DEFAULT);
+            $result = $sql->fetch(PDO::FETCH_ASSOC);
             if ($result) {
                 return $result;
             } else {
@@ -131,7 +137,7 @@ class HomeModel extends Model
         $sql = null;
         $this->db = null;
     }
-    
+
     // registrar pago recibido
     public function model_register_receive_payment(
         $id_student,
@@ -248,7 +254,7 @@ class HomeModel extends Model
         $sql = null;
         $this->db = null;
     }
-    
+
 
     // seleccionar tipos de ingresos
     public function model_select_income_source()
@@ -493,10 +499,7 @@ class HomeModel extends Model
         $edad,
         $ci_representante,
         $direccion,
-        $documentos,
-        $grado,
-        $seccion,
-        $mencion
+        $documentos
     ) {
         $sql = $this->db->conn()->prepare("SELECT id,cedula FROM alumnos WHERE cedula = ? and deleted = 0");
         $sql->execute([$cedula]);
@@ -523,12 +526,9 @@ class HomeModel extends Model
                 documentos,
                 sexo,
                 correo,
-                nivel,
-                seccion,
-                mencion,
                 data_registered,
                 deleted
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,0)");
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP,0)");
                 if ($sql->execute([
                     $result['id'],
                     $p_nombre,
@@ -543,10 +543,7 @@ class HomeModel extends Model
                     $direccion,
                     $documentos,
                     $sexo,
-                    $correo,
-                    $grado,
-                    $seccion,
-                    $mencion
+                    $correo
                 ])) {
                     $sql = $this->db->conn()->prepare("SELECT COUNT('id') FROM alumnos WHERE deleted = 0");
                     $sql->execute();
@@ -994,16 +991,24 @@ class HomeModel extends Model
         $this->db = null;
     }
 
-    public function count_student_petro()
+    public function count_students_by_mention()
     {
-        $sql = $this->db->conn()->prepare("SELECT nivel,  COUNT('cedula') as cantidad FROM alumnos WHERE mencion = 'Petroquimica' and deleted = 0 GROUP BY nivel");
+        $sql = $this->db->conn()->prepare("
+            SELECT 
+                grades.grades AS nivel_nombre, 
+                mentions.mentions AS mencion_nombre, 
+                COUNT(a.cedula) AS cantidad 
+            FROM alumnos a
+            INNER JOIN mentions ON mentions.id = a.mencion
+            INNER JOIN grades ON grades.id = a.nivel
+            WHERE a.deleted = 0 
+            GROUP BY a.nivel, a.mencion
+        ");
         $sql->execute();
-        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
         return $result;
-        $sql->closeCursor();
-        $sql = null;
-        $this->db = null;
     }
+
 
     public function count_student_meca()
     {
@@ -1074,7 +1079,7 @@ class HomeModel extends Model
 
     public function model_select_sections()
     {
-        $sql = $this->db->conn()->prepare("SELECT sections FROM sections WHERE deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT id, sections FROM sections WHERE deleted = '0'; ");
         $sql->execute([]);
         $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1087,7 +1092,7 @@ class HomeModel extends Model
 
     public function model_select_grades()
     {
-        $sql = $this->db->conn()->prepare("SELECT grades FROM grades WHERE deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT id, grades FROM grades WHERE deleted = '0'; ");
         $sql->execute([]);
         $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1100,7 +1105,7 @@ class HomeModel extends Model
 
     public function model_select_mentions()
     {
-        $sql = $this->db->conn()->prepare("SELECT mentions FROM mentions WHERE deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT id, mentions FROM mentions WHERE deleted = '0'; ");
         $sql->execute([]);
         $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1152,5 +1157,39 @@ class HomeModel extends Model
         $sql->closeCursor();
         $sql = null;
         $this->db = null;
+    }
+
+    public function model_register_sections($grade, $section, $mention, $estudiantes)
+    {
+        $estudiantesArray = [];
+
+        foreach ($estudiantes as $value) {
+            $estudiantesArray[] = $value;
+        }
+
+        // Insertar en classrooms
+        $sql = $this->db->conn()->prepare("INSERT INTO classrooms (grade, section, mention, students) VALUES (?, ?, ?, ?)");
+        if ($sql->execute([
+            $grade,
+            $section,
+            $mention,
+            json_encode($estudiantesArray)
+        ])) {
+            // Actualizar cada estudiante individualmente
+            $sqlUpdate = $this->db->conn()->prepare("UPDATE alumnos SET nivel = ?, seccion = ?, mencion = ? WHERE id = ? AND deleted = 0");
+
+            foreach ($estudiantesArray as $id) {
+                $sqlUpdate->execute([
+                    $grade,
+                    $section,
+                    $mention,
+                    $id
+                ]);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

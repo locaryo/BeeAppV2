@@ -23,7 +23,7 @@
                     <h6 class="text-center">Horario</h6>
                 </div>
                 <!-- row1 -->
-                <div class="d-flex justify-content-evenly align-items-center desktop-to-mobile">
+                <div class="d-flex justify-content-evenly align-items-center overflow-auto desktop-to-mobile">
                     <table class="table align-items-center" id="results">
                         <thead>
                             <tr>

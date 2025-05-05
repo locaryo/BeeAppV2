@@ -8,127 +8,138 @@
 <script src="<?= constant('__baseurl__') ?>public/js/custom/schedule.js"></script>
 
 <script>
-  let datos_petro = <?= $this->count_student_petro ?: '[]' ?>;
-  let datos_mecanica = <?= $this->count_student_meca ?: '[]' ?>;
-  let datos_elec = <?= $this->count_student_elec ?: '[]' ?>;
+  let datos_menciones = <?= $this->count_student_petro ? $this->count_student_petro : [] ?>;
+  
+  // Crear estructura por mención
+  let menciones = {};
+  let niveles = ['1°', '2°', '3°', '4°', '5°', '6°'];
 
-  if (Array.isArray(datos_petro) && datos_petro.length > 0) {
-    let counts_petro = datos_petro.map(item => item.cantidad);
-    let counts_meca = datos_mecanica.map(item => item.cantidad);
-    let counts_elec = datos_elec.map(item => item.cantidad);
+  datos_menciones.forEach(item => {
+    let mencion = item.mencion_nombre;
+    let nivel = item.nivel_nombre;
+    let cantidad = parseInt(item.cantidad);
 
+    if (!menciones[mencion]) {
+      menciones[mencion] = {
+        name: mencion,
+        data: Array(6).fill(0)
+      };
+    }
 
-    const ctx1 = document.getElementById("chart-line-a").getContext("2d");
+    // Suponiendo que los niveles son '1ero', '2do', ..., '6to'
+    let index = niveles.indexOf(nivel);
+    if (index !== -1) {
+      menciones[mencion].data[index] = cantidad;
+    }
+  });
 
-    var gradientStroke1 = ctx1.createLinearGradient(0, 300, 0, 50);
-    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+  // Función para generar un color hexadecimal aleatorio
+  function generarColorAleatorio() {
+    const letras = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letras[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 
-    var gradientStroke2 = ctx1.createLinearGradient(0, 300, 0, 50);
-    gradientStroke2.addColorStop(1, 'rgba(214, 21, 63, 0.2)');
-    gradientStroke2.addColorStop(0.2, 'rgba(255, 99, 132, 0.0)');
-    gradientStroke2.addColorStop(0, 'rgba(255, 99, 132, 0)');
+  // Asignar un color aleatorio a cada mención y guardarlo para consistencia
+  let colores = {};
+  Object.values(menciones).forEach(m => {
+    colores[m.name] = generarColorAleatorio();
+  });
 
-    var gradientStroke3 = ctx1.createLinearGradient(0, 300, 0, 50);
-    gradientStroke3.addColorStop(1, 'rgba(54, 162, 235, 0.2)');
-    gradientStroke3.addColorStop(0.2, 'rgba(54, 162, 235, 0.0)');
-    gradientStroke3.addColorStop(0, 'rgba(54, 162, 235, 0)');
+  // Generar datasets dinámicos
+  let datasets = Object.values(menciones).map(m => {
+    let color = colores[m.name];
+    return {
+      label: m.name,
+      tension: .5,
+      pointRadius: 0,
+      borderColor: color,
+      backgroundColor: hexToRgba(color, 0.2), // opacidad con RGBA
+      borderWidth: 1,
+      fill: true,
+      data: m.data,
+      maxBarThickness: 6
+    };
+  });
 
-    new Chart(ctx1, {
-      type: "line",
-      data: {
-        labels: ['1ero', '2do', '3ro', '4to', '5to', '6to'],
-        datasets: [{
-          label: "Petroquimica",
-          tension: .5,
-          pointRadius: 0,
-          borderColor: "#5e72e4",
-          backgroundColor: gradientStroke1,
-          borderWidth: 1,
-          fill: true,
-          data: counts_petro,
-          maxBarThickness: 6
-        }, {
-          data: counts_meca,
-          label: "Mecanica",
-          backgroundColor: gradientStroke2,
-          borderColor: "#fb6340",
-          borderWidth: 1,
-          fill: true,
-          tension: .5,
-          pointRadius: 0,
-          maxBarThickness: 6,
-        }, {
-          data: counts_elec,
-          label: "Electricidad",
-          backgroundColor: gradientStroke3,
-          borderColor: "#11cdef",
-          borderWidth: 1,
-          fill: true,
-          tension: .5,
-          pointRadius: 0,
-          maxBarThickness: 6,
-        }],
+  // Función para convertir un hex a rgba con opacidad
+  function hexToRgba(hex, alpha) {
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  // Crear gráfico
+  const ctx1 = document.getElementById("chart-line-a").getContext("2d");
+  new Chart(ctx1, {
+    type: "line",
+    data: {
+      labels: niveles,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true
+        }
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true
+      interaction: {
+        intersect: false,
+        mode: 'index'
+      },
+      scales: {
+        y: {
+          grid: {
+            drawBorder: true,
+            display: true,
+            drawOnChartArea: true,
+            drawTicks: false,
+            borderDash: [5, 5]
+          },
+          ticks: {
+            display: true,
+            padding: 10,
+            color: '#fbfbfb',
+            font: {
+              size: 11,
+              family: "Open Sans",
+              style: 'normal',
+              lineHeight: 2
+            },
           }
         },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: true,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              padding: 10,
-              color: '#fbfbfb',
-              font: {
-                size: 11,
-                family: "Open Sans",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
+        x: {
+          grid: {
+            drawBorder: false,
+            display: false,
+            drawOnChartArea: false,
+            drawTicks: true,
+            borderDash: [5, 5]
           },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: true,
-              borderDash: [5, 5]
+          ticks: {
+            display: true,
+            color: '#ccc',
+            padding: 10,
+            font: {
+              size: 11,
+              family: "Open Sans",
+              style: 'normal',
+              lineHeight: 2
             },
-            ticks: {
-              display: true,
-              color: '#ccc',
-              padding: 10,
-              font: {
-                size: 11,
-                family: "Open Sans",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
+          }
         },
       },
-    });
-  }
+    },
+  });
 </script>
+
 
 <script>
   var win = navigator.platform.indexOf('Win') > -1;
