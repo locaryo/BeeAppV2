@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const intervaloMin = 15; // bloques de 30 minutos
   const dias = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
 
+  if (!tabla) return;
+
   generarTablaHorario(horasInicio, horasFin, intervaloMin);
 
   const btnAsignar = document.getElementById("btn-asignar");
