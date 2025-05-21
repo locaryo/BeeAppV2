@@ -13,28 +13,7 @@ class Home extends Controller
     {
         session_start();
         parent::__construct();
-        $this->view->data                = "";
-        $this->view->payments                = "";
-        $this->view->moneda              = "";
-        $this->view->msj                 = "";
-        $this->view->institution         = "";
-        $this->view->count_teacher       = 0;
-        $this->view->count_student       = 0;
-        $this->view->count_student_m     = 0;
-        $this->view->count_student_f     = 0;
-        $this->view->count_student_petro = [];
-        $this->view->count_student_meca  = [];
-        $this->view->count_student_elec  = [];
-        $this->view->array               = [];
-        $this->view->sections               = [];
-        $this->view->grades               = [];
-        $this->view->mentions               = [];
-        $this->view->payment_mehtod      = [];
-        $this->view->income_source       = [];
-        $this->view->montoPagosMatriculaStudent = "";
-        $this->view->ingresoEgreso = 0;
-        $this->view->montoPagosMatriculaDashboard = 0;
-        $this->view->montoMensualidad = 0;
+
         $this->id_student = 0;
     }
 
@@ -91,21 +70,21 @@ class Home extends Controller
             $count_student_m     = $this->model->count_student_m();
             $count_student_f     = $this->model->count_student_f();
             $count_menciones = $this->model->count_students_by_mention();
-        
+
             $ingresoEgreso  = $this->model->model_product_billing_count();
-            $this->view->ingresoEgreso = json_encode($ingresoEgreso);
+            $this->view->ingresoEgreso = json_encode($ingresoEgreso) ? json_encode($ingresoEgreso) : [];
 
             $montoPagosMatriculaDashboard  = $this->model->model_select_registration_payment();
-            $this->view->montoPagosMatriculaDashboard = json_encode($montoPagosMatriculaDashboard);
+            $this->view->montoPagosMatriculaDashboard = json_encode($montoPagosMatriculaDashboard) ? json_encode($montoPagosMatriculaDashboard) : [];
 
             $montoMensualidad  = $this->model->model_select_registration_monthly_payment();
-            $this->view->montoMensualidad = json_encode($montoMensualidad);
+            $this->view->montoMensualidad = json_encode($montoMensualidad) ? json_encode($montoMensualidad) : [];
             // print_r($count_menciones);
-            $this->view->count_teacher       = $count_teacher;
-            $this->view->count_student       = $count_student;
-            $this->view->count_student_m     = $count_student_m;
-            $this->view->count_student_f     = $count_student_f;
-            $this->view->count_student_petro = json_encode($count_menciones);
+            $this->view->count_teacher       = $count_teacher ? $count_teacher : 0;
+            $this->view->count_student       = $count_student ? $count_student : 0;
+            $this->view->count_student_m     = $count_student_m ? $count_student_m : 0;
+            $this->view->count_student_f     = $count_student_f ? $count_student_f : 0;
+            $this->view->count_student_petro = json_encode($count_menciones) ? json_encode($count_menciones) : [];
             $this->view->render('admin/dashboard');
         } elseif ($_SESSION['access'] === true && $_SESSION['rol'] === 2) {
             header("Location: " . __baseurl__ . "teacher/dashboard");  // Redirigimos al dashboard sin pasar parámetros en la URL
@@ -116,30 +95,58 @@ class Home extends Controller
         }
     }
 
-    // dashboard
-    // public function accountingDashboard()
-    // {
-    //     if ($_SESSION['access'] === true && $_SESSION['rol'] === 1) {
+    // accountingDashboard
+    public function accountingDashboard()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $expenses_category = $this->model->model_select_expenses_category();
+            $this->view->expenses_category = $expenses_category ? $expenses_category : [];
 
-    //         $montoMatriculaStudent  = $this->model->select_payment_student_count();
-    //         $this->view->montoPagosMatriculaStudent = json_encode($montoMatriculaStudent);
+            $income_source = $this->model->model_select_income_source();
+            $this->view->income_source = $income_source ? $income_source : [];
 
-    //         $ingresoEgreso  = $this->model->product_billing_count();
-    //         $this->view->ingresoEgreso = json_encode($ingresoEgreso);
+            $montoPagosMatriculaDashboard  = $this->model->model_select_registration_payment();
+            $this->view->montoPagosMatriculaDashboard = json_encode($montoPagosMatriculaDashboard) ? json_encode($montoPagosMatriculaDashboard) : [];
 
-    //         $montoPagosMatriculaDashboard  = $this->model->select_payment_student_count_total_dasboard();
-    //         $this->view->montoPagosMatriculaDashboard = $montoPagosMatriculaDashboard;
+            $montoMensualidad  = $this->model->model_select_registration_monthly_payment();
+            $this->view->montoMensualidad = json_encode($montoMensualidad) ? json_encode($montoMensualidad) : [];
 
-    //         $montoUniformes  = $this->model->select_payment_student_uniformes_total_dasboard();
-    //         $this->view->montoUniformes = json_encode($montoUniformes);
+            $receivePayment = $this->model->model_receive_payments();
+            $this->view->receivePayment = $receivePayment ? $receivePayment : 0;
 
-    //         $this->view->render('admin/accounting-dashboard');
-    //     } else {
-    //         $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-    //         header("Location: " . __baseurl__);
-    //         exit;
-    //     }
-    // }
+            $sendPayment = $this->model->model_send_payments();
+            $this->view->sendPayment = $sendPayment ? $sendPayment : 0;
+
+            $profit = $receivePayment[0]['total_amount'] - $sendPayment[0]['total_amount'];
+            $this->view->profit = $profit ? $profit : 0;
+
+            $benefit = $profit / $receivePayment[0]['total_amount'] * 100;
+            $this->view->benefit = number_format($benefit, 2) ? number_format($benefit, 2) : 0;
+
+            $teacherPayments = $this->model->model_teacher_payments();
+            $this->view->teacherPayment = $teacherPayments ? $teacherPayments : 0;
+
+            $this->view->render('admin/accounting-dashboard');
+        } else {
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__);
+            exit;
+        }
+    }
+
+    public function filtrar_grafica()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $fecha_inicio = $postData['fecha_inicio'] ?? null;
+        $fecha_fin = $postData['fecha_fin'] ?? null;
+        $result = $this->model->model_filtrar_grafica($postData['tipo'], $postData['categoria'], $fecha_inicio, $fecha_fin);
+
+        echo json_encode($result);
+    }
 
     // vista registrar servicio
     public function view_register_service_payment()
@@ -147,8 +154,8 @@ class Home extends Controller
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $payment_method = $this->model->model_select_payment_method();
             $expenses_category = $this->model->model_select_expenses_category();
-            $this->view->payment_mehtod = $payment_method;
-            $this->view->income_source = $expenses_category;
+            $this->view->payment_mehtod = $payment_method ? $payment_method : [];
+            $this->view->income_source = $expenses_category ? $expenses_category : [];
             $this->view->render('admin/register-service-payment');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -200,8 +207,8 @@ class Home extends Controller
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $payment_method = $this->model->model_select_payment_method();
             $income_source = $this->model->model_select_income_source();
-            $this->view->payment_mehtod = $payment_method;
-            $this->view->income_source = $income_source;
+            $this->view->payment_mehtod = $payment_method ? $payment_method : [];
+            $this->view->income_source = $income_source ? $income_source : [];
             $this->view->render('admin/register-receive-payment');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -514,7 +521,6 @@ class Home extends Controller
     }
 
     // view create sections
-    // tablas
     public function view_create_sections()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
@@ -522,10 +528,10 @@ class Home extends Controller
             $sections = $this->model->model_select_sections();
             $grades = $this->model->model_select_grades();
             $mentions = $this->model->model_select_mentions();
-            $this->view->array = $result;
-            $this->view->sections = $sections;
-            $this->view->grades = $grades;
-            $this->view->mentions = $mentions;
+            $this->view->array = $result ? $result : [];
+            $this->view->sections = $sections ? $sections : [];
+            $this->view->grades = $grades ? $grades : [];
+            $this->view->mentions = $mentions ? $mentions : [];
             $this->view->render('admin/view_create_sections');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -559,6 +565,37 @@ class Home extends Controller
         }
     }
 
+    public  function view_consulting_sections()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $result = $this->model->model_select_teacher();
+            $sections = $this->model->model_select_sections();
+            $grades = $this->model->model_select_grades();
+            $mentions = $this->model->model_select_mentions();
+            $this->view->array = $result ? $result : [];
+            $this->view->sections = $sections ? $sections : [];
+            $this->view->grades = $grades ? $grades : [];
+            $this->view->mentions = $mentions ? $mentions : [];
+            $this->view->render('admin/view_consulting_sections');
+        } else {
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__);
+            exit;
+        }
+    }
+
+    public function consulting_classroom()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->consulting_classroom($postData['grade'],  $postData['section'], $postData['mention']);;
+
+        echo json_encode($result);
+    }
+
     // schedule_view
     public function schedule_view()
     {
@@ -567,10 +604,10 @@ class Home extends Controller
             $sections = $this->model->model_select_sections();
             $grades = $this->model->model_select_grades();
             $mentions = $this->model->model_select_mentions();
-            $this->view->array = $result;
-            $this->view->sections = $sections;
-            $this->view->grades = $grades;
-            $this->view->mentions = $mentions;
+            $this->view->array = $result ? $result : [];
+            $this->view->sections = $sections ? $sections : [];
+            $this->view->grades = $grades ? $grades : [];
+            $this->view->mentions = $mentions ? $mentions : [];
             $this->view->render('admin/schedule');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -695,7 +732,7 @@ class Home extends Controller
     public function view_data_representante($data)
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
-            $this->view->data = $data;
+            $this->view->data = $data ? $data : [];
             $this->view->render('admin/view-data-representante');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -707,6 +744,7 @@ class Home extends Controller
     // proceso para editar estudiante
     public function edit_student()
     {
+        $avatar      = !empty($_FILES['logo']['name']) ? $this->validarImagen($_FILES['logo']) : "";
         $action     = $this->validarEntrada($_POST['action']);
         $id         = $this->validarEntrada($_POST['id']);
         $p_nombre   = $this->validarEntrada($_POST['p_nombre']);
@@ -758,7 +796,8 @@ class Home extends Controller
                     $grado,
                     $seccion,
                     $mencion,
-                    $cedula_r
+                    $cedula_r,
+                    $avatar
                 );
                 if ($data === true) {
                     // Almacenar el mensaje de éxito y el ID (o la información) del estudiante en la sesión
@@ -790,6 +829,7 @@ class Home extends Controller
     {
         $action          = $this->validarEntrada($_POST['action']);
         $id              = $this->validarEntrada($_POST['id']);
+        $avatar      = !empty($_FILES['logo']['name']) ? $this->validarImagen($_FILES['logo']) : "";
         $p_nombre        = $this->validarEntrada($_POST['p_nombre']);
         $s_nombre        = $this->validarEntrada($_POST['s_nombre']);
         $p_apellido      = $this->validarEntrada($_POST['p_apellido']);
@@ -837,7 +877,8 @@ class Home extends Controller
                     $tercero,
                     $cuarto,
                     $quinto,
-                    $sexto
+                    $sexto,
+                    $avatar
                 );
                 if ($data === true) {
                     // Almacenar el mensaje de éxito y el ID (o la información) del estudiante en la sesión
@@ -917,48 +958,49 @@ class Home extends Controller
     // proceso para editar datos institucion
     public function edit_institution()
     {
-        $action    = $this->validarEntrada($_POST['action']);
         $id        = $this->validarEntrada($_POST['id']);
+        $logo      = !empty($_FILES['logo']['name']) ? $this->validarImagen($_FILES['logo']) : "";
         $nombre    = $this->validarEntrada($_POST['nombre']);
         $director  = $this->validarEntrada($_POST['director']);
+        $monto_matricula  = $this->validarEntrada($_POST['monto_matricula']);
+        $monto_mensualidad  = $this->validarEntrada($_POST['monto_mensualidad']);
         $ubicacion = $this->validarEntrada($_POST['ubicacion']);
         $telefono  = $this->validarEntrada($_POST['telefono']);
         $correo    = $this->validarEntrada($_POST['correo']);
         $codigo    = $this->validarEntrada($_POST['codigo']);
-        $opcion    = $this->validarEntrada($_POST['opcion']);
 
-        if ($action == "update") {
+        if (
+            $nombre    != "" &&
+            $ubicacion != "" &&
+            $director  != "" &&
+            $monto_matricula  != "" &&
+            $monto_mensualidad  != "" &&
+            $telefono  != "" &&
+            $codigo    != ""
+        ) {
+            $data = $this->model->model_edit_institution(
+                $id,
+                $nombre,
+                $director,
+                $monto_matricula,
+                $monto_mensualidad,
+                $ubicacion,
+                $telefono,
+                $correo,
+                $codigo,
+                $logo
+            );
 
-            if (
-                $nombre    != "" &&
-                $ubicacion != "" &&
-                $director  != "" &&
-                $telefono  != "" &&
-                $codigo    != ""
-            ) {
-                $data = $this->model->model_edit_institution(
-                    $id,
-                    $nombre,
-                    $director,
-                    $ubicacion,
-                    $telefono,
-                    $correo,
-                    $codigo
-                );
-
-                if ($data === true) {
-                    $_SESSION['updated_institution'] = true;
-                    header("Location: " . __baseurl__ . "home/view_institution");
-                } else {
-                    header("Location: " . __baseurl__ . "home/institution?error");
-                    exit;
-                }
-
-                // $data['mensaje'] = "Los datos se han actualizado correctamente.";
-                // $this->view_institution($data);
+            if ($data === true) {
+                $_SESSION['message'] = "Informacion actualizada correctamenta";
+                header("Location: " . __baseurl__ . "home/view_institution");
             } else {
-                header("Location: " . __baseurl__ . "home/institution?datos");
+                $_SESSION['message'] = "Error al actualizar los datos";
+                header("Location: " . __baseurl__ . "home/view_institution");
+                exit;
             }
+        } else {
+            header("Location: " . __baseurl__ . "home/institution?datos");
         }
     }
 
@@ -967,7 +1009,13 @@ class Home extends Controller
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
             $data = $this->model->read_all();
-            $this->view->array = $data;
+            $sections = $this->model->model_select_sections();
+            $grades = $this->model->model_select_grades();
+            $mentions = $this->model->model_select_mentions();
+            $this->view->grades = $grades ? $grades : [];
+            $this->view->sections = $sections ? $sections : [];
+            $this->view->mentions = $mentions ? $mentions : [];
+            $this->view->array = $data ? $data : [];
             $this->view->render('admin/tables');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -1011,22 +1059,92 @@ class Home extends Controller
     public function view_institution()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
-            if ((isset($_SESSION['updated_institution']))) {
-                $datos = $this->model->institution();
-                $_SESSION['message'] = "Los datos se han actualizado correctamente.";
-                $this->view->institution = $datos;
-                $this->view->render('admin/view-data-institution');
-            } else {
-                $datos = $this->model->institution();
-                $this->view->institution = $datos;
-                $this->view->render('admin/view-data-institution');
-            }
-            unset($_SESSION['updated_institution']);
+            $datos = $this->model->institution();
+            $mentions = $this->model->model_select_mentions();
+            $expenses = $this->model->model_select_expenses_category();
+            $income_source = $this->model->model_select_income_source();
+            $this->view->income_source = $income_source ? $income_source : [];
+            $this->view->expenses = $expenses ? $expenses : [];
+            $this->view->institution = $datos ? $datos : [];
+            $this->view->mentions = $mentions ? $mentions : [];
+            $this->view->render('admin/view-data-institution');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
             exit;
         }
+    }
+
+    public function delete_mention()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->delete_mention($postData['id']);
+
+        echo json_encode($result);
+    }
+
+    public function insert_mention()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->insert_mention($postData['name']);
+
+        echo json_encode($result);
+    }
+
+    public function delete_expense()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->delete_expense($postData['id']);
+
+        echo json_encode($result);
+    }
+
+    public function insert_expense()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->insert_expense($postData['name']);
+
+        echo json_encode($result);
+    }
+
+    public function delete_income()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->delete_income($postData['id']);
+
+        echo json_encode($result);
+    }
+
+    public function insert_income()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->insert_income($postData['name']);
+
+        echo json_encode($result);
     }
 
     // consulta alumno para constancias
@@ -1172,5 +1290,87 @@ class Home extends Controller
         }
 
         return $valor;
+    }
+
+    private function validarImagen($imagen)
+    {
+
+        $tipos_permitidos = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+        $extension = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+        $extension = strtolower($extension);
+
+        // 1. Validar tipo de archivo
+        if (!in_array($extension, $tipos_permitidos)) {
+            return ['error' => 'Tipo de archivo no permitido. Solo se aceptan: ' . implode(', ', $tipos_permitidos)];
+        }
+
+        // 2. Comprimir la imagen
+        $ruta_temporal = $imagen['tmp_name'];
+        $nombre_original = $imagen['name'];
+        $tipo = $imagen['type'];
+        $tamanio_original = $imagen['size'];
+        $imagen_comprimida = null;
+
+        // Definir una calidad de compresión (puedes ajustarla)
+        $calidad_jpeg = 75;
+        $calidad_webp = 80;
+
+        if ($extension === 'jpg' || $extension === 'jpeg') {
+            $imagen_source = imagecreatefromjpeg($ruta_temporal);
+            if ($imagen_source) {
+                ob_start();
+                imagejpeg($imagen_source, null, $calidad_jpeg);
+                $imagen_comprimida = ob_get_contents();
+                ob_end_clean();
+                imagedestroy($imagen_source);
+            } else {
+                return ['error' => 'Error al procesar la imagen JPEG.'];
+            }
+        } elseif ($extension === 'png') {
+            $imagen_source = imagecreatefrompng($ruta_temporal);
+            if ($imagen_source) {
+                // La compresión de PNG se puede hacer con el nivel de compresión (0-9, siendo 9 la máxima compresión)
+                // y se guarda sin pérdida, por lo que aquí principalmente optimizamos.
+                ob_start();
+                imagepng($imagen_source, null, 9); // Nivel de compresión 9
+                $imagen_comprimida = ob_get_contents();
+                ob_end_clean();
+                imagedestroy($imagen_source);
+            } else {
+                return ['error' => 'Error al procesar la imagen PNG.'];
+            }
+        } elseif ($extension === 'webp') {
+            $imagen_source = imagecreatefromwebp($ruta_temporal);
+            if ($imagen_source) {
+                ob_start();
+                imagewebp($imagen_source, null, $calidad_webp);
+                $imagen_comprimida = ob_get_contents();
+                ob_end_clean();
+                imagedestroy($imagen_source);
+            } else {
+                return ['error' => 'Error al procesar la imagen WebP.'];
+            }
+        } elseif ($extension === 'svg') {
+            // Los archivos SVG ya son basados en vectores y suelen ser ligeros.
+            // Aquí simplemente leemos el contenido del archivo.
+            $imagen_comprimida = file_get_contents($ruta_temporal);
+            if ($imagen_comprimida === false) {
+                return ['error' => 'Error al leer el archivo SVG.'];
+            }
+        }
+
+        // 3. Retornar la imagen con los cambios y validaciones
+        if ($imagen_comprimida !== null) {
+            return [
+                'nombre' => $nombre_original,
+                'tipo' => $tipo,
+                'datos' => $imagen_comprimida,
+                'tamanio_original' => $tamanio_original,
+                'tamanio_comprimido' => strlen($imagen_comprimida),
+                'extension' => $extension
+            ];
+        }
+
+        return ['error' => 'Ocurrió un error al procesar la imagen.'];
     }
 }
