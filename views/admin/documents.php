@@ -1,10 +1,10 @@
-<?php require constant("__layout__")."header.php"; ?>
+<?php require constant("__layout__") . "header.php"; ?>
 
 <body class="g-sidenav-show   bg-gray-100">
   <div class="min-height-300 bg-primary position-absolute w-100"></div>
 
-  <?php require constant("__layout__")."nav.php"; ?>
-  <?php require constant("__layout__")."aside.php"; ?>
+  <?php require constant("__layout__") . "nav.php"; ?>
+  <?php require constant("__layout__") . "aside.php"; ?>
   <main class="main-content position-relative border-radius-lg" style="overflow-x: hidden !important;">
     <?php if (isset($_SESSION['message'])): ?>
       <div class="d-flex justify-content-center" style="position: relative;z-index: 1;width: 100%;">
@@ -24,8 +24,8 @@
 
           <div class="col-12">
             <div class="card mb-4">
-              <div class="card-header pb-0 text-center">
-                <h5>Ingrese la cedula del Estudiante</h5>
+              <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+                <h6 class="text-white">Generar Documento</h6>
               </div>
 
               <!-- desktop -->
@@ -56,8 +56,8 @@
         <form class="d-block d-md-none flex-column mb-8" action="<?= constant('__baseurl__') ?>home/constancy" method="post">
           <div class="col-12">
             <div class="card mb-4">
-              <div class="card-header pb-0 text-center">
-                <h5>Ingrese la cedula del Estudiante</h5>
+              <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+                <h6 class="text-white">Generar Documento</h6>
               </div>
 
               <!-- mobile -->
@@ -86,12 +86,12 @@
 
       </div>
 
-      <?php require constant("__layout__")."footer.php"; ?>
+      <?php require constant("__layout__") . "footer.php"; ?>
 
     </div>
   </main>
 
-  <?php require constant("__layout__")."scripts.php"; ?>
+  <?php require constant("__layout__") . "scripts.php"; ?>
 
 </body>
 

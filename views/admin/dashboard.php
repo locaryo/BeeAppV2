@@ -47,7 +47,7 @@
                 </div>
                 <div class="col-4 text-end">
                   <div class="icon icon-shape bg-gradient-primary shadow-primary text-center rounded-circle">
-                    <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                    <i class="material-icons text-white opacity-10" style="font-size: 25px;">group</i>
                   </div>
                 </div>
               </div>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-4 text-end">
                   <div class="icon icon-shape bg-gradient-danger shadow-primary text-center rounded-circle">
-                    <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                    <i class="material-icons text-white opacity-10" style="font-size: 25px;">group</i>
                   </div>
                 </div>
               </div>
@@ -82,7 +82,7 @@
                 </div>
                 <div class="col-4 text-end">
                   <div class="icon icon-shape bg-gradient-success shadow-primary text-center rounded-circle">
-                    <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                    <i class="material-icons text-white opacity-10" style="font-size: 25px;">face</i>
                   </div>
                 </div>
               </div>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="col-4 text-end">
                   <div class="icon icon-shape bg-gradient-warning shadow-primary text-center rounded-circle">
-                    <i class="ni ni-single-02 text-lg opacity-10" aria-hidden="true"></i>
+                    <i class="material-icons text-white opacity-10" style="font-size: 25px;">face_3</i>
                   </div>
                 </div>
               </div>
@@ -106,11 +106,11 @@
 
             <div class="bento-col4-row1 row m-0">
               <div class="row">
-                <div class="card-header pb-0 pt-3 bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Ingresos Relevantes</h6>
+                <div class="card-header bg-transparent">
+                  <h6 class="text-capitalize text-center">Ingresos Relevantes</h6>
 
                 </div>
-                <div class="card-body p-3">
+                <div class="card-body">
                   <div class="chart">
                     <canvas id="ingresos-matricula" class="chart-canvas" height="300"></canvas>
                   </div>
@@ -121,12 +121,12 @@
             <div class="bento-col2-row1 row m-0">
               <div class="row">
                 <div class="card-header bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Tabla Comparativa</h6>
+                  <h6 class="text-capitalize text-center">Tabla Comparativa</h6>
 
                 </div>
-                <div class="card-body p-3">
+                <div class="card-body">
                   <div class="chart">
-                    <canvas id="ingresos-salidas" class="chart-canvas" height="300"></canvas>
+                    <canvas id="ingresos-salidas" class="chart-canvas" height="200"></canvas>
                   </div>
                 </div>
               </div>
@@ -134,11 +134,11 @@
 
             <div class="bento-col6-row1 row m-0">
               <div class="row">
-                <div class="card-header pb-0 pt-3 bg-transparent">
-                  <h6 class="text-capitalize text-center py-2">Menciones</h6>
+                <div class="card-header bg-transparent">
+                  <h6 class="text-capitalize text-center">Menciones</h6>
 
                 </div>
-                <div class="card-body p-3">
+                <div class="card-body">
                   <div class="chart">
                     <canvas id="chart-line-a" class="chart-canvas" height="300"></canvas>
                   </div>
@@ -264,7 +264,7 @@
   new Chart(ctx, {
     type: "line",
     data: {
-      labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+      labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
       datasets: [{
         label: 'Mensualidades ($)',
         data: ingresosPorMes,
@@ -275,7 +275,7 @@
         borderWidth: 2,
         fill: true,
         maxBarThickness: 6
-      },{
+      }, {
         label: 'Matricula ($)',
         data: ingresosPorMatricula,
         tension: 0.4,
@@ -291,7 +291,9 @@
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: false }
+        legend: {
+          display: false
+        }
       },
       interaction: {
         intersect: false,
@@ -304,11 +306,14 @@
             display: true,
             drawOnChartArea: true,
             drawTicks: false,
-            borderDash: [5,5]
+            borderDash: [5, 5]
           },
           ticks: {
             padding: 10,
-            font: { size: 11, family: "Open Sans" }
+            font: {
+              size: 11,
+              family: "Open Sans"
+            }
           }
         },
         x: {
@@ -317,7 +322,10 @@
           },
           ticks: {
             padding: 10,
-            font: { size: 11, family: "Open Sans" }
+            font: {
+              size: 11,
+              family: "Open Sans"
+            }
           }
         }
       }
