@@ -12,8 +12,8 @@
       <!-- boton dashboard -->
       <li class="nav-item">
         <a class="nav-link active" href="<?= $_SESSION['rol'] == 1 ? constant('__baseurl__') . 'home/dashboard' : constant('__baseurl__') . 'teacher/dashboard' ?>">
-          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="ni ni-tv-2 text-primary text-sm opacity-10"></i>
+          <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">dashboard</span>
           </div>
           <span class="nav-link-text ms-1">Dashboard</span>
         </a>
@@ -23,23 +23,22 @@
       <?php if ($_SESSION['rol'] == 1): ?>
         <!-- boton registros-->
         <li class="nav-item">
-          <a class="nav-link dropdown-toggle" href="#submenu1" data-bs-toggle="collapse">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-fat-add text-success text-sm opacity-10"></i>
+          <a class="nav-link dropdown-toggle" href="#nuevo_registro" data-bs-toggle="collapse">
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">add</span>
             </div>
             <span class="nav-link-text ms-1">Nuevo Registro</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
               <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
             </svg>
           </a>
-          <div class="collapse" id="submenu1">
+          <div class="collapse" id="nuevo_registro">
             <ul class="navbar-nav ps-3">
               <li class="nav-item">
                 <a class="nav-link " href="<?= constant('__baseurl__') ?>home/register_responsable_view">
 
-                  <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="ni ni-single-02 text-success text-sm opacity-10"></i>
-                    <i class="ni ni-fat-add text-success text-sm opacity-10"></i>
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-success" style="font-size: 17px;">person_add</span>
                   </div>
 
                   <span class="nav-link-text ms-1">Registrar Representante</span>
@@ -49,9 +48,8 @@
               <li class="nav-item">
                 <a class="nav-link" href="<?= constant('__baseurl__') ?>home/register_student_view">
 
-                  <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="ni ni-single-02 text-success text-sm opacity-10"></i>
-                    <i class="ni ni-fat-add text-success text-sm opacity-10"></i>
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-success" style="font-size: 17px;">person_add</span>
                   </div>
 
                   <span class="nav-link-text ms-1">Registrar Estudiante</span>
@@ -62,9 +60,8 @@
               <li class="nav-item">
                 <a class="nav-link" href="<?= constant('__baseurl__') ?>home/register_teacher_view">
 
-                  <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="ni ni-single-02 text-success text-sm opacity-10"></i>
-                    <i class="ni ni-fat-add text-success text-sm opacity-10"></i>
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-success" style="font-size: 17px;">person_add</span>
                   </div>
 
                   <span class="nav-link-text ms-1">Registrar Docente</span>
@@ -76,28 +73,59 @@
           </div>
         </li>
         <!-- boton consulta individual -->
+
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/consulting_view">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-info" style="font-size: 17px; padding:10px;">person_search</span>
             </div>
             <span class="nav-link-text ms-1">Consulta Individual</span>
           </a>
         </li>
-        <!-- boton consulta individual -->
+        <!-- boton aulas -->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_create_sections">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+          <a class="nav-link dropdown-toggle" href="#aulas" data-bs-toggle="collapse">
+            <div class="border-radius-md text-center me-2 d-flex align-items-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">school</span>
             </div>
-            <span class="nav-link-text ms-1">Asignar Secciones</span>
+            <span class="nav-link-text ms-1">Aulas</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
+            </svg>
           </a>
+          <div class="collapse" id="aulas">
+            <ul class="navbar-nav ps-3">
+              <li class="nav-item">
+                <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_create_sections">
+
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-primary" style="font-size: 17px;">format_list_bulleted_add</span>
+                  </div>
+
+                  <span class="nav-link-text ms-1">Asignar Aula</span>
+                </a>
+
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="<?= constant('__baseurl__') ?>home/view_consulting_sections">
+
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-info" style="font-size: 17px;">search</span>
+                  </div>
+
+                  <span class="nav-link-text ms-1">Consultar Aula</span>
+
+                </a>
+              </li>
+
+            </ul>
+          </div>
         </li>
         <!-- boton horarios -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/schedule_view">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">calendar_month</span>
             </div>
             <span class="nav-link-text ms-1">Asignar Horarios</span>
           </a>
@@ -105,8 +133,8 @@
         <!-- boton lista -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/tables">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-bullet-list-67 text-info text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">table_view</span>
             </div>
             <span class="nav-link-text ms-1">Lista Estudiantes</span>
           </a>
@@ -114,8 +142,8 @@
         <!-- boton documentos -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/documents">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-books text-info text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">description</span>
             </div>
             <span class="nav-link-text ms-1">Documentos</span>
           </a>
@@ -127,8 +155,8 @@
         <!-- boton consulta de horario-->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/schedule_view">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">calendar_today</span>
             </div>
             <span class="nav-link-text ms-1">Consultar Horario</span>
           </a>
@@ -136,8 +164,8 @@
         <!-- boton asignar notas a secciones-->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/asign_ratings_view">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">stars</span>
             </div>
             <span class="nav-link-text ms-1">Asignar Calificacion</span>
           </a>
@@ -145,8 +173,8 @@
         <!-- boton ver notas a secciones-->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/list_ratings_view">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-single-02 text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">saved_search</span>
             </div>
             <span class="nav-link-text ms-1">Mostrar Calificacion</span>
           </a>
@@ -157,17 +185,17 @@
       <li class="nav-item mt-3">
         <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Opciones</h6>
       </li>
-      
+
       <!-- botones para administrador -->
       <?php if ($_SESSION['rol'] == 1): ?>
 
         <!-- boton contabilidad -->
         <li class="nav-item">
           <a class="nav-link dropdown-toggle" href="#submenu2" data-bs-toggle="collapse">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-money-coins text-success text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">bar_chart</span>
             </div>
-            <span class="nav-link-text ms-1">Contabilidad</span>
+            <span class="nav-link-text ms-1">Facturas</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
               <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z" />
             </svg>
@@ -176,26 +204,26 @@
             <ul class="navbar-nav ps-3">
               <li class="nav-item">
                 <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_register_receive_payment">
-                  <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="ni ni-collection text-success text-sm opacity-10"></i>
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-success" style="font-size: 17px;">add_card</span>
                   </div>
                   <span class="nav-link-text ms-1">Pago Recibido</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_register_service_payment">
-                  <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="ni ni-collection text-success text-sm opacity-10"></i>
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-warning" style="font-size: 17px;">payments</span>
                   </div>
                   <span class="nav-link-text ms-1">Pago de Servicio</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="<?= constant('__baseurl__') ?>home/accountingDashboard">
-                  <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="ni ni-chart-pie-35 text-success text-sm opacity-10"></i>
+                  <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-icons text-primary" style="font-size: 17px;">business_center</span>
                   </div>
-                  <span class="nav-link-text ms-1">Facturas</span>
+                  <span class="nav-link-text ms-1">Contabilidad</span>
                 </a>
               </li>
             </ul>
@@ -204,8 +232,8 @@
         <!-- boton institucion -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_institution">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-settings text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">domain</span>
             </div>
             <span class="nav-link-text ms-1">Institución</span>
           </a>
@@ -217,8 +245,8 @@
         <!-- boton institucion -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/profile_view">
-            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="ni ni-settings text-primary text-sm opacity-10"></i>
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">account_box</span>
             </div>
             <span class="nav-link-text ms-1">Perfil</span>
           </a>
@@ -227,8 +255,8 @@
       <!-- boton salir -->
       <li class="nav-item">
         <a class="nav-link" href="<?= $_SESSION['rol'] == 1 ? constant('__baseurl__') . 'home/logout' : constant('__baseurl__') . 'teacher/logout' ?>">
-          <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-            <i class="ni ni-button-power text-warning text-sm opacity-10"></i>
+          <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+            <span class="material-icons text-danger" style="font-size: 17px; padding:10px;">exit_to_app</span>
           </div>
           <span class="nav-link-text ms-1">Salir</span>
         </a>

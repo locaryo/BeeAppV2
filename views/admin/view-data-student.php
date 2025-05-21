@@ -47,12 +47,21 @@
       <?php endif ?>
       <div class="row">
         <!-- *********** DESKTOP *********** -->
-        <form class="needs-validation px-2" action="<?= constant('__baseurl__') ?>home/edit_student" method="post" novalidate>
+        <form class="needs-validation px-2" action="<?= constant('__baseurl__') ?>home/edit_student" method="post" novalidate enctype="multipart/form-data">
           <div class="card mb-4">
-            <div class="card-header pb-0">
-              <h4>Estudiante</h4>
-              <!-- <button class="btn btn-success mx-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">Pagar Matricula</button>
-                <button id="consultarPagos" class="btn btn-primary mx-2" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal2">Consultar Pagos</button> -->
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2">
+              <div class="form-group col-12 col-sm-6 col-md-4 px-2">
+                <div class="avatar-upload">
+                  <div class="avatar-edit">
+                    <input value="<?= $this->data['logo'] ?>" type='file' id="imageUpload" accept=".png, .jpg, .jpeg .svg" name="logo" />
+                    <label for="imageUpload"></label>
+                  </div>
+                  <div class="avatar-preview">
+                    <div id="imagePreview" style="background-image: url(<?= constant('__baseurl__').$this->data['logo'] ?>);">
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- desktop -->
             <div class="row mx-1">

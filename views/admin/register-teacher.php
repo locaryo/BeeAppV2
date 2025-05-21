@@ -35,12 +35,12 @@
       <?php endif ?>
       <div class="row">
 
-        <form class="needs-validation" novalidate action="<?= constant('__baseurl__') ?>home/insert_teacher" method="post">
+        <form class="needs-validation" novalidate action="<?= constant('__baseurl__') ?>home/insert_teacher" method="post" enctype="multipart/form-data">
 
           <div class="card mb-4">
 
-            <div class="card-header pb-0">
-              <h6>Nuevo Docente</h6>
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2">
+              <h6 class="text-white">Nuevo Docente</h6>
             </div>
 
             <!-- desktop -->

@@ -19,9 +19,9 @@
         <?php endif; ?>
         <div class="container-fluid py-2">
             <div class="card row">
-                <div class="card-header pb-0">
-                    <h6 class="text-center">Horario</h6>
-                </div>
+                <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+              <h6 class="text-white">Horarios</h6>
+            </div>
                 <!-- row1 -->
                 <div class="d-flex justify-content-evenly align-items-center overflow-auto desktop-to-mobile">
                     <table class="table align-items-center" id="results">

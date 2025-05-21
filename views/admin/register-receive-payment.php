@@ -20,8 +20,9 @@
         <!-- form escritorio -->
         <form class="needs-validation" novalidate action="<?= constant('__baseurl__') ?>home/register_receive_payment" method="post">
           <div class="card mb-4">
-            <div class="card-header pb-0">
-              <h6>Nueva Factura: Pago Recibido</h6>
+
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2">
+              <h6 class="text-white">Nueva Factura: Pago Recibido</h6>
             </div>
             <!-- desktop -->
             <div class="row mx-1">
@@ -45,7 +46,7 @@
 
               <div class="form-group col-12 col-sm-6 col-md-4 px-2">
                 <label for="example-text-input" class="form-label required">Monto</label>
-                <input class="form-control" type="text" id="amount-bs" name="monto" required>
+                <input class="form-control" type="text" id="amount-bs" name="monto" placeholder="Monto en Bolivares" required>
               </div>
 
               <div class="form-group col-12 col-sm-6 col-md-4 px-2 d-amount d-none">

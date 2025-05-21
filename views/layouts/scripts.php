@@ -8,8 +8,12 @@
 <script src="<?= constant('__baseurl__') ?>public/js/custom/schedule.js"></script>
 
 <script>
-  let datos_menciones = <?= $this->count_student_petro ? $this->count_student_petro : [] ?>;
-  
+  let datos_menciones = []; // Inicializa como un array vacío por defecto
+
+  if (<?= ($this->count_student_petro) ?>) {
+    datos_menciones = <?= ($this->count_student_petro) ?>;
+  }
+
   // Crear estructura por mención
   let menciones = {};
   let niveles = ['1°', '2°', '3°', '4°', '5°', '6°'];

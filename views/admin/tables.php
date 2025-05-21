@@ -14,12 +14,10 @@
           <div class="form-group">
             <label for="example-text-input" class="form-control-label">Año</label>
             <select class="form-control" id="nivel">
-              <option>Seleccionar</option>
-              <option>1°ero</option>
-              <option>2°do</option>
-              <option>3°ero</option>
-              <option>4°to</option>
-              <option>5°to</option>
+              <option selected disabled value="">Seleccionar</option>
+              <?php foreach ($this->grades as $grade): ?>
+                <option value="<?= $grade['id'] ?>"><?= $grade['grades'] ?></option>
+              <?php endforeach ?>
             </select>
           </div>
         </div>
@@ -27,12 +25,10 @@
           <div class="form-group">
             <label for="example-text-input" class="form-control-label">Sección</label>
             <select class="form-control" id="seccion">
-              <option>Seleccionar</option>
-              <option>A</option>
-              <option>B</option>
-              <option>C</option>
-              <option>D</option>
-              <option>E</option>
+              <option selected disabled value="">Seleccionar</option>
+              <?php foreach ($this->sections as $section): ?>
+                <option value="<?= $section['id'] ?>"><?= $section['sections'] ?></option>
+              <?php endforeach ?>
             </select>
           </div>
         </div>
@@ -40,22 +36,22 @@
           <div class="form-group">
             <label for="example-text-input" class="form-control-label">Mención</label>
             <select class="form-control" id="mencion">
-              <option>Seleccionar</option>
-              <option>Petroquimica</option>
-              <option>Mecanica</option>
-              <option>Electricidad</option>
+              <option selected disabled value="">Seleccionar</option>
+              <?php foreach ($this->mentions as $mention): ?>
+                <option value="<?= $mention['id'] ?>"><?= $mention['mentions'] ?></option>
+              <?php endforeach ?>
             </select>
           </div>
         </div>
 
       </div>
 
-      
+
       <div class="row pb-8">
         <div class="col-12">
           <div class="card mb-4">
-            <div class="card-header pb-0">
-              <h6>Tabla de Alumnos</h6>
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+              <h6 class="text-white">Tabla de Alumnos</h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
 

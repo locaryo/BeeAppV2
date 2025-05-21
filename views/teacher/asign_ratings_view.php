@@ -14,14 +14,13 @@
                 </div>
             </div>
             <?php unset($_SESSION['message']); ?>
-        <?php else: ?>
 
         <?php endif; ?>
         <div class="container-fluid py-2">
             <!-- filtro -->
             <div class="card row mx-1">
-                <div class="card-header pb-0">
-                    <h6 class="text-center">Filtrar Secciones</h6>
+                <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+                    <h6 class="text-white">Filtrar Aula</h6>
                 </div>
                 <form action="<?= constant('__baseurl__') ?>teacher/save_ratings" method="POST" enctype="multipart/form-data">
                     <!-- row1 -->
@@ -69,8 +68,8 @@
                     </div>
 
                     <div class="card row">
-                        <div class="card-header pb-0">
-                            <h6 class="text-center">Asignar Notas</h6>
+                        <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+                            <h6 class="text-white">Asignar Notas</h6>
                         </div>
                         <!-- row1 -->
                         <div class="d-flex justify-content-evenly align-items-center overflow-auto desktop-to-mobile">

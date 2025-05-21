@@ -22,8 +22,8 @@ include __DIR__ . '/../../config/config.php';
         <?php endif; ?>
         <div class="container-fluid py-2">
             <div class="card row mx-5 my-4">
-                <div class="card-header pb-0">
-                    <h6 class="text-center">Asignar Horario</h6>
+                <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+                    <h6 class="text-white">Asignar Horario</h6>
                 </div>
                 <!-- row1 -->
                 <div class="d-flex justify-content-evenly align-items-center desktop-to-mobile">
@@ -88,11 +88,11 @@ include __DIR__ . '/../../config/config.php';
             </div>
             <!-- tabla de horario -->
             <div class="card table-responsive">
-                <form class="px-2 py-1" method="post" action="<?= constant('__baseurl__') ?>home/submit_schedule">
-                    <div class="card-header pb-0">
-                        <h6 class="text-center">Tabla de Horario</h6>
+                <form class="px-2 py-1" style="overflow: auto;" method="post" action="<?= constant('__baseurl__') ?>home/submit_schedule">
+                    <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+                        <h6 class="text-white">Horario</h6>
                     </div>
-                    <div class="d-flex justify-content-evenly align-items-center">
+                    <div class="d-flex justify-content-evenly align-items-center desktop-to-mobile">
 
                         <div class="form-group">
                             <div class="input-group">

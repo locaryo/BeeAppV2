@@ -37,8 +37,8 @@
       <div class="row">
         <form class="needs-validation" action="<?= constant('__baseurl__') ?>home/consulting_cedula" method="post" novalidate>
           <div class="card mb-4">
-            <div class="card-header pb-0 text-center">
-              <h5>Consultar Datos</h5>
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2 text-center">
+              <h6 class="text-white">Consultar Datos</h6>
             </div>
             <!-- desktop -->
             <div class="row mx-1">

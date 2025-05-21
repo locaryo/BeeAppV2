@@ -40,10 +40,10 @@
         </div>
       <?php endif ?>
       <div class="row">
-        <form class="needs-validation" action="<?= constant('__baseurl__') ?>home/insert_student" method="post" novalidate>
+        <form class="needs-validation" action="<?= constant('__baseurl__') ?>home/insert_student" method="post" novalidate enctype="multipart/form-data">
           <div class="card mb-4">
-            <div class="card-header pb-0">
-              <h6>Nuevo Estudiante</h6>
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2">
+              <h6 class="text-white">Nuevo Estudiante</h6>
             </div>
             <!-- desktop -->
             <div class="row mx-1">
