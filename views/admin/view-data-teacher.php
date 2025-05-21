@@ -35,14 +35,25 @@
       <?php endif ?>
       <div class="row">
 
-        <form action="<?= constant('__baseurl__') ?>home/edit_teacher" method="post">
+        <form class="needs-validation px-2" action="<?= constant('__baseurl__') ?>home/edit_teacher" method="post" novalidate enctype="multipart/form-data">
           <div class="col-12">
 
             <div class="card mb-4">
 
-              <div class="card-header pb-0">
-                <h6>Docente</h6>
+              <div class="card-header pb-0 bg-primary opacity-8 mb-2">
+              <div class="form-group col-12 col-sm-6 col-md-4 px-2">
+                <div class="avatar-upload">
+                  <div class="avatar-edit">
+                    <input value="<?= $this->data['logo'] ?>" type='file' id="imageUpload" accept=".png, .jpg, .jpeg .svg" name="logo" />
+                    <label for="imageUpload"></label>
+                  </div>
+                  <div class="avatar-preview">
+                    <div id="imagePreview" style="background-image: url(<?= constant('__baseurl__').$this->data['logo'] ?>);">
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
 
               <!-- desktop -->
               <div class="d-flex justify-content-center align-items-center mx-1 desktop-to-mobile">

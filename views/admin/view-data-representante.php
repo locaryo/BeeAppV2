@@ -39,8 +39,8 @@
 
           <div class="card mb-4">
 
-            <div class="card-header pb-0">
-              <h6>Representante</h6>
+            <div class="card-header pb-0 bg-primary opacity-8 mb-2">
+              <h6 class="text-white">Representante</h6>
             </div>
 
             <!-- desktop -->
