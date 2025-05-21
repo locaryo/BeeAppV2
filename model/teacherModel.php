@@ -334,6 +334,174 @@ class TeacherModel extends Model
         return $checkSql->fetchColumn() > 0;
     }
 
+    public function model_view_profile($id){
+        $sql = $this->db->conn()->prepare("SELECT * FROM docentes WHERE id = ?");
+        $sql->execute([$id]);
+        $result = $sql->fetch(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function model_consulting_teacher_payments($id_teacher)
+    {
+        $sql = $this->db->conn()->prepare("SELECT s.*, d.p_nombre, d.s_nombre, d.p_apellido, d.s_apellido, e.expenses, pm.payment_method
+        FROM send_payment as s 
+        INNER JOIN docentes as d ON d.id = s.id_teacher 
+        INNER JOIN expenses_category as e ON e.id = s.id_bills 
+        INNER JOIN payment_method as pm ON pm.id = s.id_payment_method 
+        WHERE s.id_teacher = ? AND s.deleted = 0; ");
+        $sql->execute([$id_teacher]);
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        return $result;
+    }
+
+    // actualizar docente
+    public function edit_teacher(
+        $id,
+        $p_nombre,
+        $s_nombre,
+        $p_apellido,
+        $s_apellido,
+        $cedula,
+        $telefono,
+        $correo,
+        $areas_formacion,
+        $fecha,
+        $direccion,
+        $primero,
+        $segundo,
+        $tercero,
+        $cuarto,
+        $quinto,
+        $sexto,
+        $avatar
+    ) {
+        // Definir la carpeta donde se guardarán los logos
+        $ruta_guardado = 'public/img/teacher/';
+
+        // Asegurarse de que la carpeta de guardado exista, si no, crearla
+        if (!is_dir($ruta_guardado)) {
+            mkdir($ruta_guardado, 0755, true); // El true permite crear subdirectorios recursivamente
+        }
+
+        $nombre_archivo_logo = null;
+        $logo_en_db = "";
+        $saved = false;
+
+
+
+        // Verificar si se proporcionó información del logo (es decir, si se cargó una nueva imagen)
+        if ($avatar != "") {
+            // Generar un nombre de archivo único para el logo
+            $nombre_archivo_logo = uniqid('logo_teacher') . '.' . $avatar['extension'];
+            $ruta_completa_logo = $ruta_guardado . $nombre_archivo_logo;
+
+            // Guardar el archivo en el servidor
+            if (file_put_contents($ruta_completa_logo, $avatar['datos'])) {
+                // La imagen se guardó correctamente, ahora guardaremos la ruta en la base de datos
+                $logo_en_db = $ruta_completa_logo;
+                $saved = true;
+            } else {
+                // Error al guardar el archivo
+                return ['error' => 'Error al guardar el archivo del logo en el servidor.'];
+            }
+        }
+
+        if ($saved === true) {
+            $sql = $this->db->conn()->prepare("
+            UPDATE docentes
+            SET p_nombre        = ?,
+                s_nombre        = ?,
+                p_apellido      = ?,
+                s_apellido      = ?,
+                cedula          = ?,
+                telefono        = ?,
+                correo          = ?,
+                areas_formacion = ?,
+                fecha           = ?,
+                direccion       = ?,
+                primero         = ?,
+                segundo         = ?,
+                tercero         = ?,
+                cuarto          = ?,
+                quinto          = ?,
+                sexto           = ?,
+                logo            = ?
+            WHERE id = ? and deleted = 0");
+            if ($sql->execute([
+                $p_nombre,
+                $s_nombre,
+                $p_apellido,
+                $s_apellido,
+                $cedula,
+                $telefono,
+                $correo,
+                $areas_formacion,
+                $fecha,
+                $direccion,
+                $primero,
+                $segundo,
+                $tercero,
+                $cuarto,
+                $quinto,
+                $sexto,
+                $logo_en_db,
+                $id
+            ])) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            $sql = $this->db->conn()->prepare("
+            UPDATE docentes 
+            SET p_nombre        = ?, 
+                s_nombre        = ?, 
+                p_apellido      = ?, 
+                s_apellido      = ?, 
+                cedula          = ?, 
+                telefono        = ?, 
+                correo          = ?, 
+                areas_formacion = ?, 
+                fecha           = ?, 
+                direccion       = ?, 
+                primero         = ?,
+                segundo         = ?,
+                tercero         = ?,
+                cuarto          = ?,
+                quinto          = ?,
+                sexto           = ?
+            WHERE id = ? and deleted = 0");
+
+            if ($sql->execute([
+                $p_nombre,
+                $s_nombre,
+                $p_apellido,
+                $s_apellido,
+                $cedula,
+                $telefono,
+                $correo,
+                $areas_formacion,
+                $fecha,
+                $direccion,
+                $primero,
+                $segundo,
+                $tercero,
+                $cuarto,
+                $quinto,
+                $sexto,
+                $id
+            ])) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
     public function getSectionId($section)
     {
         $sql = $this->db->conn()->prepare("SELECT id FROM sections WHERE deleted = 0 AND sections = ?");

@@ -2,6 +2,7 @@
 class Teacher extends Controller
 {
     public $view;
+    private $id_teacher;
 
     public function __construct()
     {
@@ -29,13 +30,13 @@ class Teacher extends Controller
             $count_student_meca  = $this->model->count_student_meca();
             $count_student_elec  = $this->model->count_student_elec();
 
-            $this->view->count_teacher       = $count_teacher;
-            $this->view->count_student       = $count_student;
-            $this->view->count_student_m     = $count_student_m;
-            $this->view->count_student_f     = $count_student_f;
-            $this->view->count_student_petro = json_encode($count_student_petro);
-            $this->view->count_student_meca  = json_encode($count_student_meca);
-            $this->view->count_student_elec  = json_encode($count_student_elec);
+            $this->view->count_teacher       = $count_teacher ? $count_teacher : 0;
+            $this->view->count_student       = $count_student ? $count_student : 0;
+            $this->view->count_student_m     = $count_student_m ? $count_student_m : 0;
+            $this->view->count_student_f     = $count_student_f ? $count_student_f : 0;
+            $this->view->count_student_petro = json_encode($count_student_petro) ? $count_student_petro : [];
+            $this->view->count_student_meca  = json_encode($count_student_meca) ? $count_student_meca : [];
+            $this->view->count_student_elec  = json_encode($count_student_elec) ? $count_student_elec : [];
             $this->view->render('teacher/dashboard');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
@@ -73,7 +74,7 @@ class Teacher extends Controller
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
 
             $id_teacher = (string) $_SESSION['id_docente']; // Forzamos a string
-            $horarios = $this->model->model_select_schedule_teacher();
+            $horarios = $this->model->model_select_schedule_teacher(); // Aseguramos que $horarios sea un array
             $horarios_filtrados = [];
 
             foreach ($horarios as $horario_data) {
@@ -359,6 +360,99 @@ class Teacher extends Controller
         }
     }
 
+    // visualizar datos de maestro
+    public function profile_view()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+
+            $data = $this->model->model_view_profile($_SESSION['id_docente']);
+            $payment = $this->model->model_consulting_teacher_payments($_SESSION['id_docente']);
+            $this->view->data = $data ? $data : [];
+            $this->view->payments = $payment ? $payment : [];
+            $this->view->render('teacher/profile_view');
+        } else {
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__);
+            exit;
+        }
+    }
+
+    // proceso para editar docente
+    public function edit_teacher()
+    {
+        $action          = $this->validarEntrada($_POST['action']);
+        $id              = $this->validarEntrada($_POST['id']);
+        $avatar      = !empty($_FILES['logo']['name']) ? $this->validarImagen($_FILES['logo']) : "";
+        $p_nombre        = $this->validarEntrada($_POST['p_nombre']);
+        $s_nombre        = $this->validarEntrada($_POST['s_nombre']);
+        $p_apellido      = $this->validarEntrada($_POST['p_apellido']);
+        $s_apellido      = $this->validarEntrada($_POST['s_apellido']);
+        $cedula          = $this->validarEntrada($_POST['cedula']);
+        $telefono        = $this->validarEntrada($_POST['telefono']);
+        $correo          = $this->validarEntrada($_POST['correo']);
+        $areas_formacion = $this->validarEntrada($_POST['areas_formacion']);
+        $fecha           = $this->validarEntrada($_POST['fecha']);
+        $direccion       = $this->validarEntrada($_POST['direccion']);
+        $opcion          = $this->validarEntrada($_POST['opcion']);
+
+        if ($action == "update") {
+            $primero = isset($_POST['primero']) ? ($_POST['primero'] == "on" ? 1 : 0) : 0;
+            $segundo = isset($_POST['segundo']) ? ($_POST['segundo'] == "on" ? 1 : 0) : 0;
+            $tercero = isset($_POST['tercero']) ? ($_POST['tercero'] == "on" ? 1 : 0) : 0;
+            $cuarto = isset($_POST['cuarto']) ? ($_POST['cuarto'] == "on" ? 1 : 0) : 0;
+            $quinto = isset($_POST['quinto']) ? ($_POST['quinto'] == "on" ? 1 : 0) : 0;
+            $sexto = isset($_POST['sexto']) ? ($_POST['sexto'] == "on" ? 1 : 0) : 0;
+
+
+            if (
+                $p_nombre        != "" &&
+                $p_apellido      != "" &&
+                $cedula          != "" &&
+                $telefono        != "" &&
+                $fecha           != "" &&
+                $direccion       != "" &&
+                $areas_formacion != ""
+            ) {
+                $data = $this->model->edit_teacher(
+                    $id,
+                    $p_nombre,
+                    $s_nombre,
+                    $p_apellido,
+                    $s_apellido,
+                    $cedula,
+                    $telefono,
+                    $correo,
+                    $areas_formacion,
+                    $fecha,
+                    $direccion,
+                    $primero,
+                    $segundo,
+                    $tercero,
+                    $cuarto,
+                    $quinto,
+                    $sexto,
+                    $avatar
+                );
+                if ($data === true) {
+                    $_SESSION['message'] = "Perfil actualizado correctamente";
+                    header("Location: " . __baseurl__ . "teacher/profile_view");
+                    exit;
+                } else {
+                    $_SESSION['message'] = "Error al actualizar el registro";
+                    header("Location: " . __baseurl__ . "teacher/profile_view");
+                    exit;
+                }
+            } else {
+                header("Location: " . __baseurl__ . "teacher/profile_view");
+            }
+        }
+
+        if ($action == 'delete') {
+            $cedula = $this->validarEntrada($_POST['cedula']);
+            $this->model->deleted_cedula($cedula, $opcion, $id);
+        }
+    }
+
     public function delete_rating()
     {
         // Get raw POST data
@@ -406,5 +500,87 @@ class Teacher extends Controller
         }
 
         return $valor;
+    }
+
+    private function validarImagen($imagen)
+    {
+
+        $tipos_permitidos = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+        $extension = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+        $extension = strtolower($extension);
+
+        // 1. Validar tipo de archivo
+        if (!in_array($extension, $tipos_permitidos)) {
+            return ['error' => 'Tipo de archivo no permitido. Solo se aceptan: ' . implode(', ', $tipos_permitidos)];
+        }
+
+        // 2. Comprimir la imagen
+        $ruta_temporal = $imagen['tmp_name'];
+        $nombre_original = $imagen['name'];
+        $tipo = $imagen['type'];
+        $tamanio_original = $imagen['size'];
+        $imagen_comprimida = null;
+
+        // Definir una calidad de compresión (puedes ajustarla)
+        $calidad_jpeg = 75;
+        $calidad_webp = 80;
+
+        if ($extension === 'jpg' || $extension === 'jpeg') {
+            $imagen_source = imagecreatefromjpeg($ruta_temporal);
+            if ($imagen_source) {
+                ob_start();
+                imagejpeg($imagen_source, null, $calidad_jpeg);
+                $imagen_comprimida = ob_get_contents();
+                ob_end_clean();
+                imagedestroy($imagen_source);
+            } else {
+                return ['error' => 'Error al procesar la imagen JPEG.'];
+            }
+        } elseif ($extension === 'png') {
+            $imagen_source = imagecreatefrompng($ruta_temporal);
+            if ($imagen_source) {
+                // La compresión de PNG se puede hacer con el nivel de compresión (0-9, siendo 9 la máxima compresión)
+                // y se guarda sin pérdida, por lo que aquí principalmente optimizamos.
+                ob_start();
+                imagepng($imagen_source, null, 9); // Nivel de compresión 9
+                $imagen_comprimida = ob_get_contents();
+                ob_end_clean();
+                imagedestroy($imagen_source);
+            } else {
+                return ['error' => 'Error al procesar la imagen PNG.'];
+            }
+        } elseif ($extension === 'webp') {
+            $imagen_source = imagecreatefromwebp($ruta_temporal);
+            if ($imagen_source) {
+                ob_start();
+                imagewebp($imagen_source, null, $calidad_webp);
+                $imagen_comprimida = ob_get_contents();
+                ob_end_clean();
+                imagedestroy($imagen_source);
+            } else {
+                return ['error' => 'Error al procesar la imagen WebP.'];
+            }
+        } elseif ($extension === 'svg') {
+            // Los archivos SVG ya son basados en vectores y suelen ser ligeros.
+            // Aquí simplemente leemos el contenido del archivo.
+            $imagen_comprimida = file_get_contents($ruta_temporal);
+            if ($imagen_comprimida === false) {
+                return ['error' => 'Error al leer el archivo SVG.'];
+            }
+        }
+
+        // 3. Retornar la imagen con los cambios y validaciones
+        if ($imagen_comprimida !== null) {
+            return [
+                'nombre' => $nombre_original,
+                'tipo' => $tipo,
+                'datos' => $imagen_comprimida,
+                'tamanio_original' => $tamanio_original,
+                'tamanio_comprimido' => strlen($imagen_comprimida),
+                'extension' => $extension
+            ];
+        }
+
+        return ['error' => 'Ocurrió un error al procesar la imagen.'];
     }
 }

@@ -201,6 +201,7 @@ class HomeModel extends Model
         $this->db = null;
     }
 
+
     public function model_select_registration_monthly_payment()
     {
         // Preparamos la consulta con GROUP BY
@@ -229,6 +230,7 @@ class HomeModel extends Model
         $this->db = null;
     }
 
+    // seleccionar pagos de matricula
     public function model_select_registration_payment()
     {
         // Preparamos la consulta con GROUP BY
@@ -255,13 +257,12 @@ class HomeModel extends Model
         $this->db = null;
     }
 
-
     // seleccionar tipos de ingresos
     public function model_select_income_source()
     {
         $sql = $this->db->conn()->prepare("SELECT id, income_name, description FROM income_source WHERE deleted = '0'; ");
         $sql->execute();
-        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
 
@@ -275,7 +276,7 @@ class HomeModel extends Model
     {
         $sql = $this->db->conn()->prepare("SELECT id, expenses, description FROM expenses_category WHERE deleted = '0'; ");
         $sql->execute();
-        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
 
         return $result;
 
@@ -338,12 +339,38 @@ class HomeModel extends Model
         $this->db = null;
     }
 
-    // seleccionar pagos de matricula estudiantes
-    public function select_payment_student_uniformes_total_dasboard()
+    // model_receive_payments
+    public function model_receive_payments()
     {
-        $sql = $this->db->conn()->prepare("SELECT SUM(monto) AS total_monto FROM contabilidad_ingreso WHERE motivo = 'uniformes' AND deleted = '0'; ");
+        $sql = $this->db->conn()->prepare("SELECT SUM(amount) as total_amount FROM receive_payment WHERE deleted = '0'; ");
         $sql->execute();
-        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // model_send_payment
+    public function model_send_payments()
+    {
+        $sql = $this->db->conn()->prepare("SELECT SUM(amount) as total_amount FROM send_payment WHERE deleted = '0'; ");
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // model_send_payment
+    public function model_teacher_payments()
+    {
+        $sql = $this->db->conn()->prepare("SELECT SUM(amount) as total_amount FROM send_payment WHERE deleted = '0' AND id_teacher != 0; ");
+        $sql->execute();
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
         return $result;
 
         $sql->closeCursor();
@@ -584,14 +611,95 @@ class HomeModel extends Model
         $grado,
         $seccion,
         $mencion,
-        $cedula_r
+        $cedula_r,
+        $avatar
     ) {
+        // Definir la carpeta donde se guardarán los logos
+        $ruta_guardado = 'public/img/student/';
+
+        // Asegurarse de que la carpeta de guardado exista, si no, crearla
+        if (!is_dir($ruta_guardado)) {
+            mkdir($ruta_guardado, 0755, true); // El true permite crear subdirectorios recursivamente
+        }
+
+        $nombre_archivo_logo = null;
+        $logo_en_db = "";
+        $saved = false;
+
+
+
+        // Verificar si se proporcionó información del logo (es decir, si se cargó una nueva imagen)
+        if ($avatar != "") {
+            // Generar un nombre de archivo único para el logo
+            $nombre_archivo_logo = uniqid('logo_student') . '.' . $avatar['extension'];
+            $ruta_completa_logo = $ruta_guardado . $nombre_archivo_logo;
+
+            // Guardar el archivo en el servidor
+            if (file_put_contents($ruta_completa_logo, $avatar['datos'])) {
+                // La imagen se guardó correctamente, ahora guardaremos la ruta en la base de datos
+                $logo_en_db = $ruta_completa_logo;
+                $saved = true;
+            } else {
+                // Error al guardar el archivo
+                return ['error' => 'Error al guardar el archivo del logo en el servidor.'];
+            }
+        }
+
         $sql = $this->db->conn()->prepare("SELECT id,cedula_r FROM representante WHERE cedula_r = ? and deleted = 0");
         $sql->execute([$cedula_r]);
         $result = $sql->fetch(PDO::FETCH_DEFAULT);
         if ($result) {
 
-            $sql = $this->db->conn()->prepare("
+            if ($saved === true) {
+                $sql = $this->db->conn()->prepare("
+                UPDATE alumnos 
+                SET id_representante = ?,
+                    p_nombre         = ?, 
+                    s_nombre         = ?, 
+                    p_apellido       = ?, 
+                    s_apellido       = ?, 
+                    cedula           = ?, 
+                    telefono         = ?, 
+                    sexo             = ?, 
+                    correo           = ?, 
+                    fecha            = ?, 
+                    edad             = ?, 
+                    ci_representante = ?, 
+                    direccion        = ?, 
+                    documentos       = ?, 
+                    nivel            = ?, 
+                    seccion          = ?, 
+                    mencion          = ?,
+                    logo             = ?
+                WHERE id = ? and deleted = 0");
+
+                if ($sql->execute([
+                    $result['id'],
+                    $p_nombre,
+                    $s_nombre,
+                    $p_apellido,
+                    $s_apellido,
+                    $cedula,
+                    $telefono,
+                    $sexo,
+                    $correo,
+                    $fecha,
+                    $edad,
+                    $result['cedula_r'],
+                    $direccion,
+                    $documentos,
+                    $grado,
+                    $seccion,
+                    $mencion,
+                    $logo_en_db,
+                    $id
+                ])) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                $sql = $this->db->conn()->prepare("
                 UPDATE alumnos 
                 SET id_representante = ?,
                     p_nombre         = ?, 
@@ -612,34 +720,34 @@ class HomeModel extends Model
                     mencion          = ? 
                 WHERE id = ? and deleted = 0");
 
-            if ($sql->execute([
-                $result['id'],
-                $p_nombre,
-                $s_nombre,
-                $p_apellido,
-                $s_apellido,
-                $cedula,
-                $telefono,
-                $sexo,
-                $correo,
-                $fecha,
-                $edad,
-                $result['cedula_r'],
-                $direccion,
-                $documentos,
-                $grado,
-                $seccion,
-                $mencion,
-                $id
-            ])) {
-                return true;
-            } else {
-                return false;
+                if ($sql->execute([
+                    $result['id'],
+                    $p_nombre,
+                    $s_nombre,
+                    $p_apellido,
+                    $s_apellido,
+                    $cedula,
+                    $telefono,
+                    $sexo,
+                    $correo,
+                    $fecha,
+                    $edad,
+                    $result['cedula_r'],
+                    $direccion,
+                    $documentos,
+                    $grado,
+                    $seccion,
+                    $mencion,
+                    $id
+                ])) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         } else {
             header("Location: " . __baseurl__ . "home/consulting_view?errorCedulaRepresentante");
         }
-
 
         $sql->closeCursor();
         $sql = null;
@@ -664,9 +772,87 @@ class HomeModel extends Model
         $tercero,
         $cuarto,
         $quinto,
-        $sexto
+        $sexto,
+        $avatar
     ) {
-        $sql = $this->db->conn()->prepare("
+        // Definir la carpeta donde se guardarán los logos
+        $ruta_guardado = 'public/img/teacher/';
+
+        // Asegurarse de que la carpeta de guardado exista, si no, crearla
+        if (!is_dir($ruta_guardado)) {
+            mkdir($ruta_guardado, 0755, true); // El true permite crear subdirectorios recursivamente
+        }
+
+        $nombre_archivo_logo = null;
+        $logo_en_db = "";
+        $saved = false;
+
+
+
+        // Verificar si se proporcionó información del logo (es decir, si se cargó una nueva imagen)
+        if ($avatar != "") {
+            // Generar un nombre de archivo único para el logo
+            $nombre_archivo_logo = uniqid('logo_teacher') . '.' . $avatar['extension'];
+            $ruta_completa_logo = $ruta_guardado . $nombre_archivo_logo;
+
+            // Guardar el archivo en el servidor
+            if (file_put_contents($ruta_completa_logo, $avatar['datos'])) {
+                // La imagen se guardó correctamente, ahora guardaremos la ruta en la base de datos
+                $logo_en_db = $ruta_completa_logo;
+                $saved = true;
+            } else {
+                // Error al guardar el archivo
+                return ['error' => 'Error al guardar el archivo del logo en el servidor.'];
+            }
+        }
+
+        if ($saved === true) {
+            $sql = $this->db->conn()->prepare("
+            UPDATE docentes
+            SET p_nombre        = ?,
+                s_nombre        = ?,
+                p_apellido      = ?,
+                s_apellido      = ?,
+                cedula          = ?,
+                telefono        = ?,
+                correo          = ?,
+                areas_formacion = ?,
+                fecha           = ?,
+                direccion       = ?,
+                primero         = ?,
+                segundo         = ?,
+                tercero         = ?,
+                cuarto          = ?,
+                quinto          = ?,
+                sexto           = ?,
+                logo            = ?
+            WHERE id = ? and deleted = 0");
+            if ($sql->execute([
+                $p_nombre,
+                $s_nombre,
+                $p_apellido,
+                $s_apellido,
+                $cedula,
+                $telefono,
+                $correo,
+                $areas_formacion,
+                $fecha,
+                $direccion,
+                $primero,
+                $segundo,
+                $tercero,
+                $cuarto,
+                $quinto,
+                $sexto,
+                $logo_en_db,
+                $id
+            ])) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            $sql = $this->db->conn()->prepare("
             UPDATE docentes 
             SET p_nombre        = ?, 
                 s_nombre        = ?, 
@@ -686,28 +872,29 @@ class HomeModel extends Model
                 sexto           = ?
             WHERE id = ? and deleted = 0");
 
-        if ($sql->execute([
-            $p_nombre,
-            $s_nombre,
-            $p_apellido,
-            $s_apellido,
-            $cedula,
-            $telefono,
-            $correo,
-            $areas_formacion,
-            $fecha,
-            $direccion,
-            $primero,
-            $segundo,
-            $tercero,
-            $cuarto,
-            $quinto,
-            $sexto,
-            $id
-        ])) {
-            return true;
-        } else {
-            header("Location: " . __baseurl__ . "home/register_teacher_view?error");
+            if ($sql->execute([
+                $p_nombre,
+                $s_nombre,
+                $p_apellido,
+                $s_apellido,
+                $cedula,
+                $telefono,
+                $correo,
+                $areas_formacion,
+                $fecha,
+                $direccion,
+                $primero,
+                $segundo,
+                $tercero,
+                $cuarto,
+                $quinto,
+                $sexto,
+                $id
+            ])) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         $sql->closeCursor();
@@ -774,35 +961,101 @@ class HomeModel extends Model
         $id,
         $nombre,
         $director,
+        $monto_matricula,
+        $monto_mensualidad,
         $ubicacion,
         $telefono,
         $correo,
-        $codigo
+        $codigo,
+        $logo // Aquí ahora recibiremos la información procesada del logo
     ) {
-        $sql = $this->db->conn()->prepare("
-            UPDATE institucion 
-            SET nombre_institucion    = ?, 
-                director              = ?, 
-                direccion             = ?, 
-                telefono              = ?, 
-                correo                = ?, 
-                codigo                = ?
-            WHERE id = ? and deleted = 0");
+        // Definir la carpeta donde se guardarán los logos
+        $ruta_guardado = 'public/img/logos/';
 
-        if ($sql->execute([
-            $nombre,
-            $director,
-            $ubicacion,
-            $telefono,
-            $correo,
-            $codigo,
-            $id
-        ])) {
+        // Asegurarse de que la carpeta de guardado exista, si no, crearla
+        if (!is_dir($ruta_guardado)) {
+            mkdir($ruta_guardado, 0755, true); // El true permite crear subdirectorios recursivamente
+        }
 
-            // $result = $this->institution();
-            return true;
+        $nombre_archivo_logo = null;
+        $logo_en_db = "";
+        $saved = false;
+
+
+
+        // Verificar si se proporcionó información del logo (es decir, si se cargó una nueva imagen)
+        if ($logo != "") {
+            // Generar un nombre de archivo único para el logo
+            $nombre_archivo_logo = uniqid('logo_institucion') . '.' . $logo['extension'];
+            $ruta_completa_logo = $ruta_guardado . $nombre_archivo_logo;
+
+            // Guardar el archivo en el servidor
+            if (file_put_contents($ruta_completa_logo, $logo['datos'])) {
+                // La imagen se guardó correctamente, ahora guardaremos la ruta en la base de datos
+                $logo_en_db = $ruta_completa_logo;
+                $saved = true;
+            } else {
+                // Error al guardar el archivo
+                return ['error' => 'Error al guardar el archivo del logo en el servidor.'];
+            }
+        }
+
+        if ($saved === true) {
+            $sql = $this->db->conn()->prepare("
+                UPDATE institucion
+                SET nombre_institucion   = ?,
+                    director            = ?,
+                    direccion           = ?,
+                    telefono            = ?,
+                    correo              = ?,
+                    codigo              = ?,
+                    matricula_amount    = ?,
+                    mensualidad_amount  = ?,
+                    logo                = ?
+                    WHERE id = ? and deleted = 0");
+            if ($sql->execute([
+                $nombre,
+                $director,
+                $ubicacion,
+                $telefono,
+                $correo,
+                $codigo,
+                $monto_matricula,
+                $monto_mensualidad,
+                $logo_en_db,
+                $id
+            ])) {
+                return true;
+            } else {
+                header("Location: " . __baseurl__ . "home/register_institution_view?error");
+            }
         } else {
-            return false;
+            $sql = $this->db->conn()->prepare("
+                UPDATE institucion 
+                SET nombre_institucion   = ?,
+                    director            = ?,
+                    direccion           = ?,
+                    telefono            = ?,
+                    correo              = ?,
+                    codigo              = ?,
+                    matricula_amount    = ?,
+                    mensualidad_amount  = ?
+                    WHERE id = ? and deleted = 0");
+            if ($sql->execute([
+                $nombre,
+                $director,
+                $ubicacion,
+                $telefono,
+                $correo,
+                $codigo,
+                $monto_matricula,
+                $monto_mensualidad,
+                $id
+            ])) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         $sql->closeCursor();
@@ -870,7 +1123,6 @@ class HomeModel extends Model
         $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
         return $result;
     }
-
 
     // consultar datos por opciones desde tabla
     public function consulting_tabla($nivel, $seccion, $mencion)
@@ -1009,7 +1261,6 @@ class HomeModel extends Model
         return $result;
     }
 
-
     public function count_student_meca()
     {
         $sql = $this->db->conn()->prepare("SELECT nivel,  COUNT('cedula') as cantidad FROM alumnos WHERE mencion = 'Mecanica' and deleted = 0 GROUP BY nivel");
@@ -1062,6 +1313,77 @@ class HomeModel extends Model
         $sql->closeCursor();
         $sql = null;
         $this->db = null;
+    }
+
+    // eliminar dato
+    public function insert_mention($name)
+    {
+        $sql = $this->db->conn()->prepare("INSERT INTO mentions (
+            mentions
+        ) VALUES (?)");
+        $result = $sql->execute([$name]);
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+        return $result;
+    }
+
+    // eliminar dato
+    public function delete_mention($id)
+    {
+        $sql = $this->db->conn()->prepare("UPDATE mentions SET deleted = 1 WHERE id = ?");
+        $result = $sql->execute([$id]);
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+        return $result;
+    }
+
+    // eliminar dato
+    public function insert_expense($name)
+    {
+        $sql = $this->db->conn()->prepare("INSERT INTO expenses_category (
+            expenses
+        ) VALUES (?)");
+        $result = $sql->execute([$name]);
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+        return $result;
+    }
+
+    // eliminar dato
+    public function delete_expense($id)
+    {
+        $sql = $this->db->conn()->prepare("UPDATE expenses_category SET deleted = 1 WHERE id = ?");
+        $result = $sql->execute([$id]);
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+        return $result;
+    }
+
+    public function insert_income($name)
+    {
+        $sql = $this->db->conn()->prepare("INSERT INTO income_source (
+            income_name
+        ) VALUES (?)");
+        $result = $sql->execute([$name]);
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+        return $result;
+    }
+
+    // eliminar dato
+    public function delete_income($id)
+    {
+        $sql = $this->db->conn()->prepare("UPDATE income_source SET deleted = 1 WHERE id = ?");
+        $result = $sql->execute([$id]);
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+        return $result;
     }
 
     public function model_select_teacher()
@@ -1191,5 +1513,69 @@ class HomeModel extends Model
         } else {
             return false;
         }
+    }
+
+    public function consulting_classroom($grade, $section, $mention)
+    {
+        $sql = $this->db->conn()->prepare("SELECT c.id, g.grades, s.sections, m.mentions, a.p_nombre, a.p_apellido, a.cedula
+        FROM classrooms c
+        LEFT JOIN grades g ON c.grade = g.id
+        LEFT JOIN sections s ON c.section = s.id
+        LEFT JOIN mentions m ON c.mention = m.id
+        INNER JOIN alumnos a ON JSON_EXTRACT(c.students, '$[*]') LIKE CONCAT('%', a.id, '%')
+        WHERE c.deleted = '0' AND c.grade = ? AND c.section = ? AND c.mention = ?; ");
+        $sql->execute([$grade, $section, $mention]);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    // filtro grafica
+    public function model_filtrar_grafica($table, $category, $fecha_inicio = null, $fecha_fin = null)
+    {
+        $params = [];
+        $where = "f.deleted = 0";
+
+        if ($table === "receive_payment") {
+            $where .= " AND f.id_revenue = ?";
+            $params[] = $category;
+            $join = "INNER JOIN income_source ON income_source.id = f.id_revenue";
+            $from = "receive_payment f";
+        } elseif ($table === "send_payment") {
+            $where .= " AND f.id_bills = ?";
+            $params[] = $category;
+            $join = "INNER JOIN expenses_category ON expenses_category.id = f.id_bills";
+            $from = "send_payment f";
+        } else {
+            throw new Exception("Tabla no soportada");
+        }
+
+        // Agrega filtro por fechas si existen
+        if ($fecha_inicio) {
+            $where .= " AND f.date_payment >= ?";
+            $params[] = $fecha_inicio;
+        }
+
+        if ($fecha_fin) {
+            $where .= " AND f.date_payment <= ?";
+            $params[] = $fecha_fin;
+        }
+
+        $query = "
+        SELECT f.amount, f.date_payment 
+        FROM $from
+        $join
+        WHERE $where
+        ORDER BY f.date_payment
+    ";
+
+        $stmt = $this->db->conn()->prepare($query);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
