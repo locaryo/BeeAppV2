@@ -10,37 +10,43 @@ document.addEventListener("DOMContentLoaded", () => {
   // End view-data-student go back buttons
   // Navbar breadcrumb
   const breadcrumb = document.getElementById("current-bc");
-  const ruta = "beeapp";
+  const ruta = "beeapp.albospc.online";
   const currentRoute = window.location.pathname;
   const crumbs = [
     "Dashboard",
-    "Registrar representante",
-    "Registrar estudiante",
-    "Registrar maestro",
+    "Registrar Representante",
+    "Registrar Estudiante",
+    "Registrar Maestro",
     "Consulta",
     "Horarios",
     "Estudiantes",
     "Documentos",
     "Pagos recibidos",
     "Pagos de servicios",
+    "Contabilidad",
     "Institución",
     "Consulta de estudiante",
+    "Asignar Aula",
+    "Consultar Aula",
   ];
   // Definimos las rutas que queremos manejar
   // Puedes agregar más rutas según sea necesario
   const routes = [
-    "/" + `${ruta}` + "/home/dashboard",
-    "/" + `${ruta}` + "/home/register_responsable_view",
-    "/" + `${ruta}` + "/home/register_student_view",
-    "/" + `${ruta}` + "/home/register_teacher_view",
-    "/" + `${ruta}` + "/home/consulting_view",
-    "/" + `${ruta}` + "/home/schedule_view",
-    "/" + `${ruta}` + "/home/tables",
-    "/" + `${ruta}` + "/home/documents",
-    "/" + `${ruta}` + "/home/view_register_receive_payment",
-    "/" + `${ruta}` + "/home/view_register_service_payment",
-    "/" + `${ruta}` + "/home/view_institution",
-    "/" + `${ruta}` + "/home/view_data_student",
+    "/home/dashboard",
+    "/home/register_responsable_view",
+    "/home/register_student_view",
+    "/home/register_teacher_view",
+    "/home/consulting_view",
+    "/home/schedule_view",
+    "/home/tables",
+    "/home/documents",
+    "/home/view_register_receive_payment",
+    "/home/view_register_service_payment",
+    "/home/view_institution",
+    "/home/view_data_student",
+    "/home/accountingDashboard",
+    "/home/view_create_sections",
+    "/home/view_consulting_sections",
   ];
   function getBreadcrumb() {
     routes.forEach((route, index) => {
@@ -89,9 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => (alertBox.style.display = "none"), 200); // Oculta después de la animación
     }
   }, 3000); // 3 segundos antes de ocultar
+  
+  alumnosModule.init();
+
 });
 
-// Fin de la inicialización del módulo
 const calcularDolar = (() => {
   let bcv = 0;
   let enparalelovzla = 0;
@@ -101,31 +109,11 @@ const calcularDolar = (() => {
   if (!inputMontoBs) return; // Si no existe el input, salimos de la función
   if (!divUsdBs) return; // Si no existe el div, salimos de la función
 
-  fetch(
-    "https://pydolarve.org/api/v2/dollar?page=alcambio&format_date=default&rounded_price=true"
-  )
-    .then((response) => {
-      // Verificamos si la respuesta es correcta
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // Aquí puedes manipular los datos obtenidos
-      // console.log("Data fetched successfully:", data);
-      // console.log("Data fetched successfully:", data.monitors.bcv["price"]);
-      // console.log(
-      //   "Data fetched successfully:",
-      //   data.monitors.enparalelovzla["price"]
-      // );
-
-      bcv = data.monitors.bcv["price"];
-      enparalelovzla = data.monitors.enparalelovzla["price"];
-    })
-    .catch((error) => {
-      console.error("Error fetching dollar data:", error);
-    });
+  consultarDolar().then((tasa) => {
+    if (tasa) {
+      bcv = tasa;
+    }
+  });
 
   if (inputMontoBs) {
     inputMontoBs.addEventListener("input", (event) => {
@@ -1057,3 +1045,792 @@ const listarNotas = (() => {
     });
   };
 })();
+
+const consultingSections = (() => {
+  const selectGrade = document.getElementById("select-grade");
+  const selectSection = document.getElementById("select-section");
+  const selectMention = document.getElementById("select-mention");
+
+  if (!selectGrade || !selectSection || !selectMention) return;
+
+  const handlerChanges = () => {
+    const gradeValue = selectGrade.value;
+    const sectionValue = selectSection.value;
+    const mentionValue = selectMention.value;
+    if (gradeValue != 0 && sectionValue != 0 && mentionValue != 0) {
+      selectClassroom(gradeValue, sectionValue, mentionValue);
+    }
+  };
+
+  const selectClassroom = (gradeValue, sectionValue, mentionValue) => {
+    fetch("consulting_classroom", {
+      method: "POST",
+      body: JSON.stringify({
+        grade: gradeValue,
+        section: sectionValue,
+        mention: mentionValue,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        fillTable(data);
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const fillTable = (data) => {
+    const tableBody = document.querySelector("#results-body-desktop");
+    tableBody.innerHTML = "";
+    data.forEach((estudiante) => {
+      const row = document.createElement("tr");
+
+      const nombreTd = document.createElement("td");
+      nombreTd.textContent = estudiante.p_nombre + " " + estudiante.p_apellido;
+      nombreTd.classList.add("text-center");
+
+      const cedulaTd = document.createElement("td");
+      cedulaTd.textContent = estudiante.cedula;
+      cedulaTd.classList.add("text-center");
+
+      tableBody.appendChild(row);
+      row.appendChild(nombreTd);
+      row.appendChild(cedulaTd);
+    });
+  };
+
+  selectGrade.addEventListener("change", handlerChanges);
+
+  selectSection.addEventListener("change", handlerChanges);
+
+  selectMention.addEventListener("change", handlerChanges);
+})();
+
+const dolarReferenceInstitution = (() => {
+  let bcv = 0;
+  const matriculaSpan = document.querySelector(".matricula-dolar");
+  const mensualidadSpan = document.querySelector(".mensualidad-dolar");
+  const matriculaAmount = document.querySelector("#matricula_amount");
+  const mensualidadAmount = document.querySelector("#mensualidad_amount");
+
+  if (
+    !matriculaSpan ||
+    !mensualidadSpan ||
+    !matriculaAmount ||
+    !mensualidadAmount
+  )
+    return; // Si no existe el input, salimos de la función
+
+  const updateDolar = () => {
+    let matriculaAmountValue = matriculaAmount.value;
+    let mensualidadAmountValue = mensualidadAmount.value;
+
+    const matriculaDolar = matriculaAmountValue * bcv;
+    const mensualidadDolar = mensualidadAmountValue * bcv;
+
+    matriculaSpan.textContent = "Bs " + matriculaDolar.toFixed(2);
+    mensualidadSpan.textContent = "Bs " + mensualidadDolar.toFixed(2);
+  };
+
+  // Obtener la tasa del dólar y actualizar la variable bcv
+  consultarDolar().then((tasa) => {
+    if (tasa) {
+      bcv = tasa;
+      updateDolar();
+    }
+  });
+
+  matriculaAmount.addEventListener("input", updateDolar);
+  mensualidadAmount.addEventListener("input", updateDolar);
+})();
+
+const dolarReferenceAccountingDashboard = (() => {
+  let bcv = 0;
+  const acountingDashboardReceive = document.querySelector(
+    ".acounting-dashboard-receive"
+  );
+  const acountingDashboardReceiveUSD = document.querySelector(
+    ".acounting-dashboard-receive-usd"
+  );
+  const acountingDashboardSend = document.querySelector(
+    ".acounting-dashboard-send"
+  );
+  const acountingDashboardSendUSD = document.querySelector(
+    ".acounting-dashboard-send-usd"
+  );
+  const acountingDashboardBenefit = document.querySelector(
+    ".acounting-dashboard-benefit"
+  );
+  const acountingDashboardBenefitUSD = document.querySelector(
+    ".acounting-dashboard-benefit-usd"
+  );
+
+  if (
+    !acountingDashboardReceive ||
+    !acountingDashboardSend ||
+    !acountingDashboardReceiveUSD ||
+    !acountingDashboardSendUSD ||
+    !acountingDashboardBenefit ||
+    !acountingDashboardBenefitUSD
+  )
+    return; // Si no existe el input, salimos de la función
+
+  const updateDolar = () => {
+    let matriculaAmountValue = parseFloat(
+      acountingDashboardReceive.textContent.replace(/[^0-9.-]+/g, "")
+    );
+    let mensualidadAmountValue = parseFloat(
+      acountingDashboardSend.textContent.replace(/[^0-9.-]+/g, "")
+    );
+
+    let benefitAmountValue = parseFloat(
+      acountingDashboardBenefit.textContent.replace(/[^0-9.-]+/g, "")
+    );
+
+    const matriculaDolar = matriculaAmountValue / bcv;
+    const mensualidadDolar = mensualidadAmountValue / bcv;
+    const benefitDolar = benefitAmountValue / bcv;
+
+    acountingDashboardReceiveUSD.textContent = "$ " + matriculaDolar.toFixed(2);
+    acountingDashboardSendUSD.textContent = "$ " + mensualidadDolar.toFixed(2);
+    acountingDashboardBenefitUSD.textContent = "$ " + benefitDolar.toFixed(2);
+  };
+
+  // Obtener la tasa del dólar y actualizar la variable bcv
+  consultarDolar().then((tasa) => {
+    if (tasa) {
+      bcv = tasa;
+      updateDolar();
+    }
+  });
+})();
+
+const dinamicChart = (() => {
+  const tipoSelect = document.getElementById("tipo");
+  const categoryContainer = document.querySelector(".d-category");
+  const expenses = document.getElementById("expenses_category");
+  const income = document.getElementById("income_source");
+  const intiDate = document.getElementById("fecha_inicio");
+  const endDate = document.getElementById("fecha_fin");
+  let valueCategory = "";
+  let valueTipo = "";
+  let valueIntiDate = "";
+  let valueEndDate = "";
+  let myChart = null; // Aquí guardamos la instancia del gráfico
+
+  if (
+    !tipoSelect ||
+    !categoryContainer ||
+    !expenses ||
+    !income ||
+    !intiDate ||
+    !endDate
+  )
+    return;
+
+  tipoSelect.addEventListener("change", (event) => {
+    const tipo = event.target.value;
+    valueCategory = ""; // Reiniciar selección anterior
+
+    if (tipo === "ingresos") {
+      categoryContainer.classList.remove("d-none");
+      expenses.classList.add("d-none");
+      income.classList.remove("d-none");
+      valueTipo = "receive_payment";
+    } else if (tipo === "gastos") {
+      categoryContainer.classList.remove("d-none");
+      expenses.classList.remove("d-none");
+      income.classList.add("d-none");
+      valueTipo = "send_payment";
+    } else {
+      categoryContainer.classList.add("d-none");
+      valueTipo = "";
+    }
+  });
+
+  expenses.addEventListener("change", (event) => {
+    handlerCategory(event.target.value);
+  });
+
+  income.addEventListener("change", (event) => {
+    handlerCategory(event.target.value);
+  });
+
+  const handlerCategory = (value) => {
+    if (valueTipo === "" || value === "0") return;
+
+    valueCategory = value;
+    chartFilter();
+  };
+
+  intiDate.addEventListener("change", () => {
+    if (valueTipo && valueCategory) {
+      chartFilter();
+    }
+  });
+
+  endDate.addEventListener("change", () => {
+    if (valueTipo && valueCategory) {
+      chartFilter();
+    }
+  });
+
+  const chartFilter = async () => {
+    valueIntiDate = intiDate.value;
+    valueEndDate = endDate.value;
+
+    const body = {
+      tipo: valueTipo,
+      categoria: valueCategory,
+    };
+
+    if (valueIntiDate) body.fecha_inicio = valueIntiDate;
+    if (valueEndDate) body.fecha_fin = valueEndDate;
+
+    try {
+      const [response, tasaDolar] = await Promise.all([
+        fetch("filtrar_grafica", {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: { "Content-Type": "application/json" },
+        }),
+        consultarDolar(),
+      ]);
+
+      if (!response.ok || !tasaDolar) {
+        throw new Error("No se pudo obtener datos o tasa de dólar");
+      }
+
+      const data = await response.json();
+
+      // Convertir a dólar
+      const dataWithUSD = data.map((item) => ({
+        ...item,
+        amount_usd: (item.amount / tasaDolar).toFixed(2),
+      }));
+
+      createChart(dataWithUSD);
+    } catch (error) {
+      console.error("Error al filtrar:", error);
+    }
+  };
+
+  const createChart = (data) => {
+    const ctx = document.getElementById("dinamic-chart").getContext("2d");
+
+    if (myChart) {
+      myChart.destroy();
+    }
+
+    myChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: data.map((item) => item.date_payment),
+        datasets: [
+          {
+            label: "Monto (Bs)",
+            data: data.map((item) => item.amount),
+            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "rgba(75, 192, 192, 1)",
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 0,
+            fill: true,
+          },
+          {
+            label: "Monto (USD)",
+            data: data.map((item) => item.amount_usd),
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 0,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+        interaction: {
+          intersect: false,
+          mode: "index",
+        },
+        scales: {
+          y: {
+            ticks: {
+              callback: function (value) {
+                return Number(value).toLocaleString("es-VE", {
+                  style: "currency",
+                  currency: "VES",
+                });
+              },
+            },
+          },
+        },
+      },
+    });
+  };
+})();
+
+const avatarInstitucion = (() => {
+  const imageUpload = document.getElementById("imageUpload");
+  const imagePreview = document.getElementById("imagePreview");
+
+  if (!imageUpload || !imagePreview) return; // Si no existe el input o la vista previa, salimos de la función
+
+  imageUpload.addEventListener("change", function () {
+    const file = this.files[0]; // Obtenemos el primer archivo seleccionado
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        imagePreview.style.backgroundImage = `url(${e.target.result})`;
+      };
+
+      reader.readAsDataURL(file); // Lee el archivo como una URL de datos
+    } else {
+      // Si no se selecciona ningún archivo, puedes restablecer la vista previa
+      imagePreview.style.backgroundImage = ""; // O podrías mostrar una imagen por defecto
+    }
+  });
+})();
+
+const mentionsHandler = (() => {
+  const listaMenciones = document.getElementById("lista-menciones");
+  const nuevaMencionInput = document.getElementById("nueva-mencion");
+  const agregarMencionBtn = document.getElementById("agregar-mencion");
+  const mencionesOcultoInput = document.getElementById("menciones-oculto");
+
+  if (
+    !listaMenciones ||
+    !nuevaMencionInput ||
+    !agregarMencionBtn ||
+    !mencionesOcultoInput
+  )
+    return; // Si no existe el input, salimos de la función
+  function actualizarMencionesOculto() {
+    const menciones = Array.from(
+      listaMenciones.querySelectorAll("span.badge")
+    ).map((badge) => badge.textContent.trim().slice(0, -1)); // Elimina el "x" visual
+    mencionesOcultoInput.value = menciones.join(",");
+  }
+
+  function agregarMencion() {
+    const nuevaMencionTexto = nuevaMencionInput.value.trim();
+    if (nuevaMencionTexto) {
+      const nuevaSpan = document.createElement("span");
+      nuevaSpan.classList.add(
+        "badge",
+        "bg-primary",
+        "text-white",
+        "rounded-pill",
+        "d-inline-flex",
+        "align-items-center",
+        "pe-2"
+      );
+      nuevaSpan.textContent = nuevaMencionTexto;
+
+      const eliminarBtn = document.createElement("button");
+      eliminarBtn.type = "button";
+      eliminarBtn.classList.add("btn-close", "btn-close-white", "ms-2");
+      eliminarBtn.setAttribute("aria-label", "Eliminar");
+      eliminarBtn.addEventListener("click", () => {
+        nuevaSpan.remove();
+        actualizarMencionesOculto();
+      });
+
+      nuevaSpan.appendChild(eliminarBtn);
+      listaMenciones.appendChild(nuevaSpan);
+      nuevaMencionInput.value = "";
+      actualizarMencionesOculto();
+    }
+  }
+
+  // Agregar botón de eliminar a las menciones iniciales
+  const listaBadgesIniciales = listaMenciones.querySelectorAll("span.badge");
+  listaBadgesIniciales.forEach((badge) => {
+    const eliminarBtn = document.createElement("button");
+    eliminarBtn.type = "button";
+    eliminarBtn.classList.add("btn-close", "btn-close-white", "ms-2");
+    eliminarBtn.setAttribute("aria-label", "Eliminar");
+    eliminarBtn.addEventListener("click", () => {
+      let id = badge.querySelector('input[type="hidden"]').value;
+      deletedMention(id);
+      badge.remove();
+      actualizarMencionesOculto();
+    });
+    badge.appendChild(eliminarBtn);
+  });
+
+  agregarMencionBtn.addEventListener("click", () => {
+    let name = nuevaMencionInput.value;
+    insertMention(name);
+    agregarMencion();
+  });
+  nuevaMencionInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      let name = nuevaMencionInput.value;
+      insertMention(name);
+      agregarMencion();
+    }
+  });
+
+  actualizarMencionesOculto();
+
+  const deletedMention = (id) => {
+    fetch("delete_mention", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const insertMention = (name) => {
+    fetch("insert_mention", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+})();
+
+const expensesHandler = (() => {
+  const listaExpenses = document.getElementById("lista-expenses");
+  const nuevaExpenseInput = document.getElementById("nueva-expense");
+  const agregarExpenseBtn = document.getElementById("agregar-expense");
+  const expensesOcultoInput = document.getElementById("expenses-oculto");
+
+  if (
+    !listaExpenses ||
+    !nuevaExpenseInput ||
+    !agregarExpenseBtn ||
+    !expensesOcultoInput
+  )
+    return; // Si no existe el input, salimos de la función
+
+  function actualizarExpensesOculto() {
+    const expenses = Array.from(
+      listaExpenses.querySelectorAll("span.badge")
+    ).map((badge) => badge.textContent.trim().slice(0, -1)); // Elimina el "x" visual
+    expensesOcultoInput.value = expenses.join(",");
+  }
+
+  function agregarExpense() {
+    const nuevaExpenseTexto = nuevaExpenseInput.value.trim();
+    if (nuevaExpenseTexto) {
+      const nuevaSpan = document.createElement("span");
+      nuevaSpan.classList.add(
+        "badge",
+        "bg-danger",
+        "text-white",
+        "rounded-pill",
+        "d-inline-flex",
+        "align-items-center",
+        "pe-2"
+      );
+      nuevaSpan.textContent = nuevaExpenseTexto;
+
+      const eliminarBtn = document.createElement("button");
+      eliminarBtn.type = "button";
+      eliminarBtn.classList.add("btn-close", "btn-close-white", "ms-2");
+      eliminarBtn.setAttribute("aria-label", "Eliminar");
+      eliminarBtn.addEventListener("click", () => {
+        nuevaSpan.remove();
+        actualizarExpensesOculto();
+      });
+
+      nuevaSpan.appendChild(eliminarBtn);
+      listaExpenses.appendChild(nuevaSpan);
+      nuevaExpenseInput.value = "";
+      actualizarExpensesOculto();
+    }
+  }
+
+  // Agregar botón de eliminar a las menciones iniciales
+  const listaBadgesIniciales = listaExpenses.querySelectorAll("span.badge");
+  listaBadgesIniciales.forEach((badge) => {
+    const eliminarBtn = document.createElement("button");
+    eliminarBtn.type = "button";
+    eliminarBtn.classList.add("btn-close", "btn-close-white", "ms-2");
+    eliminarBtn.setAttribute("aria-label", "Eliminar");
+    eliminarBtn.addEventListener("click", () => {
+      let id = badge.querySelector('input[type="hidden"]').value;
+      deletedExpense(id);
+      badge.remove();
+      actualizarExpensesOculto();
+    });
+    badge.appendChild(eliminarBtn);
+  });
+
+  agregarExpenseBtn.addEventListener("click", () => {
+    let name = nuevaExpenseInput.value;
+    insertExpense(name);
+    agregarExpense();
+  });
+  nuevaExpenseInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      let name = nuevaExpenseInput.value;
+      insertExpense(name);
+      agregarExpense();
+    }
+  });
+
+  actualizarExpensesOculto();
+
+  const deletedExpense = (id) => {
+    fetch("delete_expense", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const insertExpense = (name) => {
+    fetch("insert_expense", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+})();
+
+const incomeHandler = (() => {
+  const listaIncome = document.getElementById("lista-income");
+  const nuevaIncomeInput = document.getElementById("nueva-income");
+  const agregarIncomeBtn = document.getElementById("agregar-income");
+  const incomeOcultoInput = document.getElementById("income-oculto");
+
+  if (
+    !listaIncome ||
+    !nuevaIncomeInput ||
+    !agregarIncomeBtn ||
+    !incomeOcultoInput
+  )
+    return; // Si no existe el input, salimos de la función
+
+  function actualizarIncomeOculto() {
+    const income = Array.from(listaIncome.querySelectorAll("span.badge")).map(
+      (badge) => badge.textContent.trim().slice(0, -1)
+    ); // Elimina el "x" visual
+    incomeOcultoInput.value = income.join(",");
+  }
+
+  function agregarIncome() {
+    const nuevaIncomeTexto = nuevaIncomeInput.value.trim();
+    if (nuevaIncomeTexto) {
+      const nuevaSpan = document.createElement("span");
+      nuevaSpan.classList.add(
+        "badge",
+        "bg-success",
+        "text-white",
+        "rounded-pill",
+        "d-inline-flex",
+        "align-items-center",
+        "pe-2"
+      );
+      nuevaSpan.textContent = nuevaIncomeTexto;
+
+      const eliminarBtn = document.createElement("button");
+      eliminarBtn.type = "button";
+      eliminarBtn.classList.add("btn-close", "btn-close-white", "ms-2");
+      eliminarBtn.setAttribute("aria-label", "Eliminar");
+      eliminarBtn.addEventListener("click", () => {
+        nuevaSpan.remove();
+        actualizarIncomeOculto();
+      });
+
+      nuevaSpan.appendChild(eliminarBtn);
+      listaIncome.appendChild(nuevaSpan);
+      nuevaIncomeInput.value = "";
+      actualizarIncomeOculto();
+    }
+  }
+
+  // Agregar botón de eliminar a las menciones iniciales
+  const listaBadgesIniciales = listaIncome.querySelectorAll("span.badge");
+  listaBadgesIniciales.forEach((badge) => {
+    const eliminarBtn = document.createElement("button");
+    eliminarBtn.type = "button";
+    eliminarBtn.classList.add("btn-close", "btn-close-white", "ms-2");
+    eliminarBtn.setAttribute("aria-label", "Eliminar");
+    eliminarBtn.addEventListener("click", () => {
+      let id = badge.querySelector('input[type="hidden"]').value;
+      deletedIncome(id);
+      badge.remove();
+      actualizarIncomeOculto();
+    });
+    badge.appendChild(eliminarBtn);
+  });
+
+  agregarIncomeBtn.addEventListener("click", () => {
+    let name = nuevaIncomeInput.value;
+    insertIncome(name);
+    agregarIncome();
+  });
+  nuevaIncomeInput.addEventListener("keypress", (event) => {
+    if (event.key === "Enter") {
+      let name = nuevaIncomeInput.value;
+      insertIncome(name);
+      agregarIncome();
+    }
+  });
+
+  actualizarIncomeOculto();
+
+  const deletedIncome = (id) => {
+    fetch("delete_income", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+
+  const insertIncome = (name) => {
+    fetch("insert_income", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+      }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data == true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.error("Error al filtrar estudiantes:", error);
+      });
+  };
+})();
+
+async function consultarDolar() {
+  try {
+    const response = await fetch(
+      "https://pydolarve.org/api/v2/dollar?page=alcambio&format_date=default&rounded_price=true"
+    );
+
+    if (!response.ok) {
+      throw new Error("Error de red");
+    }
+
+    const data = await response.json();
+    // Usa BCV o enparalelovzla según prefieras
+    return parseFloat(data.monitors.bcv["price"]);
+  } catch (error) {
+    console.error("Error al obtener la tasa del dólar:", error);
+    return null; // Manejar errores devolviendo null
+  }
+}
