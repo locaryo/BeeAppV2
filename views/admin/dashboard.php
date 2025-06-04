@@ -27,12 +27,12 @@
     <?php endif ?>
 
 
-    <div class="container-fluid py-4">
+    <div class="container-fluid pb-4">
 
       <div class="row">
 
-        <div class="container bento-container py-4">
-          <div class="bento-grid py-4">
+        <div class="container bento-container">
+          <div class="bento-grid">
 
             <div class="bento-col3-row2 row m-0 py-2 gap-2">
               <!-- count teacher -->

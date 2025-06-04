@@ -1042,6 +1042,39 @@ class Home extends Controller
         echo json_encode($result);
     }
 
+    public function view_consulting_notes()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $secciones = $this->model->model_select_sections();
+            $niveles = $this->model->model_select_grades();
+            $this->view->secciones = $secciones ? $secciones : [];
+            $this->view->niveles = $niveles ? $niveles : [];
+ 
+            $this->view->render('admin/view_consulting_notes');
+        } else {
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+            exit;
+        }
+    }
+
+    public function consulting_course(){
+         // Get raw POST data
+         $rawData = file_get_contents("php://input");
+
+         // Decode JSON data
+         $postData = json_decode($rawData, true);
+         $result = $this->model->consulting_course($postData['section'], $postData['grade']);
+ 
+         echo json_encode($result);
+    }
+
+    public function consulting_rating(){
+        $rawData = file_get_contents("php://input");
+        $postData = json_decode($rawData, true);
+        $result = $this->model->consulting_rating($postData['course'], $postData['section'], $postData['grade']);
+        echo json_encode($result);
+    }
     // documentos
     public function documents()
     {

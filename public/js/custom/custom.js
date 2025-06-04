@@ -95,9 +95,8 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => (alertBox.style.display = "none"), 200); // Oculta después de la animación
     }
   }, 3000); // 3 segundos antes de ocultar
-  
-  alumnosModule.init();
 
+  alumnosModule.init();
 });
 
 const calcularDolar = (() => {
@@ -679,8 +678,17 @@ const asignarSeccion = (() => {
     row.setAttribute("data-id", estudiante.id);
 
     row.innerHTML = `
-      <td class="text-center">${estudiante.p_nombre} ${estudiante.p_apellido}</td>
-      <td class="text-center">${estudiante.cedula}</td>
+      <td class="text-center">
+        <div class="d-flex flex-column justify-content-center">
+          <h6 class="mb-0 text-sm">${estudiante.p_nombre}</h6>
+          <p class="text-xs text-secondary mb-0">${estudiante.p_apellido}</p>
+        </div>
+      </td>
+      <td class="text-center">
+        <div class="d-flex flex-column justify-content-center">
+          <h6 class="mb-0 text-sm">${estudiante.cedula}</h6>
+        </div>
+      </td>
       <td class="text-center">
         <button type="button" class="btn btn-danger btn-sm remove-student">Remover</button>
       </td>
@@ -1091,18 +1099,35 @@ const consultingSections = (() => {
     tableBody.innerHTML = "";
     data.forEach((estudiante) => {
       const row = document.createElement("tr");
-
-      const nombreTd = document.createElement("td");
-      nombreTd.textContent = estudiante.p_nombre + " " + estudiante.p_apellido;
-      nombreTd.classList.add("text-center");
-
-      const cedulaTd = document.createElement("td");
-      cedulaTd.textContent = estudiante.cedula;
-      cedulaTd.classList.add("text-center");
-
+      row.innerHTML = `
+        <td>
+          <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column justify-content-center">
+              <h6 class="mb-0 text-sm">${estudiante.p_nombre}</h6>
+              <p class="text-xs text-secondary mb-0">${estudiante.p_apellido}</p>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column justify-content-center">
+              <h6 class="mb-0 text-sm">${estudiante.cedula}</h6>
+            </div>
+          </div>
+        </td>
+      `;
       tableBody.appendChild(row);
-      row.appendChild(nombreTd);
-      row.appendChild(cedulaTd);
+      // const nombreTd = document.createElement("td");
+      // nombreTd.textContent = estudiante.p_nombre + " " + estudiante.p_apellido;
+      // nombreTd.classList.add("text-center");
+
+      // const cedulaTd = document.createElement("td");
+      // cedulaTd.textContent = estudiante.cedula;
+      // cedulaTd.classList.add("text-center");
+
+      // tableBody.appendChild(row);
+      // row.appendChild(nombreTd);
+      // row.appendChild(cedulaTd);
     });
   };
 
@@ -1677,6 +1702,139 @@ const expensesHandler = (() => {
       .catch((error) => {
         console.error("Error al filtrar estudiantes:", error);
       });
+  };
+})();
+
+const courseHandler = (() => {
+  const sectionInput = document.getElementById("seccion-notas");
+  const gradeInput = document.getElementById("nivel-notas");
+  const courseInput = document.getElementById("materia-notas");
+  const container = document.querySelector(".d-course");
+  const tBody = document.getElementById("results-body-desktop");
+  let section = 0;
+  let grade = 0;
+
+  if (!sectionInput || !gradeInput || !courseInput) return;
+
+  sectionInput.addEventListener("change", async () => {
+    section = sectionInput.value;
+    grade = gradeInput.value;
+    if (section != "0" && grade != "0") {
+      const data = await fetchCourse(section, grade);
+      fillCourse(data);
+    }
+  });
+
+  gradeInput.addEventListener("change", async () => {
+    section = sectionInput.value;
+    grade = gradeInput.value;
+    if (section != "0" && grade != "0") {
+      const data = await fetchCourse(section, grade);
+      fillCourse(data);
+    }
+  });
+
+  const fetchCourse = async (section, grade) => {
+    try {
+      const response = await fetch('consulting_course',
+        {
+          method: "POST",
+          body: JSON.stringify({
+            section: section,
+            grade: grade,
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error:', error);
+      return [];
+    }
+  };
+
+  const fillCourse = (courses) => {
+    tBody.innerHTML = "";
+    // Limpiar opciones existentes excepto la primera
+    while (courseInput.options.length > 1) {
+      courseInput.remove(1);
+    }
+
+    if (courses && courses.length > 0) {
+      courses.forEach(item => {
+        const option = document.createElement('option');
+        option.textContent = item.course;
+        option.value = item.course;
+        courseInput.appendChild(option);
+      });
+      container.classList.remove('d-none');
+    } else {
+      container.classList.add('d-none');
+    }
+  }
+
+  courseInput.addEventListener("change", async () => {
+    const course = courseInput.value;
+    const section = sectionInput.value;
+    const grade = gradeInput.value;
+    const data = await fetchRating(course, section, grade);
+    fillTable(data);
+  });
+
+  const fetchRating = async (course, section, grade) => {
+    tBody.innerHTML = "";
+    try {
+      const response = await fetch('consulting_rating',
+        {
+          method: "POST",
+          body: JSON.stringify({
+            course: course,
+            section: section,
+            grade: grade,
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error:', error);
+      return [];
+    }
+  };
+
+  const fillTable = (data) => {
+    tBody.innerHTML = "";
+    data.forEach(item => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>
+          <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column justify-content-center">
+              <h6 class="mb-0 text-sm">${item.p_nombre}</h6>
+              <p class="text-xs text-secondary mb-0">${item.p_apellido}</p>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column justify-content-center">
+              <h6 class="mb-0 text-sm">${item.ratings}</h6>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="d-flex justify-content-center">
+            <div class="d-flex flex-column justify-content-center">
+              <h6 class="mb-0 text-sm">${item.docente}</h6>
+              <p class="text-xs text-secondary mb-0">${item.docente_apellido}</p>
+            </div>
+          </div>
+        </td>
+      `;
+      tBody.appendChild(row);
+    });
   };
 })();
 
