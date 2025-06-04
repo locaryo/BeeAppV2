@@ -139,6 +139,15 @@
             <span class="nav-link-text ms-1">Lista Estudiantes</span>
           </a>
         </li>
+        <!-- boton consultar notas -->
+        <li class="nav-item">
+          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_consulting_notes">
+            <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">manage_search</span>
+            </div>
+            <span class="nav-link-text ms-1">Consultar Notas</span>
+          </a>
+        </li>
         <!-- boton documentos -->
         <li class="nav-item">
           <a class="nav-link " href="<?= constant('__baseurl__') ?>home/documents">
