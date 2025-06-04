@@ -7,7 +7,7 @@
   <?php require constant("__layout__") . "aside.php"; ?>
   <main class="main-content position-relative border-radius-lg ">
 
-    <div class="container-fluid pt-5">
+    <div class="container-fluid">
       <?php if (isset($_SESSION['message'])): ?>
         <div class="d-flex justify-content-center" style="position: relative;z-index: 1;width: 100%;">
           <div class="alert alert-primary text-center text-white" role="alert">
