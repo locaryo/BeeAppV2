@@ -1534,6 +1534,26 @@ class HomeModel extends Model
         $this->db = null;
     }
 
+    public function consulting_course($section, $grade)
+    {
+        $sql = $this->db->conn()->prepare("SELECT DISTINCT course FROM ratings WHERE section = ? AND grade = ?");
+        $sql->execute([$section, $grade]);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
+    public function consulting_rating($course, $section, $grade)
+    {
+        $sql = $this->db->conn()->prepare("SELECT r.id, s.p_nombre, s.p_apellido, r.ratings, d.p_nombre as docente, d.p_apellido as docente_apellido
+        FROM ratings r
+        LEFT JOIN alumnos s ON s.id = r.student
+        LEFT JOIN docentes d ON d.id = r.teacher
+        WHERE course = ? AND section = ? AND grade = ? AND r.deleted = 0");
+        $sql->execute([$course, $section, $grade]);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
     // filtro grafica
     public function model_filtrar_grafica($table, $category, $fecha_inicio = null, $fecha_fin = null)
     {
