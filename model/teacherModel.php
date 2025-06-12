@@ -334,7 +334,8 @@ class TeacherModel extends Model
         return $checkSql->fetchColumn() > 0;
     }
 
-    public function model_view_profile($id){
+    public function model_view_profile($id)
+    {
         $sql = $this->db->conn()->prepare("SELECT * FROM docentes WHERE id = ?");
         $sql->execute([$id]);
         $result = $sql->fetch(PDO::FETCH_ASSOC);
@@ -599,4 +600,27 @@ class TeacherModel extends Model
         $sql = null;
         $this->db = null;
     }
+
+    public function update_is_active($id)
+    {
+        $sql = $this->db->conn()->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
+        if ($sql->execute([$id])) {
+            return true;
+        } else {
+            return false;
+        }
+
+        $sql->closeCursor();
+        $sql = null;
+        $this->db = null;
+    }
+
+    public function consulting_course($section, $grade)
+    {
+        $sql = $this->db->conn()->prepare("SELECT DISTINCT course FROM ratings WHERE section = ? AND grade = ?");
+        $sql->execute([$section, $grade]);
+        $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    }
+
 }

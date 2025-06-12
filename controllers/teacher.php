@@ -4,24 +4,23 @@ class Teacher extends Controller
     public $view;
     private $id_teacher;
 
+    private $tiempo_inicio;
+    private $tiempo_actual;
+    protected $timeout = 10; // 30 minutos
+
     public function __construct()
     {
-        session_start();
         parent::__construct();
-        $this->view->horarios = "";
-        $this->view->array               = [];
-        $this->view->sections            = [];
-        $this->view->grades              = [];
-        $this->view->mentions            = [];
-        $this->view->niveles            = [];
-        $this->view->secciones          = [];
-        $this->view->materias           = [];
+        session_start();
     }
 
-    // dashboard
+
+    // dashboard docente
     public function dashboard()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+            $isAjax = $this->isAjaxRequest();
+
             $count_teacher       = $this->model->count_teacher();
             $count_student       = $this->model->count_student();
             $count_student_m     = $this->model->count_student_m();
@@ -37,14 +36,25 @@ class Teacher extends Controller
             $this->view->count_student_petro = json_encode($count_student_petro) ? $count_student_petro : [];
             $this->view->count_student_meca  = json_encode($count_student_meca) ? $count_student_meca : [];
             $this->view->count_student_elec  = json_encode($count_student_elec) ? $count_student_elec : [];
-            $this->view->render('teacher/dashboard');
+
+            if ($isAjax) {
+                $this->view->render('teacher/dashboard');
+            } else {
+                $this->view->renderFull('teacher/dashboard');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
             exit;
         }
     }
 
+    //crear usuario docente
     public function createUserTeacher()
     {
         $username = $this->validarEntrada($_POST['username']);
@@ -72,20 +82,19 @@ class Teacher extends Controller
     public function schedule_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+            $isAjax = $this->isAjaxRequest();
 
-            $id_teacher = (string) $_SESSION['id_docente']; // Forzamos a string
-            $horarios = $this->model->model_select_schedule_teacher(); // Aseguramos que $horarios sea un array
+            $id_teacher = (string) $_SESSION['id_docente'];
+            $horarios = $this->model->model_select_schedule_teacher();
             $horarios_filtrados = [];
 
             foreach ($horarios as $horario_data) {
-                // Decodificamos los campos
                 $docentes     = json_decode($horario_data['docente'], true);
                 $dias_semana  = json_decode($horario_data['dia_semana'], true);
                 $horas_inicio = json_decode($horario_data['hora_inicio'], true);
                 $horas_fin    = json_decode($horario_data['hora_fin'], true);
                 $materias     = json_decode($horario_data['materia'], true);
 
-                // Validamos que todos sean arrays y del mismo tamaño
                 if (
                     is_array($docentes) && is_array($dias_semana) && is_array($horas_inicio) &&
                     is_array($horas_fin) && is_array($materias) &&
@@ -94,7 +103,6 @@ class Teacher extends Controller
                     count($docentes) === count($materias)
                 ) {
                     foreach (array_keys($docentes) as $indice) {
-                        // Comparamos ambos como string por seguridad
                         $docente_id = (string) trim($docentes[$indice]);
                         if ($docente_id === (string)$id_teacher) {
                             $horario_docente = [
@@ -111,10 +119,20 @@ class Teacher extends Controller
                 }
             }
             $this->view->horarios = $horarios_filtrados;
-            $this->view->render('teacher/schedule_view');
+
+            if ($isAjax) {
+                $this->view->render('teacher/schedule_view');
+            } else {
+                $this->view->renderFull('teacher/schedule_view');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
             exit;
         }
     }
@@ -123,7 +141,9 @@ class Teacher extends Controller
     public function asign_ratings_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
-            $id_teacher = (string) $_SESSION['id_docente']; // Forzamos a string
+            $isAjax = $this->isAjaxRequest();
+
+            $id_teacher = (string) $_SESSION['id_docente'];
             $horarios = $this->model->model_select_schedule_teacher();
             $horarios_filtrados = [];
             $vistos = [];
@@ -132,17 +152,14 @@ class Teacher extends Controller
                 $docentes = json_decode($horario_data['docente'], true);
                 $materias = json_decode($horario_data['materia'], true);
 
-                if (
-                    is_array($docentes) && is_array($materias) &&
-                    count($docentes) === count($materias)
-                ) {
+                if (is_array($docentes) && is_array($materias) && count($docentes) === count($materias)) {
                     foreach (array_keys($docentes) as $indice) {
                         $docente_id = (string) trim($docentes[$indice]);
                         $materia    = $materias[$indice] ?? null;
                         $seccion    = $horario_data['seccion'];
                         $nivel      = $horario_data['nivel'];
 
-                        $clave_unica = "$materia|$seccion|$nivel"; // Clave única para evitar duplicados
+                        $clave_unica = "$materia|$seccion|$nivel";
 
                         if ($docente_id === (string)$id_teacher && !isset($vistos[$clave_unica])) {
                             $horarios_filtrados[] = [
@@ -155,6 +172,7 @@ class Teacher extends Controller
                     }
                 }
             }
+
             $niveles = [];
             $secciones = [];
             $materias = [];
@@ -168,14 +186,25 @@ class Teacher extends Controller
             $this->view->niveles = array_values($niveles);
             $this->view->secciones = array_values($secciones);
             $this->view->materias = array_values($materias);
-            $this->view->render('teacher/asign_ratings_view');
+
+            if ($isAjax) {
+                $this->view->render('teacher/asign_ratings_view');
+            } else {
+                $this->view->renderFull('teacher/asign_ratings_view');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
             exit;
         }
     }
 
+    //filtrar seccion
     public function filtrar_classroom()
     {
         // Get raw POST data
@@ -188,6 +217,7 @@ class Teacher extends Controller
         echo json_encode($result);
     }
 
+    //save ratings
     public function save_ratings()
     {
         $teacherId = $_SESSION['id_docente'];
@@ -243,7 +273,9 @@ class Teacher extends Controller
     public function list_ratings_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
-            $id_teacher = (string) $_SESSION['id_docente']; // Forzamos a string
+            $isAjax = $this->isAjaxRequest();
+
+            $id_teacher = (string) $_SESSION['id_docente'];
             $horarios = $this->model->model_select_schedule_teacher();
             $horarios_filtrados = [];
             $vistos = [];
@@ -252,17 +284,14 @@ class Teacher extends Controller
                 $docentes = json_decode($horario_data['docente'], true);
                 $materias = json_decode($horario_data['materia'], true);
 
-                if (
-                    is_array($docentes) && is_array($materias) &&
-                    count($docentes) === count($materias)
-                ) {
+                if (is_array($docentes) && is_array($materias) && count($docentes) === count($materias)) {
                     foreach (array_keys($docentes) as $indice) {
                         $docente_id = (string) trim($docentes[$indice]);
                         $materia    = $materias[$indice] ?? null;
                         $seccion    = $horario_data['seccion'];
                         $nivel      = $horario_data['nivel'];
 
-                        $clave_unica = "$materia|$seccion|$nivel"; // Clave única para evitar duplicados
+                        $clave_unica = "$materia|$seccion|$nivel";
 
                         if ($docente_id === (string)$id_teacher && !isset($vistos[$clave_unica])) {
                             $horarios_filtrados[] = [
@@ -275,6 +304,7 @@ class Teacher extends Controller
                     }
                 }
             }
+
             $niveles = [];
             $secciones = [];
             $materias = [];
@@ -288,14 +318,25 @@ class Teacher extends Controller
             $this->view->niveles = array_values($niveles);
             $this->view->secciones = array_values($secciones);
             $this->view->materias = array_values($materias);
-            $this->view->render('teacher/list_ratings_view');
+
+            if ($isAjax) {
+                $this->view->render('teacher/list_ratings_view');
+            } else {
+                $this->view->renderFull('teacher/list_ratings_view');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
             exit;
         }
     }
 
+    //filtrar notas
     public function filtrar_ratings()
     {
         // Get raw POST data
@@ -308,6 +349,7 @@ class Teacher extends Controller
         echo json_encode($result);
     }
 
+    //edit ratings
     public function edit_ratings()
     {
         $teacherId = $_SESSION['id_docente'];
@@ -364,14 +406,26 @@ class Teacher extends Controller
     public function profile_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+            $isAjax = $this->isAjaxRequest();
 
             $data = $this->model->model_view_profile($_SESSION['id_docente']);
             $payment = $this->model->model_consulting_teacher_payments($_SESSION['id_docente']);
             $this->view->data = $data ? $data : [];
             $this->view->payments = $payment ? $payment : [];
-            $this->view->render('teacher/profile_view');
+
+            if ($isAjax) {
+                $this->view->render('teacher/profile_view');
+            } else {
+
+                $this->view->renderFull('teacher/profile_view');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -453,6 +507,7 @@ class Teacher extends Controller
         }
     }
 
+    //eliminar notas
     public function delete_rating()
     {
         // Get raw POST data
@@ -472,11 +527,115 @@ class Teacher extends Controller
     // cerrare sesion
     public function logOut()
     {
-        session_unset(); // Eliminar todas las variables de sesión
-        session_destroy(); // Destruir la sesión
-        // Redirigir a la página de inicio o login
-        header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
-        exit;
+        $result = $this->model->update_is_active($_SESSION['id_user']);
+        if ($result) {
+            session_unset(); // Eliminar todas las variables de sesión
+            session_destroy(); // Destruir la sesión
+            header("Location: " . __baseurl__);  // Redirigimos a login
+            exit;
+        } else {
+            $_SESSION['message'] = "Error al cerrar sesión";
+            header("Location: " . __baseurl__);
+            exit;
+        }
+    }
+    //expiracion de sesion
+    private function checkSessionInactivity()
+    {
+        $tiempoActual = time();
+
+        if (!isset($_SESSION['ultima_actividad'])) {
+            $_SESSION['ultima_actividad'] = $tiempoActual;
+            return;
+        }
+
+        $tiempoInicio = $_SESSION['ultima_actividad'];
+
+        if (($tiempoActual - $tiempoInicio) > $this->timeout) {
+            // Redirige al controlador encargado de cerrar sesión por inactividad
+            header("Location: " . __baseurl__ . "teacher/logOut");
+            exit;
+        }
+
+        // Si sigue activa la sesión, actualiza el tiempo
+        $_SESSION['ultima_actividad'] = $tiempoActual;
+    }
+    public function filter_ratings()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+            $seccion = $_POST['seccion'];
+            $nivel = $_POST['nivel'];
+            $materia = $_POST['materia'];
+
+            $estudiantes = $this->model->model_filter_ratings($seccion, $nivel, $materia);
+
+            if ($estudiantes) {
+                foreach ($estudiantes as $estudiante) {
+                    $notas = $this->model->model_get_ratings($estudiante['id'], $materia);
+                    $nota = $notas ? $notas['nota'] : '';
+                    echo '<tr>
+                            <td class="text-center text-uppercase text-sm font-weight-bold mb-0 text-xs">' . $estudiante['p_nombre'] . ' ' . $estudiante['p_apellido'] . '</td>
+                            <td class="text-center text-sm font-weight-bold mb-0 text-xs">
+                                <input type="number" class="form-control" name="notas[]" value="' . $nota . '" min="0" max="20" required>
+                                <input type="hidden" name="estudiantes[]" value="' . $estudiante['id'] . '">
+                            </td>
+                            <td class="text-center text-sm font-weight-bold mb-0 text-xs">
+                                <button type="button" class="btn btn-primary btn-sm">Editar</button>
+                            </td>
+                        </tr>';
+                }
+            } else {
+                echo '<tr><td colspan="3" class="text-center">No hay estudiantes registrados en esta sección</td></tr>';
+            }
+            exit;
+        } else {
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
+            exit;
+        }
+    }
+
+    public function filter_students()
+    {
+        if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 2) {
+            $seccion = $_POST['seccion'];
+            $nivel = $_POST['nivel'];
+            $materia = $_POST['materia'];
+
+            $estudiantes = $this->model->model_filter_students($seccion, $nivel);
+
+            if ($estudiantes) {
+                foreach ($estudiantes as $estudiante) {
+                    echo '<tr>
+                            <td class="text-center text-uppercase text-sm font-weight-bold mb-0 text-xs">' . $estudiante['p_nombre'] . ' ' . $estudiante['p_apellido'] . '</td>
+                            <td class="text-center text-sm font-weight-bold mb-0 text-xs">
+                                <input type="number" class="form-control" name="notas[]" min="0" max="20" required>
+                                <input type="hidden" name="estudiantes[]" value="' . $estudiante['id'] . '">
+                            </td>
+                            <td class="text-center text-sm font-weight-bold mb-0 text-xs">
+                                <button type="button" class="btn btn-primary btn-sm">Asignar</button>
+                            </td>
+                        </tr>';
+                }
+            } else {
+                echo '<tr><td colspan="3" class="text-center">No hay estudiantes registrados en esta sección</td></tr>';
+            }
+            exit;
+        } else {
+            if ($this->isAjaxRequest()) {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'No autorizado']);
+                exit;
+            }
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
+            exit;
+        }
     }
 
     private function validarEntrada($valor)
@@ -582,5 +741,11 @@ class Teacher extends Controller
         }
 
         return ['error' => 'Ocurrió un error al procesar la imagen.'];
+    }
+
+    private function isAjaxRequest()
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 }

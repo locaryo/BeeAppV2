@@ -11,7 +11,7 @@
     <ul class="navbar-nav">
       <!-- boton dashboard -->
       <li class="nav-item">
-        <a class="nav-link active" href="<?= $_SESSION['rol'] == 1 ? constant('__baseurl__') . 'home/dashboard' : constant('__baseurl__') . 'teacher/dashboard' ?>">
+        <a class="nav-link active" href="<?= constant('__baseurl__') . ($_SESSION['rol'] == 1 ? 'home/dashboard' : 'teacher/dashboard') ?>" data-link>
           <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">dashboard</span>
           </div>
@@ -23,7 +23,7 @@
       <?php if ($_SESSION['rol'] == 1): ?>
         <!-- boton registros-->
         <li class="nav-item">
-          <a class="nav-link dropdown-toggle" href="#nuevo_registro" data-bs-toggle="collapse">
+          <a data-link class="nav-link dropdown-toggle" href="#nuevo_registro" data-bs-toggle="collapse">
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">add</span>
             </div>
@@ -35,7 +35,7 @@
           <div class="collapse" id="nuevo_registro">
             <ul class="navbar-nav ps-3">
               <li class="nav-item">
-                <a class="nav-link " href="<?= constant('__baseurl__') ?>home/register_responsable_view">
+                <a class="nav-link " href="<?= constant('__baseurl__') ?>home/register_responsable_view" data-link>
 
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-success" style="font-size: 17px;">person_add</span>
@@ -46,7 +46,7 @@
 
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?= constant('__baseurl__') ?>home/register_student_view">
+                <a class="nav-link" data-link href="<?= constant('__baseurl__') ?>home/register_student_view">
 
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-success" style="font-size: 17px;">person_add</span>
@@ -58,7 +58,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?= constant('__baseurl__') ?>home/register_teacher_view">
+                <a class="nav-link" data-link href="<?= constant('__baseurl__') ?>home/register_teacher_view">
 
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-success" style="font-size: 17px;">person_add</span>
@@ -75,7 +75,7 @@
         <!-- boton consulta individual -->
 
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/consulting_view">
+          <a class="nav-link" href="<?= constant('__baseurl__') ?>home/consulting_view" data-link="true">
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-info" style="font-size: 17px; padding:10px;">person_search</span>
             </div>
@@ -84,7 +84,7 @@
         </li>
         <!-- boton aulas -->
         <li class="nav-item">
-          <a class="nav-link dropdown-toggle" href="#aulas" data-bs-toggle="collapse">
+          <a class="nav-link dropdown-toggle" href="#aulas" data-bs-toggle="collapse" data-no-ajax="true">
             <div class="border-radius-md text-center me-2 d-flex align-items-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">school</span>
             </div>
@@ -96,7 +96,7 @@
           <div class="collapse" id="aulas">
             <ul class="navbar-nav ps-3">
               <li class="nav-item">
-                <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_create_sections">
+                <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>home/view_create_sections">
 
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-primary" style="font-size: 17px;">format_list_bulleted_add</span>
@@ -107,7 +107,7 @@
 
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?= constant('__baseurl__') ?>home/view_consulting_sections">
+                <a class="nav-link" data-link href="<?= constant('__baseurl__') ?>home/view_consulting_sections">
 
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-info" style="font-size: 17px;">search</span>
@@ -132,7 +132,7 @@
         </li>
         <!-- boton lista -->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/tables">
+          <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>home/tables">
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">table_view</span>
             </div>
@@ -141,7 +141,7 @@
         </li>
         <!-- boton consultar notas -->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_consulting_notes">
+          <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>home/view_consulting_notes">
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">manage_search</span>
             </div>
@@ -150,7 +150,7 @@
         </li>
         <!-- boton documentos -->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/documents">
+          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/documents" data-link >
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">description</span>
             </div>
@@ -163,7 +163,7 @@
       <?php if ($_SESSION['rol'] == 2): ?>
         <!-- boton consulta de horario-->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/schedule_view">
+          <a class="nav-link" href="<?= constant('__baseurl__') ?>teacher/schedule_view" data-link>
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">calendar_today</span>
             </div>
@@ -172,7 +172,7 @@
         </li>
         <!-- boton asignar notas a secciones-->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/asign_ratings_view">
+          <a class="nav-link" href="<?= constant('__baseurl__') ?>teacher/asign_ratings_view" data-link>
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">stars</span>
             </div>
@@ -181,7 +181,7 @@
         </li>
         <!-- boton ver notas a secciones-->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/list_ratings_view">
+          <a class="nav-link" href="<?= constant('__baseurl__') ?>teacher/list_ratings_view" data-link>
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">saved_search</span>
             </div>
@@ -212,7 +212,7 @@
           <div class="collapse" id="submenu2">
             <ul class="navbar-nav ps-3">
               <li class="nav-item">
-                <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_register_receive_payment">
+                <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>home/view_register_receive_payment">
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-success" style="font-size: 17px;">add_card</span>
                   </div>
@@ -220,7 +220,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_register_service_payment">
+                <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>home/view_register_service_payment">
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-warning" style="font-size: 17px;">payments</span>
                   </div>
@@ -228,7 +228,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="<?= constant('__baseurl__') ?>home/accountingDashboard">
+                <a class="nav-link" href="<?= constant('__baseurl__') ?>home/accountingDashboard" data-link>
                   <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
                     <span class="material-icons text-primary" style="font-size: 17px;">business_center</span>
                   </div>
@@ -240,7 +240,7 @@
         </li>
         <!-- boton institucion -->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>home/view_institution">
+          <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>home/view_institution">
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">domain</span>
             </div>
@@ -253,7 +253,7 @@
       <?php if ($_SESSION['rol'] == 2): ?>
         <!-- boton institucion -->
         <li class="nav-item">
-          <a class="nav-link " href="<?= constant('__baseurl__') ?>teacher/profile_view">
+          <a data-link class="nav-link " href="<?= constant('__baseurl__') ?>teacher/profile_view">
             <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <span class="material-icons text-primary" style="font-size: 17px; padding:10px;">account_box</span>
             </div>
@@ -263,7 +263,7 @@
       <?php endif; ?>
       <!-- boton salir -->
       <li class="nav-item">
-        <a class="nav-link" href="<?= $_SESSION['rol'] == 1 ? constant('__baseurl__') . 'home/logout' : constant('__baseurl__') . 'teacher/logout' ?>">
+        <a class="nav-link" href="<?= $_SESSION['rol'] == 1 ? constant('__baseurl__') . 'home/logout' : constant('__baseurl__') . 'teacher/logout' ?>" data-no-ajax="true">
           <div class="border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
             <span class="material-icons text-danger" style="font-size: 17px; padding:10px;">exit_to_app</span>
           </div>

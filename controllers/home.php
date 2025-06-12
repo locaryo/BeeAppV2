@@ -65,6 +65,7 @@ class Home extends Controller
     public function dashboard()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $count_teacher       = $this->model->count_teacher();
             $count_student       = $this->model->count_student();
             $count_student_m     = $this->model->count_student_m();
@@ -85,12 +86,18 @@ class Home extends Controller
             $this->view->count_student_m     = $count_student_m ? $count_student_m : 0;
             $this->view->count_student_f     = $count_student_f ? $count_student_f : 0;
             $this->view->count_student_petro = json_encode($count_menciones) ? json_encode($count_menciones) : [];
-            $this->view->render('admin/dashboard');
+
+            if ($isAjax) {
+                $this->view->render('admin/dashboard');
+            } else {
+                $this->view->renderFull('admin/dashboard');
+            }
         } elseif ($_SESSION['access'] === true && $_SESSION['rol'] === 2) {
             header("Location: " . __baseurl__ . "teacher/dashboard");  // Redirigimos al dashboard sin pasar parámetros en la URL
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
-            header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
+            header("Location: " . __baseurl__);
             exit;
         }
     }
@@ -99,6 +106,8 @@ class Home extends Controller
     public function accountingDashboard()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
+
             $expenses_category = $this->model->model_select_expenses_category();
             $this->view->expenses_category = $expenses_category ? $expenses_category : [];
 
@@ -120,15 +129,23 @@ class Home extends Controller
             $profit = $receivePayment[0]['total_amount'] - $sendPayment[0]['total_amount'];
             $this->view->profit = $profit ? $profit : 0;
 
-            $benefit = $profit / $receivePayment[0]['total_amount'] * 100;
+            $benefit = $receivePayment[0]['total_amount'] > 0
+                ? ($profit / $receivePayment[0]['total_amount'] * 100)
+                : 0;
+
             $this->view->benefit = number_format($benefit, 2) ? number_format($benefit, 2) : 0;
 
             $teacherPayments = $this->model->model_teacher_payments();
             $this->view->teacherPayment = $teacherPayments ? $teacherPayments : 0;
 
-            $this->view->render('admin/accounting-dashboard');
+            if ($isAjax) {
+                $this->view->render('admin/accounting-dashboard'); // ✅
+            } else {
+                $this->view->renderFull('admin/accounting-dashboard'); // solo si accede directamente desde el navegador
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -152,13 +169,20 @@ class Home extends Controller
     public function view_register_service_payment()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
+
             $payment_method = $this->model->model_select_payment_method();
             $expenses_category = $this->model->model_select_expenses_category();
             $this->view->payment_mehtod = $payment_method ? $payment_method : [];
             $this->view->income_source = $expenses_category ? $expenses_category : [];
-            $this->view->render('admin/register-service-payment');
+            if ($isAjax) {
+                $this->view->render('admin/register-service-payment');
+            } else {
+                $this->view->renderFull('admin/register-service-payment');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -205,13 +229,20 @@ class Home extends Controller
     public function view_register_receive_payment()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
+
             $payment_method = $this->model->model_select_payment_method();
             $income_source = $this->model->model_select_income_source();
             $this->view->payment_mehtod = $payment_method ? $payment_method : [];
             $this->view->income_source = $income_source ? $income_source : [];
-            $this->view->render('admin/register-receive-payment');
+            if ($isAjax) {
+                $this->view->render('admin/register-receive-payment');
+            } else {
+                $this->view->renderFull('admin/register-receive-payment');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -261,9 +292,16 @@ class Home extends Controller
     public function register_student_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
-            $this->view->render('admin/register-student');
+            $isAjax = $this->isAjaxRequest();
+
+            if ($isAjax) {
+                $this->view->render('admin/register-student');
+            } else {
+                $this->view->renderFull('admin/register-student');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -322,10 +360,16 @@ class Home extends Controller
     public function register_teacher_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
 
-            $this->view->render('admin/register-teacher');
+            if ($isAjax) {
+                $this->view->render('admin/register-teacher');
+            } else {
+                $this->view->renderFull('admin/register-teacher');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -394,10 +438,16 @@ class Home extends Controller
     public function register_responsable_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
 
-            $this->view->render('admin/register-responsable');
+            if ($isAjax) {
+                $this->view->render('admin/register-responsable');
+            } else {
+                $this->view->renderFull('admin/register-responsable');
+            }
         } else {
-            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
+
+            $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";
             header("Location: " . __baseurl__);
             exit;
         }
@@ -464,6 +514,18 @@ class Home extends Controller
         echo json_encode($result);
     }
 
+    public function filtrar_representante()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
+
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->model_filtrar_representante($postData['query']);
+
+        echo json_encode($result);
+    }
+
     // procesar consulta de cedula
     public function select_payment_student()
     {
@@ -484,7 +546,12 @@ class Home extends Controller
     public function consulting_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
-            $this->view->render('admin/consulting');
+            $isAjax = $this->isAjaxRequest();
+            if ($isAjax) {
+                $this->view->render('admin/consulting');
+            } else {
+                $this->view->renderFull('admin/consulting');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -524,6 +591,7 @@ class Home extends Controller
     public function view_create_sections()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $result = $this->model->model_select_teacher();
             $sections = $this->model->model_select_sections();
             $grades = $this->model->model_select_grades();
@@ -532,7 +600,13 @@ class Home extends Controller
             $this->view->sections = $sections ? $sections : [];
             $this->view->grades = $grades ? $grades : [];
             $this->view->mentions = $mentions ? $mentions : [];
-            $this->view->render('admin/view_create_sections');
+
+            if ($isAjax) {
+
+                $this->view->render('admin/view_create_sections');
+            } else {
+                $this->view->renderFull('admin/view_create_sections');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -568,6 +642,7 @@ class Home extends Controller
     public  function view_consulting_sections()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $result = $this->model->model_select_teacher();
             $sections = $this->model->model_select_sections();
             $grades = $this->model->model_select_grades();
@@ -576,7 +651,14 @@ class Home extends Controller
             $this->view->sections = $sections ? $sections : [];
             $this->view->grades = $grades ? $grades : [];
             $this->view->mentions = $mentions ? $mentions : [];
-            $this->view->render('admin/view_consulting_sections');
+
+            if ($isAjax) {
+
+                $this->view->render('admin/view_consulting_sections');
+            } else {
+
+                $this->view->renderFull('admin/view_consulting_sections');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -600,6 +682,7 @@ class Home extends Controller
     public function schedule_view()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $result = $this->model->model_select_teacher();
             $sections = $this->model->model_select_sections();
             $grades = $this->model->model_select_grades();
@@ -608,7 +691,8 @@ class Home extends Controller
             $this->view->sections = $sections ? $sections : [];
             $this->view->grades = $grades ? $grades : [];
             $this->view->mentions = $mentions ? $mentions : [];
-            $this->view->render('admin/schedule');
+
+            $this->view->renderFull('admin/schedule');
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -686,8 +770,7 @@ class Home extends Controller
     public function view_data_teacher()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
-            // $this->view->data = $data;
-            // $this->view->render('admin/view-data-teacher');
+            $isAjax = $this->isAjaxRequest();
 
             // Si ya se pasó información en $data (por ejemplo, desde una consulta), se utiliza esa
             if (isset($_SESSION['cedula']) && isset($_SESSION['opcion'])) {
@@ -1008,6 +1091,7 @@ class Home extends Controller
     public function tables()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $data = $this->model->read_all();
             $sections = $this->model->model_select_sections();
             $grades = $this->model->model_select_grades();
@@ -1016,7 +1100,14 @@ class Home extends Controller
             $this->view->sections = $sections ? $sections : [];
             $this->view->mentions = $mentions ? $mentions : [];
             $this->view->array = $data ? $data : [];
-            $this->view->render('admin/tables');
+
+            if ($isAjax) {
+
+                $this->view->render('admin/tables');
+            } else {
+
+                $this->view->renderFull('admin/tables');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -1045,12 +1136,19 @@ class Home extends Controller
     public function view_consulting_notes()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $secciones = $this->model->model_select_sections();
             $niveles = $this->model->model_select_grades();
             $this->view->secciones = $secciones ? $secciones : [];
             $this->view->niveles = $niveles ? $niveles : [];
- 
-            $this->view->render('admin/view_consulting_notes');
+
+            if ($isAjax) {
+
+                $this->view->render('admin/view_consulting_notes');
+            } else {
+
+                $this->view->renderFull('admin/view_consulting_notes');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);  // Redirigimos a login en caso de error
@@ -1058,18 +1156,20 @@ class Home extends Controller
         }
     }
 
-    public function consulting_course(){
-         // Get raw POST data
-         $rawData = file_get_contents("php://input");
+    public function consulting_course()
+    {
+        // Get raw POST data
+        $rawData = file_get_contents("php://input");
 
-         // Decode JSON data
-         $postData = json_decode($rawData, true);
-         $result = $this->model->consulting_course($postData['section'], $postData['grade']);
- 
-         echo json_encode($result);
+        // Decode JSON data
+        $postData = json_decode($rawData, true);
+        $result = $this->model->consulting_course($postData['section'], $postData['grade']);
+
+        echo json_encode($result);
     }
 
-    public function consulting_rating(){
+    public function consulting_rating()
+    {
         $rawData = file_get_contents("php://input");
         $postData = json_decode($rawData, true);
         $result = $this->model->consulting_rating($postData['course'], $postData['section'], $postData['grade']);
@@ -1079,8 +1179,14 @@ class Home extends Controller
     public function documents()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
 
-            $this->view->render('admin/documents');
+            if ($isAjax) {
+
+                $this->view->render('admin/documents');
+            } else {
+                $this->view->renderFull('admin/documents');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -1092,6 +1198,7 @@ class Home extends Controller
     public function view_institution()
     {
         if (isset($_SESSION['access']) && $_SESSION['access'] == true && $_SESSION['rol'] == 1) {
+            $isAjax = $this->isAjaxRequest();
             $datos = $this->model->institution();
             $mentions = $this->model->model_select_mentions();
             $expenses = $this->model->model_select_expenses_category();
@@ -1100,7 +1207,13 @@ class Home extends Controller
             $this->view->expenses = $expenses ? $expenses : [];
             $this->view->institution = $datos ? $datos : [];
             $this->view->mentions = $mentions ? $mentions : [];
-            $this->view->render('admin/view-data-institution');
+
+            if ($isAjax) {
+
+                $this->view->render('admin/view-data-institution');
+            } else {
+                $this->view->renderFull('admin/view-data-institution');
+            }
         } else {
             $_SESSION['message'] = "Debe iniciar sesion para ingresar al sistema";  // Guardamos el mensaje en la sesión
             header("Location: " . __baseurl__);
@@ -1405,5 +1518,11 @@ class Home extends Controller
         }
 
         return ['error' => 'Ocurrió un error al procesar la imagen.'];
+    }
+
+    protected function isAjaxRequest()
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
 }

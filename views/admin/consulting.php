@@ -1,10 +1,3 @@
-<?php require constant("__layout__") . "header.php"; ?>
-
-<body class="g-sidenav-show   bg-gray-100">
-  <div class="min-height-300 bg-primary position-absolute w-100"></div>
-  <?php require constant("__layout__") . "nav.php"; ?>
-  <?php require constant("__layout__") . "aside.php"; ?>
-  <main class="main-content position-relative border-radius-lg ">
     <?php if (isset($_SESSION['message'])): ?>
       <div class="d-flex justify-content-center">
         <div class="alert alert-primary text-center text-white" role="alert">
@@ -33,7 +26,8 @@
         </div>
       </div>
     <?php endif ?>
-    <div class="container-fluid py-7" style="overflow-x: hidden;">
+
+    <div class="container-fluid py-7" style="overflow-x: hidden;" data-vista="consultingUsers">
       <div class="row">
         <form class="needs-validation" action="<?= constant('__baseurl__') ?>home/consulting_cedula" method="post" novalidate>
           <div class="card mb-4">
@@ -72,10 +66,4 @@
           </div>
         </form>
       </div>
-      <?php require constant("__layout__") . "footer.php"; ?>
     </div>
-  </main>
-  <?php require constant("__layout__") . "scripts.php"; ?>
-</body>
-
-</html>

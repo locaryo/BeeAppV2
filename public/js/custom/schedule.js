@@ -1,18 +1,31 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const tabla = document
-    .getElementById("tabla-horario")
-    .getElementsByTagName("tbody")[0];
+window.Custom = window.Custom || {};
+
+Custom.horario = function () {
+  const tablaElement = document.getElementById("tabla-horario");
+  if (!tablaElement) {
+    console.log(
+      "Tabla de horario no encontrada - Ignorando inicialización de schedule.js"
+    );
+    return;
+  }
+
+  const tabla = tablaElement.getElementsByTagName("tbody")[0];
+  if (!tabla) {
+    console.log("tbody no encontrado en la tabla de horario");
+    return;
+  }
+
   const horasInicio = "13:00";
   const horasFin = "17:00";
   const intervaloMin = 15; // bloques de 30 minutos
   const dias = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"];
 
-  if (!tabla) return;
-
   generarTablaHorario(horasInicio, horasFin, intervaloMin);
 
   const btnAsignar = document.getElementById("btn-asignar");
-  btnAsignar.addEventListener("click", asignarMateria);
+  if (btnAsignar) {
+    btnAsignar.addEventListener("click", asignarMateria);
+  }
 
   tabla.addEventListener("click", function (event) {
     if (event.target.classList.contains("btn-danger")) {
@@ -47,7 +60,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const horaFin = document.getElementById("hora-fin-asignar").value;
     const docente = document.getElementById("docente-asignar").value;
     const selectDocente = document.getElementById("docente-asignar");
-    const textoDocente = selectDocente.options[selectDocente.selectedIndex].text;
+    const textoDocente =
+      selectDocente.options[selectDocente.selectedIndex].text;
     const materia = document.getElementById("materia-asignar").value;
 
     // console.log("=== VALORES DEL FORMULARIO ===");
@@ -144,17 +158,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const coloresMaterias = {
-      "MATEMÁTICAS": "bg-primary",
-      "SALUD": "bg-primary",
-      "LENGUA": "bg-info",
-      "CIENCIAS": "bg-success",
-      "HISTORIA": "bg-warning",
-      "GEOGRAFIA": "bg-info",
+      MATEMÁTICAS: "bg-primary",
+      SALUD: "bg-primary",
+      LENGUA: "bg-info",
+      CIENCIAS: "bg-success",
+      HISTORIA: "bg-warning",
+      GEOGRAFIA: "bg-info",
       "EDUCACION FISICA": "bg-secondary",
-      "ARTE": "bg-light",
-      "MUSICA": "bg-dark",
-      "INGLES": "bg-primary",
-      "TECNOLOGIA": "bg-success",
+      ARTE: "bg-light",
+      MUSICA: "bg-dark",
+      INGLES: "bg-primary",
+      TECNOLOGIA: "bg-success",
     };
 
     // Asignar la materia
@@ -210,10 +224,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const horaInicio = celda.querySelector(
       'input[name="horario_hora_inicio[]"]'
     ).value;
-    const horaFin = celda.querySelector('input[name="horario_hora_fin[]"]').value;
-    const docente = celda.querySelector('input[name="horario_docente[]"]').value;
-    const materia = celda.querySelector('input[name="horario_materia[]"]').value;
-  
+    const horaFin = celda.querySelector(
+      'input[name="horario_hora_fin[]"]'
+    ).value;
+    const docente = celda.querySelector(
+      'input[name="horario_docente[]"]'
+    ).value;
+    const materia = celda.querySelector(
+      'input[name="horario_materia[]"]'
+    ).value;
+
     // Restablecer la celda principal
     celda.innerHTML = "";
     celda.removeAttribute("data-ocupado");
@@ -243,4 +263,4 @@ document.addEventListener("DOMContentLoaded", function () {
       `Materia "${materia}" de ${docente} eliminada en ${dia} (${horaInicio} - ${horaFin}).`
     );
   }
-});
+};

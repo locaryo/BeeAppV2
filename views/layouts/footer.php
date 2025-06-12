@@ -1,4 +1,5 @@
 <!-- footer -->
+</main>
 <footer class="footer mt-5">
   <div class="container-fluid">
     <div class="row align-items-center justify-content-lg-between">

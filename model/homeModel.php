@@ -5,6 +5,7 @@ class HomeModel extends Model
 
     public function __construct()
     {
+
         parent::__construct();
     }
     // admin
@@ -25,24 +26,34 @@ class HomeModel extends Model
                             $_SESSION['ultima_actividad'] = time(),
                             $_SESSION['access'] = true,
                             $_SESSION['rol'] = $result['rol'],
-                            $_SESSION['token'] = md5(uniqid(mt_rand(), true))
+                            $_SESSION['token'] = md5(uniqid(mt_rand(), true)),
+                            $_SESSION['is_active'] = true
                         ];
                     return true;
                 } elseif ($result['rol'] == '2') {
-                    $session =
-                        [
-                            $_SESSION['username'] = $result['user'],
-                            $_SESSION['id_user'] = $result['id'],
-                            $_SESSION['id_docente'] = $result['id_teacher'],
-                            $_SESSION['tiempo_inicio'] = time(),
-                            $_SESSION['ultima_actividad'] = time(),
-                            $_SESSION['access'] = true,
-                            $_SESSION['rol'] = $result['rol'],
-                            $_SESSION['token'] = md5(uniqid(mt_rand(), true))
-                        ];
-                    return true;
+                    if ($result['is_active'] == 1) {
+                        $_SESSION['message'] = "Ya existe una sesión activa";
+                        header("Location: " . __baseurl__);
+                        exit;
+                    } else {
+                        $session =
+                            [
+                                $_SESSION['username'] = $result['user'],
+                                $_SESSION['id_user'] = $result['id'],
+                                $_SESSION['id_docente'] = $result['id_teacher'],
+                                $_SESSION['tiempo_inicio'] = time(),
+                                $_SESSION['ultima_actividad'] = time(),
+                                $_SESSION['access'] = true,
+                                $_SESSION['rol'] = $result['rol'],
+                                $_SESSION['token'] = md5(uniqid(mt_rand(), true)),
+                                $_SESSION['is_active'] = true
+                            ];
+                        $update_is_active = $this->db->conn()->prepare("UPDATE users SET is_active = 1 WHERE id = ?");
+                        $update_is_active->execute([$result['id']]);
+                        return true;
+                    }
                 } else {
-                    echo "homeModel, line 46";
+                    echo "homeModel, line 49, no existe el rol";
                 }
             } else {
                 return false;
@@ -1124,6 +1135,18 @@ class HomeModel extends Model
         return $result;
     }
 
+    public function model_filtrar_representante($query)
+    {
+        $sql = $this->db->conn()->prepare("SELECT id, p_nombre_r, s_nombre_r, p_apellido_r, s_apellido_r, cedula_r FROM representante WHERE deleted = 0 AND (p_nombre_r LIKE ? OR p_apellido_r LIKE ? OR cedula_r LIKE ?) ORDER BY p_nombre_r");
+        $sql->execute([
+            '%' . $query . '%',
+            '%' . $query . '%',
+            '%' . $query . '%'
+        ]);
+        $result = $sql->fetchAll(PDO::FETCH_DEFAULT);
+        return $result;
+    }
+
     // consultar datos por opciones desde tabla
     public function consulting_tabla($nivel, $seccion, $mencion)
     {
@@ -1544,7 +1567,7 @@ class HomeModel extends Model
 
     public function consulting_rating($course, $section, $grade)
     {
-        $sql = $this->db->conn()->prepare("SELECT r.id, s.p_nombre, s.p_apellido, r.ratings, d.p_nombre as docente, d.p_apellido as docente_apellido
+        $sql = $this->db->conn()->prepare("SELECT r.id, r.student, s.p_nombre, s.p_apellido, r.ratings, d.p_nombre as docente, d.p_apellido as docente_apellido
         FROM ratings r
         LEFT JOIN alumnos s ON s.id = r.student
         LEFT JOIN docentes d ON d.id = r.teacher
@@ -1597,5 +1620,12 @@ class HomeModel extends Model
         $stmt->execute($params);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function update_is_active($id)
+    {
+        $sql = $this->db->conn()->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
+        $sql->execute([$id]);
+        return $sql;
     }
 }

@@ -1,4 +1,13 @@
 /* Estilo para el menú desplegable */
+.fade-content {
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.46, 0.03, 0.52, 0.96);
+}
+
+.fade-out {
+  opacity: 0;
+}
+
 .navbar-nav .dropdown-toggle {
   cursor: pointer;
   display: flex;
